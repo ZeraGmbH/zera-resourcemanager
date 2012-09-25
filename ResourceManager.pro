@@ -5,18 +5,30 @@
 TEMPLATE = app
 QT += network
 TARGET = 
-DEPENDPATH += . resource server server/implementations
-INCLUDEPATH += . server resource server/implementations
+DEPENDPATH += . resource server scpi
+INCLUDEPATH += . resource server scpi
 
 # Input
 HEADERS += resourcemanager.h \
-           resource/resourceobject.h \
            server/client.h \
            server/serverinterface.h \
-           server/implementations/scpi.h
+    scpi/catalog.h \
+    scpi/resourceobject.h \
+    resource/resource.h \
+    scpi/scpiinterface.h \
+    scpi/delegate.h
 SOURCES += main.cpp \
            resourcemanager.cpp \
-           resource/resourceobject.cpp \
            server/client.cpp \
            server/serverinterface.cpp \
-           server/implementations/scpi.cpp
+    scpi/catalog.cpp \
+    scpi/resourceobject.cpp \
+    resource/resource.cpp \
+    scpi/scpiinterface.cpp \
+    scpi/delegate.cpp
+
+
+# Library
+
+INCLUDEPATH += "/work/downloads/git-clones/scpi"
+LIBS += -L/work/downloads/git-clones/SCPI-build-desktop-Qt_aus_PATH_Debug -lSCPI

@@ -1,41 +1,48 @@
-#ifdef CONSOLE_ONLY
-#include <QtCore/QCoreApplication>
-#else
 #include <QApplication>
-#endif
+
 #include "server/serverinterface.h"
 #include "resourcemanager.h"
+#include "scpi/scpiinterface.h"
 
 //debug
-#include "resource/resourceobject.h"
-
-#include <QTableView>
+#include "resource/resource.h"
+#include "server/client.h"
+#include <QDebug>
+#include <QTreeView>
 
 int main(int argc, char* argv[])
 {
-#ifdef CONSOLE_ONLY
-  QCoreApplication a(argc, argv);
-#else
   QApplication a(argc,argv);
-#endif
 
   ResourceManager* rManager=0;
   rManager=ResourceManager::getInstance();
+
   Server::ServerInterface* sInterface=0;
   sInterface=Server::ServerInterface::getInstance();
 
-#ifndef CONSOLE_ONLY
-  QTableView view;
-  view.setModel(rManager->getModel());
-  view.setGeometry(view.x(),view.y(), 1024, 576);
+  SCPI::SCPIInterface* scpiIface=0;
+  scpiIface=SCPI::SCPIInterface::getInstance();
+
+#ifndef FULL_DEBUG
+  QTreeView view;
+  view.setModel(scpiIface->getModel());
+  view.setGeometry(view.x(),view.y(), 480, 576);
   view.show();
   view.setSelectionBehavior(QAbstractItemView::SelectRows);
+
+
+  Server::Client* testClient=new Server::Client(0);
+
+  QObject::connect(testClient,SIGNAL(scpiCommandSent(QString)),scpiIface,SLOT(scpiTransaction(QString)));
+
+  testClient->test("RESOURCE:ADD SENSE;UL1;;Messkanal 0V..480V;");
+  testClient->test("RESOURCE:ADD SENSE;UL2;;Messkanal 0V..480V;");
+  testClient->test("RESOURCE:ADD MMEMORY;DSP1PGRCMEM;1024;DSP1 ProgramMemory (Cyclic);");
 #endif
 
-  //TEST
-  rManager->newResource(new Resource::ResourceObject("Res1",0,"A brief description",0));
-  rManager->newResource(new Resource::ResourceObject("Res2",0,"A somewhat longer description than what Res1 has as description, isn't it?",256*256*256*256-1));
-  //
-  view.resizeColumnsToContents();
+
+
+
+
   return a.exec();
 }
