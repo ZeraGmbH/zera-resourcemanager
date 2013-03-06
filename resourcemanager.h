@@ -31,12 +31,17 @@ public:
     @b Lists all resources of a given type as QString
     @returns QString with resources separated by a semicolon
     */
-  const QString &listResources(const QString &Type);
+  const QString listResources(const QString &Type);
 
   /**
     @b Creates a Application::Resource and appends it to the resourceList
     */
   Application::Resource *createResource(quint32 amount, const QString &description, const QString &name, int provider, const QString &type);
+
+  /**
+    @b retrieves the resource with the given name and type
+    */
+  Application::Resource *getResource(const QString &name, const QString &type);
 
 
 public slots:
@@ -64,9 +69,8 @@ public slots:
     @b Will be triggered when the a Server::Client wants to unlock Resource:ResourceObject
     @param [in] *resource the Application::ResourceObject that will be unlocked with Application::ResourceLock
     @param [in] *client the Server::Client requesting the operation
-    @param amount if the resource has a quantity the amount of the resource that should be freed can be specified
     */
-  void freeResource(Application::Resource* resource, Server::Client* client, quint32 amount=0);
+  void freeResource(Application::Resource* resource, Server::Client* client);
 
 private:
   /**
@@ -74,8 +78,9 @@ private:
     */
   static ResourceManager* singletonInstance;
 
-  QReadWriteLock rwLock;
-
+  /**
+    @b Holds the resources
+    */
   QList<Application::Resource*> resourceList;
   /**
     @note Instances of this class should only get accessed through the getInstance method.
