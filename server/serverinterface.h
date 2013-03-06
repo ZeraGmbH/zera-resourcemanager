@@ -16,7 +16,7 @@ namespace Application
 namespace Server
 {
   /**
-    @b Represents the interface between the network implementations and the ResourceManager
+    @brief Represents the interface between the network implementations and the ResourceManager
     */
   class ServerInterface : public QTcpServer
   {
@@ -99,7 +99,7 @@ namespace Server
     /**
       @b The thread where the clients live in
       */
-    QThread* thread;
+    QThread* netThread;
 
     /**
       @note Instances of this class should only get accessed through the getInstance method.

@@ -6,16 +6,17 @@
 namespace Server
 {
   ServerInterface::ServerInterface(QObject* parent) :
-    QTcpServer(parent), thread(new QThread(this))
+    QTcpServer(parent), netThread(new QThread(this))
   {
 
+    /// @todo change default port
     this->listen(QHostAddress::Any, 12345);
     qDebug()<<"Server Started";
   }
 
   ServerInterface::~ServerInterface()
   {
-    thread->deleteLater();
+    netThread->deleteLater();
     foreach(Client *c, clients)
     {
       c->deleteLater();
@@ -28,12 +29,13 @@ namespace Server
 
     Client *client = new Client(socketDescriptor);
     clients.append(client);
-    client->moveToThread(thread);
+    client->moveToThread(netThread); //the client will be executed in the QThread
     connect(client,SIGNAL(),SCPI::SCPIInterface::getInstance(),SLOT(scpiTransaction(QString)));
     connect(client, SIGNAL(clientFinished()), this, SLOT(clientDisconnect()));
-    if(!thread->isRunning())
+    /// @note There might be cases where the thread is not running because all clients finished previously
+    if(!netThread->isRunning())
     {
-      thread->start();
+      netThread->start();
     }
     client->run();
   }
@@ -42,7 +44,7 @@ namespace Server
   {
     if(QObject::sender()!=0)
     {
-      Client* client = (Client*) QObject::sender();
+      Client* client = static_cast<Client*> (QObject::sender());
       qDebug()<<"Client disconnected:"<<client->getName();
       clients.removeAll(client);
       client->deleteLater();

@@ -19,25 +19,32 @@ namespace Server
   {
     enum ClientStates
     {
-      notConnected=0,
-      connected,
-      aboutToDisconnect,
-      disconnected
+      notConnected=0, /**< The default state */
+      connected, /**< The client has connected */
+      aboutToDisconnect, /**< The client will disconnect soon */
+      disconnected /**< The client is gone and this instance will be deleted in a few cycles */
     };
   }
 
   /**
-    @b Contains hardcoded strings
+    @brief Contains hardcoded strings
     */
   namespace HCStrings
   {
+    /**
+      @b Default message ids
+      @see Server::HCStrings::PreformattedMessages
+      */
     enum MessageIDs
     {
-      accepted=0,/** The general "command was accepted" message */
+      accepted=0,/**< The general "command was accepted" message */
       disconnect, /**< The client wants to disconnect */
       refresh, /**< The client will send this message to refresh the timeout counter */
       welcome /**< The client will recieve this message when he connects */
     };
+    /**
+      @b Default hardcoded messages, case insensitive
+      */
     static QStringList PreformattedMessages=QStringList()<<"ack"
                                                         <<"disconnect"
                                                        <<"refresh"
@@ -53,21 +60,31 @@ namespace Server
   {
     Q_OBJECT
   public:
+    /**
+      @b The default constructor
+      @note Other constructors are invalid
+      */
     explicit Client(int socketDescriptor, QObject *parent = 0);
     /**
       @b returns the name of the client (something like RMS or Oscilloscope)
       */
-    QString getName();
+    const QString &getName();
     /**
       @b returns the socket descriptor of the clients socket
       */
     int getSocket();
 
-    void test(QString message);
+    void testScpiCommand(const QString &message);
 
   signals:
-    void scpiCommandSent(QString command);
+    /**
+      @b Notifies the SCPI::SCPIInterface of new SCPI commands
+      */
+    void scpiCommandSent(const QString &command);
 
+    /**
+      @b Socket error fallback
+      */
     void error(QTcpSocket::SocketError socketError);
     /**
       @brief timeout raises when no communication between server and client occurs within 5 seconds
@@ -80,14 +97,31 @@ namespace Server
     void clientFinished();
 
   private:
-
+    /**
+      @b Disconnects the client
+      */
     void closeConnection();
+    /**
+      @b Creates a connection to the client
+      */
     void initConnection();
+    /**
+      @b Wait for commands
+      */
     void maintainConnection();
+    /**
+      @b State machine logic checker
+      */
     void transitToState(States::ClientStates newState);
 
-    QString readClient();
-    void writeClient(QString message);
+    /**
+      @b Reads a QString from the socket
+      */
+    const QString readClient();
+    /**
+      @b Writes a QString to the socket
+      */
+    void writeClient(const QString &message);
 
     /**
       @b The current state in the state machine
@@ -123,7 +157,7 @@ namespace Server
     /**
       @brief Will be called if locking the resource caused errors
       */
-    void sendToClient(QString message);
+    void sendToClient(const QString &message);
 
     /**
       @brief Resets the timer back to 5 seconds.

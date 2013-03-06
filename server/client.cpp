@@ -5,6 +5,7 @@ namespace Server
   Client::Client(int socketDescriptor, QObject *parent) :
     QObject(parent)
   {
+    internalState=States::notConnected;
     name="";
     sockDescriptor=socketDescriptor;
     connect(&timeoutCheck, SIGNAL(timeout()), this,SIGNAL(timeout()));
@@ -51,10 +52,18 @@ namespace Server
           }
       }
     }
-    /* */
 
-    //debug
-    QTcpSocket clSocket;
+    emit clientFinished();
+  }
+
+  void Client::closeConnection()
+  {
+    clSocket.close();
+    transitToState(States::disconnected);
+  }
+
+  void Client::initConnection()
+  {
     if(!clSocket.setSocketDescriptor(sockDescriptor))
     {
       emit error(clSocket.error());
@@ -62,34 +71,6 @@ namespace Server
       return;
     }
 
-    char buffer[1024] = {0};
-    clSocket.read(buffer, clSocket.bytesAvailable());
-    qDebug() <<  "Client: " << buffer << endl;
-
-    QString text="ACK";
-    quint8 number=1;
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out << (quint16)0;
-    out << text;
-    out << number;
-    out.device()->seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
-
-    clSocket.write(block);
-    clSocket.waitForBytesWritten();
-    clSocket.close();
-
-    emit clientFinished();
-  }
-
-  void Client::closeConnection()
-  {
-  }
-
-  void Client::initConnection()
-  {
     writeClient(HCStrings::PreformattedMessages.at(HCStrings::welcome));
     name=readClient();
 
@@ -97,7 +78,11 @@ namespace Server
     {
       transitToState(States::connected);
     }
-
+    else
+    {
+      /// @TODO
+      // error?
+    }
   }
 
   void Client::maintainConnection()
@@ -107,11 +92,21 @@ namespace Server
     {
       refresh();
     }
-    else
+    else if(command==HCStrings::PreformattedMessages.at(HCStrings::disconnect))
+    {
+      /// @TODO
+    }
+    else /*if(isScpiCommand(command)) */ /// @TODO insert check if the command is a valid SCPI command
     {
       refresh();//refresh anyway, the other check is only to filter out pure refreshes
       emit scpiCommandSent(command);
     }
+    /*
+    else
+    {
+      // error
+    }
+    */
   }
 
   void Client::transitToState(States::ClientStates newState)
@@ -137,7 +132,7 @@ namespace Server
     }
   }
 
-  QString Client::readClient()
+  const QString Client::readClient()
   {
     if(clSocket.waitForReadyRead(150))//wait for 150 mseconds max
     {
@@ -155,14 +150,14 @@ namespace Server
       else
       {
         in >> retVal;
-      }      
+      }
       return retVal;
     }
     else
       return "";
   }
 
-  void Client::writeClient(QString message)
+  void Client::writeClient(const QString &message)
   {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -178,7 +173,7 @@ namespace Server
 
   }
 
-  QString Client::getName()
+  const QString &Client::getName()
   {
     return name;
   }
@@ -189,7 +184,7 @@ namespace Server
   }
 
   /// @todo REMOVE!
-  void Client::test(QString message)
+  void Client::testScpiCommand(const QString &message)
   {
     scpiCommandSent(message);
   }
@@ -199,7 +194,7 @@ namespace Server
     timeoutCheck.start(150);
   }
 
-  void Client::sendToClient(QString message)
+  void Client::sendToClient(const QString &message)
   {
     clMutex.lock();
     writeClient(message);
