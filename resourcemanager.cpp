@@ -5,9 +5,17 @@ ResourceManager::ResourceManager(QObject* parent) :
 {
 }
 
-ResourceManager* ResourceManager::singletonInstance=0;
+ResourceManager::~ResourceManager()
+{
+  foreach(Application::Resource* r, resourceList)
+  {
+    r->deleteLater();
+  }
+}
 
-ResourceManager* ResourceManager::getInstance()
+ResourceManager  *ResourceManager::singletonInstance=0;
+
+ResourceManager *ResourceManager::getInstance()
 {
   if(singletonInstance==0)
   {

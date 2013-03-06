@@ -19,6 +19,7 @@ protected:
     @b The class is a Singleton so the constructor is protected [P.157+ Design patterns Gang of Four]
     */
   ResourceManager(QObject* parent = 0);
+  ~ResourceManager();
 
 public:
   /**
