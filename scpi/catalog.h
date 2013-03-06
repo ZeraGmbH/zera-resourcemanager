@@ -8,7 +8,7 @@
 namespace SCPI
 {
   /**
-    @b Allows to list resources of a given type
+    @brief Allows to list resources of a given type
     */
   class Catalog : public cSCPIObject
   {
@@ -17,14 +17,29 @@ namespace SCPI
 
     bool executeSCPI(const QString& sInput, QString& sOutput);
 
-    QString getCatalogType();
+    /**
+      @b returns catalogType
+      */
+    const QString &getCatalogType();
+    /**
+      @b sets catalogType
+      */
     void setCatalogType(const QString &type);
+    /**
+      @b increments the reference count
+      */
     void upRef();
+    /**
+      @b decrements the reference count
+      */
     void unRef();
 
   private:
     static Catalog* singletonInstance;
     QString catalogType;
+    /**
+      @b reference counter
+      */
     int refCount;
   };
 }

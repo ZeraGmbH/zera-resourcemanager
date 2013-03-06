@@ -17,46 +17,50 @@ namespace Server
 namespace Application
 {
   /**
-    @b Represents a resource with a list of features
+    @brief Represents a resource with a list of features
     */
   class Resource : public QObject
   {
-  Q_OBJECT
+    Q_OBJECT
   public:
     /**
       @b Initialise the const variables
-      @param name the name of the Application::ResourceObject
-      @param provider the provider socket id
-      @param description the description of the resource
       @param amount if the resource has a quantity that can be reserved partially it can specify the amount of that quantity
-      @note Every Server::Resource object should only be adressed once
+      @param description the description of the resource
+      @param name the name of the Application::Resource
+      @param provider the provider socket id
+      @param type the type of the resource
+      @note Every Application::Resource object should only be adressed once
       */
     Resource(quint32 amount, const QString& description, const QString& name, int provider, const QString& type );
 
     /**
-      @b Returns the name of the Application::ResourceObject
+      @b Returns the name of the Application::Resource
       */
-    const QString getName();
+    const QString &getName();
     /**
       @b Returns the provider socket id
       */
     int getProvider();
     /**
-      @b Returns the description of the Application::ResourceObject
+      @b Returns the description of the Application::Resource
       */
-    const QString getDescription();
+    const QString &getDescription();
     /**
-      @b Returns the amount of the Application::ResourceObject
+      @b Returns the amount of the Application::Resource
       */
     quint32 getAmount();
 
-    QString getType();
     /**
-      @b Returns the free amount of the Application::ResourceObject
+      @b Returns the type of the Application::Resource
+      */
+    const QString &getType();
+    /**
+      @b Returns the free amount of the Application::Resource
       */
     quint32 getFreeAmount();
     /**
-      @b Returns the occupiers of the Application::ResourceObject
+      @b Returns the occupiers of the Application::Resource
       */
     QList<int> getOccupiers();
 
@@ -73,13 +77,23 @@ namespace Application
     /**
       @b frees the resource
       @param occupier the client requesting the operation
-      @param amount the amount of the resource that should be freed
-      @note the amount should be only >0 if the resource has a quantity (resourceAmount>0)
-      @note the amount cannot be more than the resourceAmount occupied by occupier
       @returns true if succeeds
       */
-    bool freeResource(Server::Client* occupier, quint32 amount=0);
+    bool freeResource(Server::Client* occupier);
   private:
+    /**
+      @b free amount of the Application::ResourceObject if the resource has  a quantity
+      @note if a Server::Client occupies a resource and the resource has an amount > 0 the ResourceObject::Occupy call also needs to specify an amount > 0
+      */
+    quint32 freeAmount;
+
+    /**
+      @b amount of the Application::ResourceObject
+      @note if the amount is set to 0 then the resource can only be occupied once, and all occupy calls with amount>0 will fail with "bad amount"
+      */
+    const quint32 resourceAmount;
+
+
     /**
       @b name of the Application::ResourceObject
       */
@@ -94,23 +108,14 @@ namespace Application
       */
     const QString resourceType;
 
-    /**
-      @b amount of the Application::ResourceObject
-      @note if the amount is set to 0 then the resource can only be occupied once, and all occupy calls with amount>0 will fail with "bad amount"
-      */
-    const QString resourceDescription;
-    /**
-      @b free amount of the Application::ResourceObject if the resource has  a quantity
-      @note if a Server::Client occupies a resource and the resource has an amount > 0 the ResourceObject::Occupy call also needs to specify an amount > 0
-      */
-    const quint32 resourceAmount;
 
     /**
       @b description of the Application::ResourceObject
       */
-    quint32 freeAmount;
+    const QString resourceDescription;
+
     /**
-      @b occupiers (socket ids) of the Application::ResourceObject
+      @b occupiers (socket ids) of the Application::ResourceObject, quint32 is the amount
       @note if the resource has no quantity (amount=0) only one occupation is possible
       */
     QMap<int, quint32> occupiers;

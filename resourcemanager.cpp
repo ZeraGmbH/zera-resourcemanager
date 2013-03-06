@@ -16,7 +16,7 @@ ResourceManager* ResourceManager::getInstance()
   return singletonInstance;
 }
 
-QString ResourceManager::listResources(QString Type)
+const QString &ResourceManager::listResources(const QString &Type)
 {
   Application::Resource* tmpRO;
   QString retVal;
@@ -28,7 +28,7 @@ QString ResourceManager::listResources(QString Type)
   return retVal;
 }
 
-Application::Resource* ResourceManager::createResource(quint32 amount, QString description, QString name, int provider, QString type)
+Application::Resource* ResourceManager::createResource(quint32 amount, const QString &description, const QString &name, int provider, const QString &type)
 {
   Application::Resource* tmpRes=new Application::Resource(amount, description, name, provider, type);
   newResource(tmpRes);

@@ -9,7 +9,7 @@
 #include "resource/resource.h"
 
 /**
-  @b Represents the managing instance in this application that holds Application::ResourceObjects and Application::ResourceLock
+  @brief Represents the managing instance in this application that holds Application::ResourceObjects and Application::ResourceLock
   */
 class ResourceManager : public QObject
 {
@@ -26,9 +26,16 @@ public:
     */
   static ResourceManager* getInstance();
 
-  QString listResources(QString Type);
+  /**
+    @b Lists all resources of a given type as QString
+    @returns QString with resources separated by a semicolon
+    */
+  const QString &listResources(const QString &Type);
 
-  Application::Resource *createResource(quint32 amount, QString description, QString name, int provider, QString type);
+  /**
+    @b Creates a Application::Resource and appends it to the resourceList
+    */
+  Application::Resource *createResource(quint32 amount, const QString &description, const QString &name, int provider, const QString &type);
 
 
 public slots:

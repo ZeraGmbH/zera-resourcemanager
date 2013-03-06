@@ -15,7 +15,7 @@ namespace SCPI
     return true;
   }
 
-  QString Catalog::getCatalogType()
+  const QString &Catalog::getCatalogType()
   {
     return catalogType;
   }

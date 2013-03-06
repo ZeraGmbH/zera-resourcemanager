@@ -10,7 +10,7 @@ namespace Application
     freeAmount=amount;
   }
 
-  const QString Resource::getName()
+  const QString &Resource::getName()
   {
     return resourceName;
   }
@@ -20,7 +20,7 @@ namespace Application
     return resourceProvider;
   }
 
-  const QString Resource::getDescription()
+  const QString &Resource::getDescription()
   {
     return resourceDescription;
   }
@@ -30,7 +30,7 @@ namespace Application
     return resourceAmount;
   }
 
-  QString Resource::getType()
+  const QString &Resource::getType()
   {
     return resourceType;
   }
