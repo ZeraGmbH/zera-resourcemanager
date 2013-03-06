@@ -8,15 +8,17 @@
 
 #include <QStringList>
 
+#include <QDebug>
+
 
 namespace SCPI
 {
   SCPIInterface::SCPIInterface(QObject* parent) : QObject(parent)
   {
     scpiInstance = new cSCPI("Resourcemanager");
-    addResource=new Delegate("ADD", SCPI::isCmdwP);
-    removeResource=new Delegate("REMOVE", SCPI::isCmdwP);
-    catalogType=new Delegate("CATALOG", SCPI::isCmd);
+    addResource=new Delegate("ADD", isCmdwP);
+    removeResource=new Delegate("REMOVE", isCmdwP);
+    catalogType=new Delegate("CATALOG", isCmd);
 
     //Add all default cSCPIObjects
     QStringList aTMP = QStringList("RESOURCE");
@@ -44,6 +46,26 @@ namespace SCPI
     return scpiInstance->getSCPIModel();
   }
 
+  const QString SCPIInterface::listTypes()
+  {
+    /// @todo untested
+    QString retVal;
+    foreach(Catalog* tmpCat, catalogList)
+    {
+      if(retVal.contains(tmpCat->getCatalogType()))
+      {
+        retVal.append(tmpCat->getCatalogType());
+      }
+    }
+
+    return retVal;
+  }
+
+  const QString SCPIInterface::listResourceByType(const QString &type)
+  {
+    return ResourceManager::getInstance()->listResources(type);
+  }
+
   void SCPIInterface::resourceAdd(Application::Resource *res)
   {
     ResourceObject* newRes= new ResourceObject(res);
@@ -59,6 +81,7 @@ namespace SCPI
       {
         tmpCat->upRef();//increment reference counter
         catalogFound=true;
+        break;
       }
     }
     if(!catalogFound) //add a catalog to the type
@@ -79,28 +102,51 @@ namespace SCPI
     scpiInstance->genSCPICmd(position,newRes);
   }
 
-  void SCPIInterface::resourceRemove(Application::Resource *res, int clientSockedDesc)
+  void SCPIInterface::resourceRemove(Application::Resource *res, int clientSocketDesc)
   {
+    if(clientSocketDesc==res->getProvider())
+    {
+      ResourceManager::getInstance()->deleteResource(res);
+    }
+    else
+    {
+      // this would be a strange error
+    }
+    /// @todo .
+    qDebug()<<"Removing resources is unimplemented";
   }
 
-  void SCPIInterface::resourceOccupy(Application::Resource *res, int clientSockedDesc, int amount)
+  void SCPIInterface::resourceOccupy(Application::Resource *res, int clientSocketDesc, int amount)
   {
+    /// @todo .
   }
 
-  void SCPIInterface::resourceFree(Application::Resource *res, int clientSockedDesc, int amount)
+  void SCPIInterface::resourceFree(Application::Resource *res, int clientSocketDesc, int amount)
   {
+    /// @todo .
   }
 
-  void SCPIInterface::scpiTransaction(QString commands)
+  void SCPIInterface::scpiTransaction(const QString &commands)
   {
     scpiMutex.lock();
     Server::Client* currentClient=0;
-    currentClient = (Server::Client*) sender();
+    currentClient = static_cast<Server::Client*> (sender());
     if(currentClient!=0)
     {
       QString socket=QString("%1;").arg(currentClient->getSocket());
       cSCPICommand command=commands+socket; //Add the clients socket descriptor to the scpi commands
       cSCPIObject* tmpObject = scpiInstance->getSCPIObject(command); //check what scpi node is triggered
+
+      /// @todo remove debug code
+      QString dbgString;
+      for(quint32 i=0; i<command.getParamCount(); i++)
+      {
+        dbgString+=QString("%1;").arg(command.getParam(i));
+      }
+      qDebug()<<"Command:"<<command.getCommand()<<"Params:"<<command.getParamCount()<<dbgString<<endl;
+      qDebug()<<command.getParam(AddParams::type)<<command.getParam(AddParams::name);
+
+      // check the delegates
       if(tmpObject==addResource) //A resource is about to be added
       {
         Application::Resource* tmpRes=0;
@@ -112,13 +158,19 @@ namespace SCPI
               command.getParam(AddParams::type));
         emit resourceAdded(tmpRes);
 
-        /// @todo remove debug code
-        QString dbgString;
-        for(int i=0; i<command.getParamCount(); i++)
+      }
+      else if(tmpObject==removeResource)
+      {
+        Application::Resource* tmpRes=0;
+        tmpRes=ResourceManager::getInstance()->getResource(command.getParam(AddParams::name),command.getParam(AddParams::type));
+        if(tmpRes!=0)
         {
-          dbgString+=QString("%1;").arg(command.getParam(i));
+          resourceRemove(tmpRes,socket.toInt());
         }
-        qDebug()<<"Command:"<<command.getCommand()<<"Params:"<<command.getParamCount()<<dbgString<<endl;
+        else
+        {
+          // error -> notify the client
+        }
       }
       /// @todo return output to the client
     }

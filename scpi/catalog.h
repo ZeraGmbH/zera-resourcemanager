@@ -35,7 +35,9 @@ namespace SCPI
     void unRef();
 
   private:
-    static Catalog* singletonInstance;
+    /**
+      @b the Type which the catalog represents
+      */
     QString catalogType;
     /**
       @b reference counter

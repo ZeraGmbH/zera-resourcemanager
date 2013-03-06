@@ -10,6 +10,10 @@
 #include <QDebug>
 #include <QTreeView>
 
+#include <QInputContextFactory>
+
+#define FULL_DEBUG
+
 int main(int argc, char* argv[])
 {
   QApplication a(argc,argv);
@@ -23,7 +27,7 @@ int main(int argc, char* argv[])
   SCPI::SCPIInterface* scpiIface=0;
   scpiIface=SCPI::SCPIInterface::getInstance();
 
-#ifndef FULL_DEBUG
+#ifdef FULL_DEBUG
   QTreeView view;
   view.setModel(scpiIface->getModel());
   view.setGeometry(view.x(),view.y(), 480, 576);
@@ -35,9 +39,10 @@ int main(int argc, char* argv[])
 
   QObject::connect(testClient,SIGNAL(scpiCommandSent(QString)),scpiIface,SLOT(scpiTransaction(QString)));
 
-  testClient->test("RESOURCE:ADD SENSE;UL1;;Messkanal 0V..480V;");
-  testClient->test("RESOURCE:ADD SENSE;UL2;;Messkanal 0V..480V;");
-  testClient->test("RESOURCE:ADD MMEMORY;DSP1PGRCMEM;1024;DSP1 ProgramMemory (Cyclic);");
+  testClient->testScpiCommand("RESOURCE:ADD SENSE;UL1;;Messkanal 0V..480V;");
+  testClient->testScpiCommand("RESOURCE:ADD SENSE;UL2;;Messkanal 0V..480V;");
+  testClient->testScpiCommand("RESOURCE:ADD MMEMORY;DSP1PGRCMEM;1024;DSP1 ProgramMemory (Cyclic);");
+  testClient->testScpiCommand("RESOURCE:REMOVE SENSE;UL1;");
 #endif
 
 

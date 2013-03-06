@@ -1,5 +1,4 @@
 #include "catalog.h"
-#include "resourcemanager.h"
 
 namespace SCPI
 {
@@ -11,7 +10,7 @@ namespace SCPI
   bool Catalog::executeSCPI(const QString &sInput, QString &sOutput)
   {
     /// @todo !!
-    sOutput=ResourceManager::getInstance()->listResources(sInput);
+    //sOutput=ResourceManager::getInstance()->listResources(sInput);
     return true;
   }
 
