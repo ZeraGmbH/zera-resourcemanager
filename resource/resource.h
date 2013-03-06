@@ -93,11 +93,16 @@ namespace Application
       */
     const quint32 resourceAmount;
 
+    /**
+      @b description of the Application::ResourceObject
+      */
+    const QString resourceDescription;
 
     /**
       @b name of the Application::ResourceObject
       */
     const QString resourceName;
+
     /**
       @b socket id of the provider of this Application::ResourceObject
       */
@@ -107,12 +112,6 @@ namespace Application
       @b type of the Application::ResourceObject, e.g. Sense for sensors
       */
     const QString resourceType;
-
-
-    /**
-      @b description of the Application::ResourceObject
-      */
-    const QString resourceDescription;
 
     /**
       @b occupiers (socket ids) of the Application::ResourceObject, quint32 is the amount
