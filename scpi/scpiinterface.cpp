@@ -46,13 +46,13 @@ namespace SCPI
     return scpiInstance->getSCPIModel();
   }
 
-  const QString SCPIInterface::listTypes()
+  QString SCPIInterface::listTypes()
   {
     /// @todo untested
     QString retVal;
     foreach(Catalog* tmpCat, catalogList)
     {
-      if(retVal.contains(tmpCat->getCatalogType()))
+      if(!retVal.contains(tmpCat->getCatalogType()))
       {
         retVal.append(tmpCat->getCatalogType());
       }
@@ -61,7 +61,7 @@ namespace SCPI
     return retVal;
   }
 
-  const QString SCPIInterface::listResourceByType(const QString &type)
+  QString SCPIInterface::listResourceByType(const QString &type)
   {
     return ResourceManager::getInstance()->listResources(type);
   }
@@ -104,15 +104,17 @@ namespace SCPI
 
   bool SCPIInterface::resourceRemove(Application::Resource *res, Server::Client *client)
   {
-    bool retVal=true;
+    bool retVal=false;
     if(client==res->getProvider())
     {
       ResourceManager::getInstance()->deleteResource(res);
+      client->sendACK();
+      retVal=true;
     }
     else
     {
-      // this would be a strange error, someone tries to delete an existing resource he did not provide?
-      retVal=false;
+      // this would be a strange error, someone tries to delete an existing resource he did not provide?#
+      client->sendError(tr("Not owner of resource: %1").arg(res->getName()));
     }
     /// @todo .
     qDebug()<<"Removing resources is unimplemented";

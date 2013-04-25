@@ -17,13 +17,17 @@ int main(int argc, char* argv[])
   QApplication a(argc,argv);
 
   ResourceManager* rManager=0;
-  rManager=ResourceManager::getInstance();
-
   SCPI::SCPIInterface* scpiIface=0;
-  scpiIface=SCPI::SCPIInterface::getInstance();
-
   Server::ServerInterface* sInterface=0;
+
+  rManager=ResourceManager::getInstance();
+  scpiIface=SCPI::SCPIInterface::getInstance();
   sInterface=Server::ServerInterface::getInstance();
+
+  Q_UNUSED(rManager)
+  Q_UNUSED(scpiIface)
+  Q_UNUSED(sInterface)
+
 
 
   return a.exec();

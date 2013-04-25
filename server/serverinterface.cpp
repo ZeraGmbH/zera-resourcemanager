@@ -44,9 +44,9 @@ namespace Server
     client->sendACK(tr("Access granted for resource: %1").arg(resource->getName()));
   }
 
-  void ServerInterface::newClient(Zera::Net::ZeraClient* newClient)
+  void ServerInterface::newClient(Zera::Net::ZeraClient* cl)
   {
-    Client* tmpClient = new Client(newClient);
+    Client* tmpClient = new Client(cl);
     clients.append(tmpClient);
     connect(tmpClient,SIGNAL(aboutToDisconnect()),this,SLOT(clientDisconnected()));
   }

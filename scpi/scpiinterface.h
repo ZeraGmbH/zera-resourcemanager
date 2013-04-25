@@ -41,49 +41,6 @@ namespace SCPI
       description
     };
   }
-  /**
-    @brief this encapsulates redundant entries for the add / remove parameters
-    */
-  namespace RemoveParams
-  {
-    /**
-      @brief This enum allows parameter reordering and will provide legacy support if changed
-      */
-    enum Parameters
-    {
-      type=0,
-      name,
-      providerSocketDesc
-    };
-  }
-
-  /**
-    @brief this will encapsulate redundant entries for the occupy / free parameters
-    */
-  namespace OccupyParams
-  {
-    /**
-      @brief This enum allows parameter reordering and will provide legacy support if changed
-      */
-    enum Parameters
-    {
-      amount=0,
-      providerSocketDesc
-    };
-  }
-  /**
-    @brief this will encapsulate redundant entries for the occupy / free parameters
-    */
-  namespace FreeParams
-  {
-    /**
-      @brief This enum allows parameter reordering and will provide legacy support if changed
-      */
-    enum Parameters
-    {
-      providerSocketDesc=0
-    };
-  }
 
   class ResourceObject;
 
@@ -111,11 +68,11 @@ namespace SCPI
     /**
       @b uses the ResourceManager to list Application::Resource names of a given type
       */
-    const QString listResourceByType(const QString &type);
+    QString listResourceByType(const QString &type);
     /**
       @b Lists types which have a Catalog command
       */
-    const QString listTypes();
+    QString listTypes();
 
 
 

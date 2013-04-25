@@ -79,7 +79,11 @@ namespace Server
       */
     void lockGranted(Application::Resource* resource, Server::Client* client);
 
-    void newClient(Zera::Net::ZeraClient *newClient);
+    /**
+     * @brief Is called when new clients arrive
+     * @param [in] *cl the Zera::Net::ZeraClient that just connected
+     */
+    void newClient(Zera::Net::ZeraClient *cl);
 
   protected:
     /**
@@ -98,6 +102,9 @@ namespace Server
       */
     QList<Client*> clients;
 
+    /**
+     * @brief Internally used server
+     */
     Zera::Net::ZeraServer* m_zServer;
 
     /**

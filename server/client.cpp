@@ -41,6 +41,17 @@ namespace Server
     sendMessage(envelope);
   }
 
+  void Client::sendDebug(const QString &message)
+  {
+    ProtobufMessage::NetMessage envelope;
+    ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
+    envelope.set_type(ProtobufMessage::NetMessage::NET_REPLY);
+    newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::DEBUG);
+    newMessage->set_body(message.toStdString());
+
+    sendMessage(envelope);
+  }
+
   void Client::sendError(const QString &message)
   {
     ProtobufMessage::NetMessage envelope;
@@ -80,12 +91,17 @@ namespace Server
             }
           case ProtobufMessage::NetMessage::NetReply::ACK:
             {
-              /// @todo .
+              /// @todo are we expecting a reply from a client or is this a defect?
+              break;
+            }
+          case ProtobufMessage::NetMessage::NetReply::DEBUG:
+            {
+              qDebug() << QString("Client '%1' sent debug message:\n%2").arg(this->getName()).arg(QString::fromStdString(envelope.reply().body()));
               break;
             }
           default:
             {
-              /// @todo .
+              /// @todo this is the error case
               break;
             }
         }
@@ -97,7 +113,7 @@ namespace Server
     }
     else
     {
-      sendNACK("Protocol error!");
+      sendNACK(tr("Protocol error"));
       qDebug()<<"Error parsing protobuf";
     }
   }
