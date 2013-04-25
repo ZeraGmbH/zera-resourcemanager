@@ -102,39 +102,54 @@ namespace SCPI
     scpiInstance->genSCPICmd(position,newRes);
   }
 
-  void SCPIInterface::resourceRemove(Application::Resource *res, int clientSocketDesc)
+  bool SCPIInterface::resourceRemove(Application::Resource *res, Server::Client *client)
   {
-    if(clientSocketDesc==res->getProvider())
+    bool retVal=true;
+    if(client==res->getProvider())
     {
       ResourceManager::getInstance()->deleteResource(res);
     }
     else
     {
-      // this would be a strange error
+      // this would be a strange error, someone tries to delete an existing resource he did not provide?
+      retVal=false;
     }
     /// @todo .
     qDebug()<<"Removing resources is unimplemented";
+    return retVal;
   }
 
-  void SCPIInterface::resourceOccupy(Application::Resource *res, int clientSocketDesc, int amount)
+  void SCPIInterface::resourceOccupy(Application::Resource *res, Server::Client *client, int amount)
   {
-    /// @todo .
+    if(res->occupyResource(client,amount))
+    {
+      client->sendACK();
+    }
+    else
+    {
+      client->sendNACK();
+    }
   }
 
-  void SCPIInterface::resourceFree(Application::Resource *res, int clientSocketDesc, int amount)
+  void SCPIInterface::resourceFree(Application::Resource *res, Server::Client *client)
   {
-    /// @todo .
+    if(res->freeResource(client))
+    {
+      client->sendACK();
+    }
+    else
+    {
+      client->sendNACK();
+    }
   }
 
   void SCPIInterface::scpiTransaction(const QString &commands)
   {
-    scpiMutex.lock();
     Server::Client* currentClient=0;
     currentClient = static_cast<Server::Client*> (sender());
     if(currentClient!=0)
     {
-      QString socket=QString("%1;").arg(currentClient->getSocket());
-      cSCPICommand command=commands+socket; //Add the clients socket descriptor to the scpi commands
+      cSCPICommand command=commands;
       cSCPIObject* tmpObject = scpiInstance->getSCPIObject(command); //check what scpi node is triggered
 
       /// @todo remove debug code
@@ -144,7 +159,6 @@ namespace SCPI
         dbgString+=QString("%1;").arg(command.getParam(i));
       }
       qDebug()<<"Command:"<<command.getCommand()<<"Params:"<<command.getParamCount()<<dbgString<<endl;
-      qDebug()<<command.getParam(AddParams::type)<<command.getParam(AddParams::name);
 
       // check the delegates
       if(tmpObject==addResource) //A resource is about to be added
@@ -152,28 +166,27 @@ namespace SCPI
         Application::Resource* tmpRes=0;
         tmpRes=ResourceManager::getInstance()->createResource(
               0,//command.getParam(AddParams::amount).toUInt(),
-              command.getParam(AddParams::description-1),/// @todo remove temporary workaround
-              command.getParam(AddParams::name),
-              command.getParam(AddParams::providerSocketDesc-1).toInt(), /// @todo remove temporary workaround
-              command.getParam(AddParams::type));
+              command.getParam(CommandParams::description-1),/// @todo remove temporary workaround
+              command.getParam(CommandParams::name),
+              currentClient,
+              command.getParam(CommandParams::type));
         emit resourceAdded(tmpRes);
 
       }
       else if(tmpObject==removeResource)
       {
         Application::Resource* tmpRes=0;
-        tmpRes=ResourceManager::getInstance()->getResource(command.getParam(AddParams::name),command.getParam(AddParams::type));
+        tmpRes=ResourceManager::getInstance()->getResource(command.getParam(CommandParams::name),command.getParam(CommandParams::type));
         if(tmpRes!=0)
         {
-          resourceRemove(tmpRes,socket.toInt());
+          resourceRemove(tmpRes,currentClient);
         }
         else
         {
-          // error -> notify the client
+          currentClient->sendError(tr("Resource not found: %1").arg(command.getParam(CommandParams::name)));
         }
       }
       /// @todo return output to the client
     }
-    scpiMutex.unlock();
   }
 }

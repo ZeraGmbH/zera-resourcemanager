@@ -19,6 +19,11 @@ namespace SCPI
     return catalogType;
   }
 
+  quint16 Catalog::getRefCount()
+  {
+    return refCount;
+  }
+
   void Catalog::setCatalogType(const QString& type)
   {
     catalogType=type;

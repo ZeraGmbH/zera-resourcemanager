@@ -4,7 +4,7 @@
 
 namespace Application
 {
-  Resource::Resource(quint32 amount, const QString& description, const QString& name, int provider, const QString& type ) :
+  Resource::Resource(quint32 amount, const QString& description, const QString& name, Server::Client * provider, const QString& type ) :
     resourceAmount(amount), resourceDescription(description), resourceName(name), resourceProvider(provider), resourceType(type)
   {
     freeAmount=amount;
@@ -15,7 +15,7 @@ namespace Application
     return resourceName;
   }
 
-  int Resource::getProvider()
+  Server::Client * Resource::getProvider()
   {
     return resourceProvider;
   }
@@ -40,7 +40,7 @@ namespace Application
     return freeAmount;
   }
 
-  QList<int> Resource::getOccupiers()
+  QList<Server::Client *> Resource::getOccupiers()
   {
     return occupiers.keys();
   }
@@ -52,7 +52,7 @@ namespace Application
     {
       if(amount<=resourceAmount)
       {
-        occupiers.insert(occupier->getSocket(),amount);
+        occupiers.insert(occupier,amount);
         freeAmount=freeAmount-amount;
         retVal = true;
       }
@@ -61,7 +61,7 @@ namespace Application
     {
       if(occupiers.isEmpty())
       {
-        occupiers.insert(occupier->getSocket(),1); //1 means the whole resource here
+        occupiers.insert(occupier,1); //1 means the whole resource here
         retVal = true;
       }
     }
@@ -72,10 +72,10 @@ namespace Application
   {
     bool retVal = false;
     quint32 tmpVal;
-    tmpVal=occupiers.value(occupier->getSocket(),0); // this will also detect if the occupier isn't currently holding any resource amount
+    tmpVal=occupiers.value(occupier,0); // this will also detect if the occupier isn't currently holding any resource amount
     if(tmpVal>0) //remove the occupier
     {
-      occupiers.remove(occupier->getSocket());
+      occupiers.remove(occupier);
       freeAmount=freeAmount+tmpVal;
       retVal=true;
     }

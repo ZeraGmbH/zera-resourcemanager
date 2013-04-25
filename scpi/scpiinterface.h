@@ -28,7 +28,7 @@ namespace SCPI
   /**
     @brief this encapsulates redundant entries for the add / remove parameters
     */
-  namespace AddParams
+  namespace CommandParams
   {
     /**
       @brief This enum allows parameter reordering and will provide legacy support if changed
@@ -38,8 +38,7 @@ namespace SCPI
       type=0,
       name,
       amount,
-      description,
-      providerSocketDesc
+      description
     };
   }
   /**
@@ -143,15 +142,15 @@ namespace SCPI
 
       @todo Also remove the SCPI::Catalog if the refcounter hits 0 and remove the node of the type
       */
-    void resourceRemove(Application::Resource * res, int clientSocketDesc);
+    bool resourceRemove(Application::Resource * res, Server::Client* client);
     /**
       @b Occupies an Application::Resource with the given client and amount
       */
-    void resourceOccupy(Application::Resource * res, int clientSocketDesc, int amount);
+    void resourceOccupy(Application::Resource * res, Server::Client *client, int amount);
     /**
       @b Frees an Application::Resource with the given client
       */
-    void resourceFree(Application::Resource * res, int clientSocketDesc, int amount);
+    void resourceFree(Application::Resource * res, Server::Client *client);
 
   private:
     /**
@@ -175,11 +174,6 @@ namespace SCPI
       @b Singleton instance, no other instances of this object are possible
       */
     static SCPIInterface* singletonInstance;
-
-    /**
-      @b used for thread safety in scpiTransaction()
-      */
-    QMutex scpiMutex;
 
     /**
       @b The list that holds the SCPI::Catalog for each catalogType

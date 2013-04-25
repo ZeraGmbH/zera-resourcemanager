@@ -21,6 +21,8 @@ namespace SCPI
       @b returns catalogType
       */
     const QString &getCatalogType();
+
+    quint16 getRefCount();
     /**
       @b sets catalogType
       */
@@ -42,7 +44,7 @@ namespace SCPI
     /**
       @b reference counter
       */
-    int refCount;
+    quint16 refCount;
   };
 }
 

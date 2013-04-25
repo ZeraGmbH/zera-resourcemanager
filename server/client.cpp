@@ -1,207 +1,110 @@
 #include "server/client.h"
 
+
+
 namespace Server
 {
-  Client::Client(int socketDescriptor, QObject *parent) :
-    QObject(parent)
+  Client::Client(Zera::Net::ZeraClient *zClient, QObject *parent) :
+    QObject(parent),
+    m_zClient(zClient)
   {
-    internalState=States::notConnected;
-    name="";
-    sockDescriptor=socketDescriptor;
-    connect(&timeoutCheck, SIGNAL(timeout()), this,SIGNAL(timeout()));
-
-    if(!clSocket.setSocketDescriptor(sockDescriptor))
-    {
-      emit error(clSocket.error());
-      qDebug()<<"error setting clients socket descriptor";
-      return;
-    }
+    //we will manually delete the client in the destructor
+    m_zClient->setAutoDeletion(false);
+    connect(m_zClient,SIGNAL(messageReceived(QByteArray)),this,SLOT(messageReceived(QByteArray)));
+    connect(m_zClient,SIGNAL(clientDisconnected()),this, SIGNAL(aboutToDisconnect()));
   }
 
-
-
-  void Client::run()
+  Client::~Client()
   {
-    /* */
-    while(internalState!=States::disconnected)
-    {
-      switch(internalState)
-      {
-        case States::notConnected:
-          {
-            /** start the timer with 150 mseconds timeout */
-            timeoutCheck.start(150);
-            initConnection();
-            break;
-          }
-        case States::connected:
-          {
-            maintainConnection();
-            break;
-          }
-        case States::aboutToDisconnect:
-          {
-            closeConnection();
-            break;
-          }
-        case States::disconnected:
-        default:
-          {
-            //error
-            break;
-          }
-      }
-    }
-
-    emit clientFinished();
+    m_zClient->deleteLater();
   }
 
-  void Client::closeConnection()
-  {
-    clSocket.close();
-    transitToState(States::disconnected);
-  }
-
-  void Client::initConnection()
-  {
-    if(!clSocket.setSocketDescriptor(sockDescriptor))
-    {
-      emit error(clSocket.error());
-      qDebug()<<"error";
-      return;
-    }
-
-    writeClient(HCStrings::PreformattedMessages.at(HCStrings::welcome));
-    name=readClient();
-
-    if(name!="")
-    {
-      transitToState(States::connected);
-    }
-    else
-    {
-      /// @TODO
-      // error?
-    }
-  }
-
-  void Client::maintainConnection()
-  {
-    QString command=readClient();
-    if(command==HCStrings::PreformattedMessages.at(HCStrings::refresh))
-    {
-      refresh();
-    }
-    else if(command==HCStrings::PreformattedMessages.at(HCStrings::disconnect))
-    {
-      /// @TODO
-    }
-    else /*if(isScpiCommand(command)) */ /// @TODO insert check if the command is a valid SCPI command
-    {
-      refresh();//refresh anyway, the other check is only to filter out pure refreshes
-      emit scpiCommandSent(command);
-    }
-    /*
-    else
-    {
-      // error
-    }
-    */
-  }
-
-  void Client::transitToState(States::ClientStates newState)
-  {
-    if(internalState!=newState)
-    {
-      //The client has connected
-      if(internalState==States::notConnected&&newState==States::connected)
-      {
-        internalState=newState;
-      }
-      //The client will disconnect soon
-      if(internalState==States::connected&&newState==States::aboutToDisconnect)
-      {
-        internalState=newState;
-      }
-      //The client is gone and this instance will be deleted in a few cycles
-      if(internalState==States::aboutToDisconnect&&newState==States::disconnected)
-      {
-        emit clientFinished();
-        internalState=newState;
-      }
-    }
-  }
-
-  const QString Client::readClient()
-  {
-    if(clSocket.waitForReadyRead(150))//wait for 150 mseconds max
-    {
-      refresh(); //the connection is alive
-      QString retVal;
-      QDataStream in(&clSocket);
-      in.setVersion(QDataStream::Qt_4_0);
-      quint16 tmp;
-      in >> tmp;
-      if(clSocket.bytesAvailable()<tmp)
-      {
-        qDebug()<<"Error bytes not available";
-        retVal="";
-      }
-      else
-      {
-        in >> retVal;
-      }
-      return retVal;
-    }
-    else
-      return "";
-  }
-
-  void Client::writeClient(const QString &message)
-  {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out << (quint16)0;
-    out << message;
-    out.device()->seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
-
-    clSocket.write(block);
-    if(clSocket.waitForBytesWritten(150)) // wait 150 mseconds max
-      refresh(); //the connection is alive
-
-  }
 
   const QString &Client::getName()
   {
-    return name;
+    return m_zClient->getName();
   }
 
-  int Client::getSocket()
+  bool Client::isRepresenting(Zera::Net::ZeraClient *zClient)
   {
-    return sockDescriptor;
+    return (m_zClient==zClient);
   }
 
-  /// @todo REMOVE!
-  void Client::testScpiCommand(const QString &message)
+  void Client::sendACK(const QString &message)
   {
-    scpiCommandSent(message);
+    ProtobufMessage::NetMessage envelope;
+    ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
+    envelope.set_type(ProtobufMessage::NetMessage::NET_REPLY);
+    newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::ACK);
+    newMessage->set_body(message.toStdString());
+
+    sendMessage(envelope);
   }
 
-  void Client::refresh()
+  void Client::sendError(const QString &message)
   {
-    timeoutCheck.start(150);
+    ProtobufMessage::NetMessage envelope;
+    ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
+    envelope.set_type(ProtobufMessage::NetMessage::NET_REPLY);
+    newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::ERROR);
+    newMessage->set_body(message.toStdString());
+
+    sendMessage(envelope);
   }
 
-  void Client::sendToClient(const QString &message)
+  void Client::sendNACK(const QString &message)
   {
-    clMutex.lock();
-    writeClient(message);
-    if(readClient()!=HCStrings::PreformattedMessages.at(HCStrings::accepted))
+    ProtobufMessage::NetMessage envelope;
+    ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
+    envelope.set_type(ProtobufMessage::NetMessage::NET_REPLY);
+    newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::NACK);
+    newMessage->set_body(message.toStdString());
+
+    sendMessage(envelope);
+  }
+
+  void Client::messageReceived(QByteArray message)
+  {
+    // return message to client to show that it was received
+    ProtobufMessage::NetMessage envelope;
+    if(envelope.ParseFromArray(message, message.size()))
     {
-      //error
+      if(envelope.has_reply())
+      {
+        switch(envelope.reply().rtype())
+        {
+          case ProtobufMessage::NetMessage::NetReply::IDENT:
+            {
+              m_zClient->setName(QString::fromStdString(envelope.reply().body()));
+              break;
+            }
+          case ProtobufMessage::NetMessage::NetReply::ACK:
+            {
+              /// @todo .
+              break;
+            }
+          default:
+            {
+              /// @todo .
+              break;
+            }
+        }
+      }
+      if(envelope.has_scpi())
+      {
+        emit scpiCommandSent(envelope.scpi());
+      }
     }
-    clMutex.unlock();
+    else
+    {
+      sendNACK("Protocol error!");
+      qDebug()<<"Error parsing protobuf";
+    }
+  }
+
+  void Client::sendMessage(const ProtobufMessage::NetMessage &message)
+  {
+    QByteArray block(message.SerializeAsString().c_str(), message.ByteSize());
+    m_zClient->writeClient(block);
   }
 }
