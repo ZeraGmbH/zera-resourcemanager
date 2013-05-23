@@ -22,7 +22,6 @@ namespace Server
       @note Other constructors are invalid
       */
     explicit Client(Zera::Net::ZeraClient* zClient, QObject *parent = 0);
-    ~Client();
 
     /**
      * @brief getName

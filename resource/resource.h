@@ -10,14 +10,10 @@ namespace Server
   class Client;
 }
 
-namespace Zera
+namespace SCPI
 {
-  namespace Net
-  {
-    class ZeraClient;
-  }
+  class ResourceObject;
 }
-
 
 /**
   @brief The Application namespace holds the application specific informations (e.g. Resources)
@@ -59,6 +55,7 @@ namespace Application
       */
     quint32 getAmount();
 
+    SCPI::ResourceObject* getResourceObject();
     /**
       @b Returns the type of the Application::Resource
       */
@@ -88,6 +85,8 @@ namespace Application
       @returns true if succeeds
       */
     bool freeResource(Server::Client* occupier);
+
+    void setObject(SCPI::ResourceObject* obj);
   private:
     /**
       @b free amount of the SCPI::ResourceObject if the resource has  a quantity
@@ -110,6 +109,8 @@ namespace Application
       @b name of the SCPI::ResourceObject
       */
     const QString resourceName;
+
+    SCPI::ResourceObject* resourceObject;
 
     /**
       @b socket id of the provider of this SCPI::ResourceObject

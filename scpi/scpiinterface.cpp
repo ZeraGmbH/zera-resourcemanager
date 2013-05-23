@@ -8,9 +8,6 @@
 
 #include <QStringList>
 
-#include <QDebug>
-
-
 namespace SCPI
 {
   SCPIInterface::SCPIInterface(QObject* parent) : QObject(parent)
@@ -26,7 +23,6 @@ namespace SCPI
     scpiInstance->genSCPICmd(aTMP,removeResource);
     aTMP<<"TYPE";
     scpiInstance->genSCPICmd(aTMP,catalogType);
-
 
     connect(this,SIGNAL(resourceAdded(Application::Resource*)),this,SLOT(resourceAdd(Application::Resource*)));
   }
@@ -48,13 +44,12 @@ namespace SCPI
 
   QString SCPIInterface::listTypes()
   {
-    /// @todo untested
     QString retVal;
     foreach(Catalog* tmpCat, catalogList)
     {
       if(!retVal.contains(tmpCat->getCatalogType()))
       {
-        retVal.append(tmpCat->getCatalogType());
+        retVal.append(QString("%1;").arg(tmpCat->getCatalogType()));
       }
     }
 
@@ -69,6 +64,7 @@ namespace SCPI
   void SCPIInterface::resourceAdd(Application::Resource *res)
   {
     ResourceObject* newRes= new ResourceObject(res);
+    res->setObject(newRes);
     QStringList position; //the scpi subsections where the resource will be recognized
     position<<"RESOURCE";
     position<<res->getType();
@@ -108,7 +104,21 @@ namespace SCPI
     if(client==res->getProvider())
     {
       ResourceManager::getInstance()->deleteResource(res);
-      client->sendACK();
+      res->deleteLater();
+      foreach(Catalog* tmpCat, catalogList)
+      {
+        if(tmpCat->getCatalogType()==res->getType())
+        {
+          tmpCat->unRef();
+          if(tmpCat->getRefCount()==0)
+          {
+            catalogList.removeAll(tmpCat);
+            scpiInstance->delSCPICmds(QString("RESOURCE:%1:CATALOG").arg(tmpCat->getCatalogType()));
+            delete tmpCat;
+          }
+          break;
+        }
+      }
       retVal=true;
     }
     else
@@ -116,79 +126,121 @@ namespace SCPI
       // this would be a strange error, someone tries to delete an existing resource he did not provide?#
       client->sendError(tr("Not owner of resource: %1").arg(res->getName()));
     }
-    /// @todo .
-    qDebug()<<"Removing resources is unimplemented";
     return retVal;
   }
 
-  void SCPIInterface::resourceOccupy(Application::Resource *res, Server::Client *client, int amount)
+  void SCPIInterface::scpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand)
   {
-    if(res->occupyResource(client,amount))
-    {
-      client->sendACK();
-    }
-    else
-    {
-      client->sendNACK();
-    }
-  }
-
-  void SCPIInterface::resourceFree(Application::Resource *res, Server::Client *client)
-  {
-    if(res->freeResource(client))
-    {
-      client->sendACK();
-    }
-    else
-    {
-      client->sendNACK();
-    }
-  }
-
-  void SCPIInterface::scpiTransaction(const QString &commands)
-  {
+    bool retVal=false;
     Server::Client* currentClient=0;
+    QString answer="";
     currentClient = static_cast<Server::Client*> (sender());
     if(currentClient!=0)
     {
-      cSCPICommand command=commands;
-      cSCPIObject* tmpObject = scpiInstance->getSCPIObject(command); //check what scpi node is triggered
-
-      /// @todo remove debug code
-      QString dbgString;
-      for(quint32 i=0; i<command.getParamCount(); i++)
+      cSCPICommand command=QString("%1 %2").arg(QString::fromStdString(pbSCPICommand.command())).arg(QString::fromStdString(pbSCPICommand.parameter()));
+      cSCPIObject* tmpObject=0;
+      tmpObject=scpiInstance->getSCPIObject(command); //check which scpi node is triggered
+      if(tmpObject!=0)
       {
-        dbgString+=QString("%1;").arg(command.getParam(i));
-      }
-      qDebug()<<"Command:"<<command.getCommand()<<"Params:"<<command.getParamCount()<<dbgString<<endl;
 
-      // check the delegates
-      if(tmpObject==addResource) //A resource is about to be added
-      {
-        Application::Resource* tmpRes=0;
-        tmpRes=ResourceManager::getInstance()->createResource(
-              0,//command.getParam(AddParams::amount).toUInt(),
-              command.getParam(CommandParams::description-1),/// @todo remove temporary workaround
-              command.getParam(CommandParams::name),
-              currentClient,
-              command.getParam(CommandParams::type));
-        emit resourceAdded(tmpRes);
 
-      }
-      else if(tmpObject==removeResource)
-      {
-        Application::Resource* tmpRes=0;
-        tmpRes=ResourceManager::getInstance()->getResource(command.getParam(CommandParams::name),command.getParam(CommandParams::type));
-        if(tmpRes!=0)
+        /// @todo remove debug code
+        QString dbgString;
+        for(quint32 i=0; i<command.getParamCount(); i++)
         {
-          resourceRemove(tmpRes,currentClient);
+          dbgString+=QString("%1;").arg(command.getParam(i));
+        }
+        answer=QString("Command: %1 Params(%2): %3").arg(command.getCommand()).arg(command.getParamCount()).arg(dbgString);
+        qDebug()<<answer<<endl;
+
+
+        // check the delegates
+        if(tmpObject==addResource) //A resource is about to be added
+        {
+          Application::Resource* tmpRes=0;
+          tmpRes=ResourceManager::getInstance()->createResource(
+                command.getParam(CommandParams::amount).toUInt(),
+                command.getParam(CommandParams::description),/// @todo remove temporary workaround
+                command.getParam(CommandParams::name),
+                currentClient,
+                command.getParam(CommandParams::type));
+          emit resourceAdded(tmpRes);
+          retVal=true;
+        }
+        else if(tmpObject==removeResource)
+        {
+          QString tmpDelete=command.getParam(0); //get the first parameter
+          cSCPICommand toDelete;
+          Application::Resource* tmpRes=0;
+
+          for(quint32 i=1; i<command.getParamCount(); i++)
+          {
+            tmpDelete=QString("%1:%2").arg(tmpDelete).arg(command.getParam(i));
+          }
+          qDebug()<<"Deleting with:  "<<tmpDelete;
+          toDelete = tmpDelete;
+          tmpRes=ResourceManager::getInstance()->getResourceByObject(static_cast<ResourceObject*>(scpiInstance->getSCPIObject(toDelete)));
+          if(tmpRes!=0)
+          {
+            if(resourceRemove(tmpRes,currentClient))
+            {
+              scpiInstance->delSCPICmds(tmpDelete);
+              retVal=true;
+            }
+          }
+          else
+          {
+            answer=tr("Resource not found: %1").arg(command.getParam(CommandParams::name));
+          }
+        }
+        else if(tmpObject==catalogType)
+        {
+          answer=listTypes();
+        }
+        else // this is a true cSCPIObject try the standard routine
+        {
+          if(!tmpObject->executeSCPI(command.getCommand(),answer))
+          {
+            Application::Resource* tmpRes=ResourceManager::getInstance()->getResourceByObject(static_cast<ResourceObject*>(tmpObject));
+
+            if(command.getParam(SetParams::command).toLower()==SetParams::SET_RESOURCE)
+            {
+              if(tmpRes->occupyResource(currentClient,command.getParam(SetParams::amount).toInt()))
+              {
+                retVal=true;
+              }
+            }
+            else if(command.getParam(FreeParams::command).toLower()==FreeParams::FREE_RESOURCE)
+            {
+              if(tmpRes->freeResource(currentClient))
+              {
+                retVal=true;
+              }
+            }
+          }
+          else
+          {
+            retVal=true;
+          }
+        }
+
+
+        if(retVal)
+        {
+          currentClient->sendACK(answer);
         }
         else
         {
-          currentClient->sendError(tr("Resource not found: %1").arg(command.getParam(CommandParams::name)));
+          currentClient->sendNACK(answer);
         }
+
+
       }
-      /// @todo return output to the client
+      else //tmpObject was not found
+      {
+        currentClient->sendError(tr("ERROR INVALID SCPI COMMAND"));
+      }
     }
+
   }
 }

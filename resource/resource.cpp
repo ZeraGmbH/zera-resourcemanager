@@ -7,6 +7,7 @@ namespace Application
   Resource::Resource(quint32 amount, const QString& description, const QString& name, Server::Client * provider, const QString& type ) :
     resourceAmount(amount), resourceDescription(description), resourceName(name), resourceProvider(provider), resourceType(type)
   {
+    resourceObject=0;
     freeAmount=amount;
   }
 
@@ -28,6 +29,11 @@ namespace Application
   quint32 Resource::getAmount()
   {
     return resourceAmount;
+  }
+
+  SCPI::ResourceObject *Resource::getResourceObject()
+  {
+    return resourceObject;
   }
 
   const QString &Resource::getType()
@@ -80,5 +86,13 @@ namespace Application
       retVal=true;
     }
     return retVal;
+  }
+
+  void Resource::setObject(SCPI::ResourceObject *obj)
+  {
+    if(!resourceObject)
+    {
+      resourceObject=obj;
+    }
   }
 }

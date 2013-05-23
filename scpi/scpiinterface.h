@@ -8,6 +8,7 @@
 
 #include "delegate.h"
 #include "catalog.h"
+#include "netmessages.pb.h"
 
 namespace Server
 {
@@ -39,6 +40,25 @@ namespace SCPI
       name,
       amount,
       description
+    };
+  }
+
+  namespace SetParams
+  {
+    const QString SET_RESOURCE="set";
+    enum Parameters
+    {
+      command=0,
+      amount
+    };
+  }
+
+  namespace FreeParams
+  {
+    const QString FREE_RESOURCE="free";
+    enum Parameters
+    {
+      command=0
     };
   }
 
@@ -87,7 +107,7 @@ namespace SCPI
     /**
       @b The clients SCPI data is handled here
       */
-    void scpiTransaction(const QString &commands);
+    void scpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand);
     /**
       @b Adds a SCPI::ResourceObject to the SCPI tree
 
@@ -100,14 +120,6 @@ namespace SCPI
       @todo Also remove the SCPI::Catalog if the refcounter hits 0 and remove the node of the type
       */
     bool resourceRemove(Application::Resource * res, Server::Client* client);
-    /**
-      @b Occupies an Application::Resource with the given client and amount
-      */
-    void resourceOccupy(Application::Resource * res, Server::Client *client, int amount);
-    /**
-      @b Frees an Application::Resource with the given client
-      */
-    void resourceFree(Application::Resource * res, Server::Client *client);
 
   private:
     /**
@@ -140,7 +152,6 @@ namespace SCPI
       @b Holds the cSCPIObjects for the tree
       */
     QList<ResourceObject *> resourceList;
-
 
     /**
       @b Disables copying due to Singleton pattern

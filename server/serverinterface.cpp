@@ -19,36 +19,20 @@ namespace Server
   {
     if(QObject::sender()!=0)
     {
-      Zera::Net::ZeraClient* client = static_cast<Zera::Net::ZeraClient*> (QObject::sender());
+      Client* cl = static_cast<Server::Client*> (QObject::sender());
 
-      qDebug()<<"Client disconnected:"<<client->getName();
-      foreach(Client* cl, clients)
-      {
-        if(cl->isRepresenting(client))
-        {
-          clients.removeAll(cl);
-          cl->deleteLater();
-          break;
-        }
-      }
+      qDebug()<<"Client disconnected:"<<cl->getName();
+      clients.removeAll(cl);
+      cl->deleteLater();
     }
   }
 
-  void ServerInterface::lockFailed(Application::Resource *resource, Client *client)
+  void ServerInterface::newClient(Zera::Net::ZeraClient* zcl)
   {
-    client->sendNACK(tr("Failed to obtain resource: %1").arg(resource->getName()));
-  }
-
-  void ServerInterface::lockGranted(Application::Resource *resource, Client *client)
-  {
-    client->sendACK(tr("Access granted for resource: %1").arg(resource->getName()));
-  }
-
-  void ServerInterface::newClient(Zera::Net::ZeraClient* cl)
-  {
-    Client* tmpClient = new Client(cl);
+    Client* tmpClient = new Client(zcl);
     clients.append(tmpClient);
     connect(tmpClient,SIGNAL(aboutToDisconnect()),this,SLOT(clientDisconnected()));
+    connect(tmpClient,SIGNAL(scpiCommandSent(ProtobufMessage::NetMessage::ScpiCommand)),SCPI::SCPIInterface::getInstance(),SLOT(scpiTransaction(ProtobufMessage::NetMessage::ScpiCommand)));
   }
 
 

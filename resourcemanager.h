@@ -41,8 +41,14 @@ public:
   /**
     @b retrieves the resource with the given name and type
     */
-  Application::Resource *getResource(const QString &name, const QString &type);
+  Application::Resource *getResourceByName(const QString &name, const QString &type);
 
+  /**
+   * @brief Find a Resource with its ResourceObject
+   * @param obj the objec that represents the resource
+   * @return the resource
+   */
+  Application::Resource *getResourceByObject(SCPI::ResourceObject* obj);
 
 public slots:
   /**
@@ -56,21 +62,6 @@ public slots:
     @param [in] *resource the SCPI::ResourceObject that will be  deleted in ResourceManager
     */
   void deleteResource(Application::Resource* resource);
-
-  /**
-    @b Will be triggered when the a Server::Client wants to lock a Resource:ResourceObject
-    @param [in] *resource the SCPI::ResourceObject that will be locked with Application::ResourceLock
-    @param [in] *client the Server::Client that attempts to lock the SCPI::ResourceObject
-    @param amount if the resource has a quantity the amount of the resource that should be reserved can be specified
-    */
-  void occupyResource(Application::Resource* resource, Server::Client* client, quint32 amount=0);
-
-  /**
-    @b Will be triggered when the a Server::Client wants to unlock Resource:ResourceObject
-    @param [in] *resource the SCPI::ResourceObject that will be unlocked with Application::ResourceLock
-    @param [in] *client the Server::Client requesting the operation
-    */
-  void freeResource(Application::Resource* resource, Server::Client* client);
 
 private:
   /**

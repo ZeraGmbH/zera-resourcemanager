@@ -1,4 +1,5 @@
 #include "catalog.h"
+#include "resourcemanager.h"
 
 namespace SCPI
 {
@@ -9,9 +10,16 @@ namespace SCPI
 
   bool Catalog::executeSCPI(const QString &sInput, QString &sOutput)
   {
-    /// @todo !!
-    //sOutput=ResourceManager::getInstance()->listResources(sInput);
-    return true;
+    QString resType;
+    QStringList separator;
+    separator=sInput.split(":");
+    resType=separator.at(separator.count()-2);//get the element before the last
+    sOutput=ResourceManager::getInstance()->listResources(resType);
+
+    if(sOutput.isEmpty())
+      return false;
+    else
+      return true;
   }
 
   const QString &Catalog::getCatalogType()

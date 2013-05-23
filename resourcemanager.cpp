@@ -1,4 +1,5 @@
 #include "resourcemanager.h"
+#include "scpistring.h"
 
 ResourceManager::ResourceManager(QObject* parent) :
   QObject(parent)
@@ -26,11 +27,13 @@ ResourceManager *ResourceManager::getInstance()
 
 const QString ResourceManager::listResources(const QString &Type)
 {
-  Application::Resource* tmpRO;
+  cSCPIString a, b;
   QString retVal;
-  foreach(tmpRO, resourceList)
+  a=Type;
+  foreach(Application::Resource* tmpRO, resourceList)
   {
-    if(tmpRO->getType()==Type)
+    b=tmpRO->getType();
+    if(a==b)
       retVal+=tmpRO->getName()+";";
   }
   return retVal;
@@ -43,7 +46,26 @@ Application::Resource *ResourceManager::createResource(quint32 amount, const QSt
   return tmpRes;
 }
 
-Application::Resource *ResourceManager::getResource(const QString &name, const QString &type)
+Application::Resource *ResourceManager::getResourceByObject(SCPI::ResourceObject* obj)
+{
+  Application::Resource *retVal=0;
+  quint32 sanityCounter=0;
+  foreach (Application::Resource *res, resourceList)
+  {
+    if(res->getResourceObject()==obj)
+    {
+      sanityCounter++;
+      retVal=res;
+    }
+  }
+  if (sanityCounter>1)
+  {
+    //error
+  }
+  return retVal;
+}
+
+Application::Resource *ResourceManager::getResourceByName(const QString &name, const QString &type)
 {
   Application::Resource *retVal=0;
   quint32 sanityCounter=0;
@@ -70,21 +92,4 @@ void ResourceManager::newResource(Application::Resource* resource)
 void ResourceManager::deleteResource(Application::Resource* resource)
 {
   resourceList.removeAll(resource);
-}
-
-void ResourceManager::occupyResource(Application::Resource* resource, Server::Client* client, quint32 amount)
-{
-  if(resource->occupyResource(client,amount))
-  {
-    Server::ServerInterface::getInstance()->lockGranted(resource,client);
-  }
-  else
-  {
-    Server::ServerInterface::getInstance()->lockFailed(resource,client);
-  }
-}
-
-void ResourceManager::freeResource(Application::Resource* resource, Server::Client* client)
-{
-  resource->freeResource(client);
 }

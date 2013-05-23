@@ -46,44 +46,17 @@ namespace Server
       */
     void deleteResource(Application::Resource* resource, Client* client);
 
-    /**
-      @b Will be triggered when a Server::Client wants to lock a SCPI::ResourceObject
-      @param [in] *resource the SCPI::ResourceObject that will be locked with Application::ResourceLock
-      @param [in] *client the Server::Client that requested the operation
-      */
-    void lockResource(Application::Resource* resource, Client* client);
-
-    /**
-      @b Will be triggered when a Server::Client wants to unlock SCPI::ResourceObject
-      @param [in] *resource the SCPI::ResourceObject that will be unlocked with Application::ResourceLock
-      @param [in] *client the Server::Client that requested the operation
-      */
-    void unlockResource(Application::Resource* resource, Client* client);
-
   public slots:
     /**
       @b Will be triggered when the Server::Client disconnects
       */
     void clientDisconnected();
-    /**
-      @b Will be triggered when a Client wants to lock a Resource:ResourceObject but it is already locked
-      @param [in] *resource the SCPI::ResourceObject that will be locked with Application::ResourceLock
-      @param [in] *client the Server::Client that requested the operation
-      */
-    void lockFailed(Application::Resource* resource, Server::Client* client);
-
-    /**
-      @b Will be triggered when a Client wants to lock a Resource:ResourceObject and succeeds
-      @param [in] *resource the SCPI::ResourceObject that will be locked with Application::ResourceLock
-      @param [in] *client the Server::Client that requested the operation
-      */
-    void lockGranted(Application::Resource* resource, Server::Client* client);
 
     /**
      * @brief Is called when new clients arrive
      * @param [in] *cl the Zera::Net::ZeraClient that just connected
      */
-    void newClient(Zera::Net::ZeraClient *cl);
+    void newClient(Zera::Net::ZeraClient *zcl);
 
   protected:
     /**

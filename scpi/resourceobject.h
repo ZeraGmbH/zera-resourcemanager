@@ -2,7 +2,11 @@
 #define RESOURCEOBJECT_H
 #include "scpiobject.h"
 
-#include "resource/resource.h"
+namespace Application
+{
+  class Resource;
+}
+
 
 namespace SCPI
 {
@@ -22,7 +26,7 @@ namespace SCPI
     /**
       @b A link to the corresponding Application::Resource
       */
-    const Application::Resource* res;
+    Application::Resource* res;
   };
 }
 #endif // RESOURCEOBJECT_H

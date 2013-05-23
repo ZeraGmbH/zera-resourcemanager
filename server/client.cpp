@@ -1,24 +1,17 @@
 #include "server/client.h"
 
-
+#include "QDebug"
 
 namespace Server
 {
   Client::Client(Zera::Net::ZeraClient *zClient, QObject *parent) :
-    QObject(parent),
-    m_zClient(zClient)
+    QObject(parent)
   {
-    //we will manually delete the client in the destructor
-    m_zClient->setAutoDeletion(false);
+    m_zClient = zClient;
+    m_zClient->setParent(this);
     connect(m_zClient,SIGNAL(messageReceived(QByteArray)),this,SLOT(messageReceived(QByteArray)));
     connect(m_zClient,SIGNAL(clientDisconnected()),this, SIGNAL(aboutToDisconnect()));
   }
-
-  Client::~Client()
-  {
-    m_zClient->deleteLater();
-  }
-
 
   const QString &Client::getName()
   {
@@ -87,6 +80,7 @@ namespace Server
           case ProtobufMessage::NetMessage::NetReply::IDENT:
             {
               m_zClient->setName(QString::fromStdString(envelope.reply().body()));
+              qDebug() << "Client identified" << getName();
               break;
             }
           case ProtobufMessage::NetMessage::NetReply::ACK:
@@ -101,6 +95,7 @@ namespace Server
             }
           default:
             {
+              qWarning("Something went wrong with network messages!");
               /// @todo this is the error case
               break;
             }
