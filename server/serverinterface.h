@@ -27,20 +27,20 @@ namespace Server
     Q_OBJECT
   public:
     /**
-      @b See [P.157+ Design patterns Gang of Four]
+      @brief See [P.157+ Design patterns Gang of Four]
       */
     static ServerInterface* getInstance();
 
   signals:
     /**
-      @b Will be triggered when a Server::Client provides a new SCPI::ResourceObject
+      @brief Will be triggered when a Server::Client provides a new SCPI::ResourceObject
       @param [in] *resource the SCPI::ResourceObject that will be added in ResourceManager
       @param [in] *client the Server::Client that requested the operation
       */
     void newResource(Application::Resource* resource, Client* client);
 
     /**
-      @b Will be triggered when a Server::Client wants to delete a SCPI::ResourceObject
+      @brief Will be triggered when a Server::Client wants to delete a SCPI::ResourceObject
       @param [in] *resource the SCPI::ResourceObject that will be  deleted in ResourceManager
       @param [in] *client the Server::Client that requested the operation
       */
@@ -48,7 +48,7 @@ namespace Server
 
   public slots:
     /**
-      @b Will be triggered when the Server::Client disconnects
+      @brief Will be triggered when the Server::Client disconnects
       */
     void clientDisconnected();
 
@@ -60,18 +60,18 @@ namespace Server
 
   protected:
     /**
-      @b The class is a Singleton so the constructor is protected [P.157+ Design patterns Gang of Four]
+      @brief The class is a Singleton so the constructor is protected [P.157+ Design patterns Gang of Four]
       */
     ServerInterface(QObject* parent = 0);
     ~ServerInterface();
     /**
-      @b See [P.157+ Design patterns Gang of Four]
+      @brief See [P.157+ Design patterns Gang of Four]
       */
     static ServerInterface* singletonInstance;
 
   private:
     /**
-      @b  list of all Server::Client instances this server handles
+      @brief  list of all Server::Client instances this server handles
       */
     QList<Client*> clients;
 

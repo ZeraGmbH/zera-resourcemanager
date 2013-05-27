@@ -72,25 +72,25 @@ namespace SCPI
     Q_OBJECT
   protected:
     /**
-      @b default constructor, private due to Singleton
+      @brief default constructor, private due to Singleton
       */
     SCPIInterface(QObject* parent=0);
 
   public:
     /**
-      @b returns the singletonInstance
+      @brief returns the singletonInstance
       */
     static SCPIInterface* getInstance();
     /**
-      @b For debugging, returns the cSCPI::model
+      @brief For debugging, returns the cSCPI::model
       */
     QStandardItemModel* getModel();
     /**
-      @b uses the ResourceManager to list Application::Resource names of a given type
+      @brief uses the ResourceManager to list Application::Resource names of a given type
       */
     QString listResourceByType(const QString &type);
     /**
-      @b Lists types which have a Catalog command
+      @brief Lists types which have a Catalog command
       */
     QString listTypes();
 
@@ -98,24 +98,24 @@ namespace SCPI
 
   signals:
     /**
-      @b This signal will inform the Resourcemanager of new resources, it will also call SCPIInterface::resourceAdd()
+      @brief This signal will inform the Resourcemanager of new resources, it will also call SCPIInterface::resourceAdd()
       */
     void resourceAdded(Application::Resource* res);
 
 
   public slots:
     /**
-      @b The clients SCPI data is handled here
+      @brief The clients SCPI data is handled here
       */
     void scpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand);
     /**
-      @b Adds a SCPI::ResourceObject to the SCPI tree
+      @brief Adds a SCPI::ResourceObject to the SCPI tree
 
       Also adds a SCPI::Catalog if the resource's type is a new type
       */
     void resourceAdd(Application::Resource * res);
     /**
-      @b Removes a SCPI::ResourceObject from the SCPI tree
+      @brief Removes a SCPI::ResourceObject from the SCPI tree
 
       @todo Also remove the SCPI::Catalog if the refcounter hits 0 and remove the node of the type
       */
@@ -123,38 +123,38 @@ namespace SCPI
 
   private:
     /**
-      @b represents the RESOURCE:ADD in the SCPI tree
+      @brief represents the RESOURCE:ADD in the SCPI tree
       */
     Delegate* addResource;
     /**
-      @b represents the RESOURCE:REMOVE in the SCPI tree
+      @brief represents the RESOURCE:REMOVE in the SCPI tree
       */
     Delegate* removeResource;
     /**
-      @b represents the RESOURCE:(TYPE):CATALOG in the SCPI tree
+      @brief represents the RESOURCE:(TYPE):CATALOG in the SCPI tree
       */
     Delegate* catalogType;
 
     /**
-      @b SCPI library interaction is held here
+      @brief SCPI library interaction is held here
       */
     cSCPI* scpiInstance;
     /**
-      @b Singleton instance, no other instances of this object are possible
+      @brief Singleton instance, no other instances of this object are possible
       */
     static SCPIInterface* singletonInstance;
 
     /**
-      @b The list that holds the SCPI::Catalog for each catalogType
+      @brief The list that holds the SCPI::Catalog for each catalogType
       */
     QList<Catalog *> catalogList;
     /**
-      @b Holds the cSCPIObjects for the tree
+      @brief Holds the cSCPIObjects for the tree
       */
     QList<ResourceObject *> resourceList;
 
     /**
-      @b Disables copying due to Singleton pattern
+      @brief Disables copying due to Singleton pattern
       */
     Q_DISABLE_COPY(SCPIInterface)
   };

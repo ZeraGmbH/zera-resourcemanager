@@ -18,7 +18,7 @@ namespace SCPI
     bool executeSCPI(const QString& sInput, QString& sOutput);
 
     /**
-      @b returns catalogType
+      @brief returns catalogType
       */
     const QString &getCatalogType();
 
@@ -28,25 +28,25 @@ namespace SCPI
      */
     quint16 getRefCount();
     /**
-      @b sets catalogType
+      @brief sets catalogType
       */
     void setCatalogType(const QString &type);
     /**
-      @b increments the reference count
+      @brief increments the reference count
       */
     void upRef();
     /**
-      @b decrements the reference count
+      @brief decrements the reference count
       */
     void unRef();
 
   private:
     /**
-      @b the Type which the catalog represents
+      @brief the Type which the catalog represents
       */
     QString catalogType;
     /**
-      @b reference counter
+      @brief reference counter
       */
     quint16 refCount;
   };

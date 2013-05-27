@@ -17,14 +17,14 @@ namespace SCPI
   {
   public:
     /**
-      @b this constructor will set the const pointer to the Application::Resource
+      @brief this constructor will set the const pointer to the Application::Resource
       */
     ResourceObject(Application::Resource* resource);
     bool executeSCPI(const QString& sInput, QString& sOutput);
 
   private:
     /**
-      @b A link to the corresponding Application::Resource
+      @brief A link to the corresponding Application::Resource
       */
     Application::Resource* res;
   };

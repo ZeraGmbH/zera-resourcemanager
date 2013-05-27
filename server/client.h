@@ -18,7 +18,7 @@ namespace Server
     Q_OBJECT
   public:
     /**
-      @b The default constructor
+      @brief The default constructor
       @note Other constructors are invalid
       */
     explicit Client(Zera::Net::ZeraClient* zClient, QObject *parent = 0);
@@ -43,7 +43,7 @@ namespace Server
     void aboutToDisconnect();
 
     /**
-      @b Notifies the SCPI::SCPIInterface of new SCPI commands
+      @brief Notifies the SCPI::SCPIInterface of new SCPI commands
       */
     void scpiCommandSent(const ProtobufMessage::NetMessage::ScpiCommand &command);
 

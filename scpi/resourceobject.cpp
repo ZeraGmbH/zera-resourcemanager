@@ -14,7 +14,7 @@ namespace SCPI
   {
     bool retVal=false;
 
-    if(sInput.contains('?')) ///< @b Queries the resource
+    if(sInput.contains('?')) ///< Queries the resource
     {
       sOutput=QString("%1;%2;%3;").arg(res->getAmount()).arg(res->getFreeAmount()).arg(res->getDescription());
       retVal=true;
