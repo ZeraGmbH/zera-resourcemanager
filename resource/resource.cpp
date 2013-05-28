@@ -4,8 +4,8 @@
 
 namespace Application
 {
-  Resource::Resource(quint32 amount, const QString& description, const QString& name, Server::Client * provider, const QString& type ) :
-    resourceAmount(amount), resourceDescription(description), resourceName(name), resourceProvider(provider), resourceType(type)
+  Resource::Resource(quint32 amount, const QString& description, const QString& name, Server::Client * provider, const QString& type , quint32 port) :
+    resourceAmount(amount), resourceDescription(description), resourceName(name), resourcePort(port), resourceProvider(provider), resourceType(type)
   {
     resourceObject=0;
     freeAmount=amount;
@@ -49,6 +49,11 @@ namespace Application
   QList<Server::Client *> Resource::getOccupiers()
   {
     return occupiers.keys();
+  }
+
+  quint32 Resource::getPort()
+  {
+    return resourcePort;
   }
 
   bool Resource::occupyResource(Server::Client *occupier, quint32 amount)

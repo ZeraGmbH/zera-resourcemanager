@@ -23,6 +23,11 @@ namespace Server
     return (m_zClient==zClient);
   }
 
+  QString Client::getIpAdress()
+  {
+    return m_zClient->getIpAddress().toString();
+  }
+
   void Client::sendACK(const QString &message)
   {
     ProtobufMessage::NetMessage envelope;

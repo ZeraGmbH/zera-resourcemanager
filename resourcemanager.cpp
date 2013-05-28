@@ -39,9 +39,9 @@ const QString ResourceManager::listResources(const QString &Type)
   return retVal;
 }
 
-Application::Resource *ResourceManager::createResource(quint32 amount, const QString &description, const QString &name, Server::Client * provider, const QString &type)
+Application::Resource *ResourceManager::createResource(quint32 amount, const QString &description, const QString &name, Server::Client * provider, const QString &type, quint32 port)
 {
-  Application::Resource* tmpRes=new Application::Resource(amount, description, name, provider, type);
+  Application::Resource* tmpRes=new Application::Resource(amount, description, name, provider, type, port);
   newResource(tmpRes);
   return tmpRes;
 }

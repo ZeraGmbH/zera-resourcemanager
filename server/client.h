@@ -36,6 +36,12 @@ namespace Server
      */
     bool isRepresenting(Zera::Net::ZeraClient* zClient);
 
+    /**
+     * @brief getIpAdress
+     * @return
+     */
+    QString getIpAdress();
+
   signals:
     /**
      * @brief The client disconnected from the server

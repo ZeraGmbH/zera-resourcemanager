@@ -14,13 +14,15 @@ namespace SCPI
   {
     scpiInstance = new cSCPI("Resourcemanager");
     addResource=new Delegate("ADD", isCmdwP);
-    removeResource=new Delegate("REMOVE", isCmdwP);
     catalogType=new Delegate("CATALOG", isCmd);
+    removeResource=new Delegate("REMOVE", isCmdwP);
+    resourceProvider=new Delegate("PROVIDER",isCmdwP);
 
     //Add all default cSCPIObjects
     QStringList aTMP = QStringList("RESOURCE");
     scpiInstance->genSCPICmd(aTMP,addResource);
     scpiInstance->genSCPICmd(aTMP,removeResource);
+    scpiInstance->genSCPICmd(aTMP,resourceProvider);
     aTMP<<"TYPE";
     scpiInstance->genSCPICmd(aTMP,catalogType);
 
@@ -158,14 +160,34 @@ namespace SCPI
         if(tmpObject==addResource) //A resource is about to be added
         {
           Application::Resource* tmpRes=0;
-          tmpRes=ResourceManager::getInstance()->createResource(
-                command.getParam(CommandParams::amount).toUInt(),
-                command.getParam(CommandParams::description),/// @todo remove temporary workaround
-                command.getParam(CommandParams::name),
-                currentClient,
-                command.getParam(CommandParams::type));
-          emit resourceAdded(tmpRes);
-          retVal=true;
+          quint32 port=0;
+          bool portConvert;
+          if(command.getParamCount()==CommandParams::_paramcount)
+          {
+            port=command.getParam(CommandParams::port).toUInt(&portConvert);
+            if(!portConvert) // check if the provider has a TCP/IP port where the resource is located
+            {
+              tmpRes=ResourceManager::getInstance()->createResource(
+                    command.getParam(CommandParams::amount).toUInt(),
+                    command.getParam(CommandParams::description),/// @todo remove temporary workaround
+                    command.getParam(CommandParams::name),
+                    currentClient,
+                    command.getParam(CommandParams::type));
+            }
+            else
+            {
+              tmpRes=ResourceManager::getInstance()->createResource(
+                    command.getParam(CommandParams::amount).toUInt(),
+                    command.getParam(CommandParams::description),/// @todo remove temporary workaround
+                    command.getParam(CommandParams::name),
+                    currentClient,
+                    command.getParam(CommandParams::type),
+                    port);
+            }
+            emit resourceAdded(tmpRes);
+            retVal=true;
+          }
+          retVal=false;
         }
         else if(tmpObject==removeResource)
         {
@@ -192,6 +214,26 @@ namespace SCPI
           {
             answer=tr("Resource not found: %1").arg(command.getParam(CommandParams::name));
           }
+        }
+        else if(tmpObject==resourceProvider) // return IP address and port
+        {
+          QString tmpSearch=command.getParam(0); //get the first parameter
+          cSCPICommand searchCommand;
+          Application::Resource* tmpRes=0;
+          for(quint32 i=1; i<command.getParamCount(); i++)
+          {
+            tmpSearch=QString("%1:%2").arg(tmpSearch).arg(command.getParam(i));
+          }
+
+          searchCommand=tmpSearch;
+
+          tmpRes=ResourceManager::getInstance()->getResourceByObject(static_cast<ResourceObject*>(scpiInstance->getSCPIObject(searchCommand)));
+          if(tmpRes!=0)
+          {
+            retVal=true;
+            answer=QString("%1;%2;").arg(tmpRes->getProvider()->getIpAdress()).arg(tmpRes->getPort());
+          }
+
         }
         else if(tmpObject==catalogType)
         {

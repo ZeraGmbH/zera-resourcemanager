@@ -39,7 +39,9 @@ namespace SCPI
       type=0,
       name,
       amount,
-      description
+      description,
+      port,
+      _paramcount
     };
   }
 
@@ -127,13 +129,17 @@ namespace SCPI
       */
     Delegate* addResource;
     /**
+      @brief represents the RESOURCE:(TYPE):CATALOG in the SCPI tree
+      */
+    Delegate* catalogType;
+    /**
       @brief represents the RESOURCE:REMOVE in the SCPI tree
       */
     Delegate* removeResource;
     /**
-      @brief represents the RESOURCE:(TYPE):CATALOG in the SCPI tree
+      @brief Retrieves the service information for the resource
       */
-    Delegate* catalogType;
+    Delegate* resourceProvider;
 
     /**
       @brief SCPI library interaction is held here
