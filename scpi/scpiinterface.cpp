@@ -16,12 +16,15 @@ namespace SCPI
     addResource=new Delegate("ADD", isCmdwP);
     catalogType=new Delegate("CATALOG", isCmd);
     removeResource=new Delegate("REMOVE", isCmdwP);
+    resourceModel=new Delegate("MODEL",isQuery);
     resourceProvider=new Delegate("PROVIDER",isCmdwP);
+
 
     //Add all default cSCPIObjects
     QStringList aTMP = QStringList("RESOURCE");
     scpiInstance->genSCPICmd(aTMP,addResource);
     scpiInstance->genSCPICmd(aTMP,removeResource);
+    scpiInstance->genSCPICmd(aTMP,resourceModel);
     scpiInstance->genSCPICmd(aTMP,resourceProvider);
     aTMP<<"TYPE";
     scpiInstance->genSCPICmd(aTMP,catalogType);
@@ -214,6 +217,12 @@ namespace SCPI
           {
             answer=tr("Resource not found: %1").arg(command.getParam(CommandParams::name));
           }
+        }
+        else if(tmpObject==resourceModel) // return XMLized qstandarditem model
+        {
+          answer="";
+          scpiInstance->exportSCPIModelXML(answer);
+          retVal=true;
         }
         else if(tmpObject==resourceProvider) // return IP address and port
         {

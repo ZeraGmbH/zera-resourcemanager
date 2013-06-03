@@ -136,6 +136,11 @@ namespace SCPI
       @brief represents the RESOURCE:REMOVE in the SCPI tree
       */
     Delegate* removeResource;
+
+    /**
+     * @brief Retrieves the XMLized model of the SCPI tree structure
+     */
+    Delegate* resourceModel;
     /**
       @brief Retrieves the service information for the resource
       */
