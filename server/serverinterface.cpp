@@ -27,7 +27,7 @@ namespace Server
     }
   }
 
-  void ServerInterface::newClient(Zera::Net::ZeraClient* zcl)
+  void ServerInterface::newClient(Zera::Net::cClient* zcl)
   {
     Client* tmpClient = new Client(zcl);
     clients.append(tmpClient);
@@ -38,9 +38,9 @@ namespace Server
 
   ServerInterface::ServerInterface(QObject* parent) :
     QObject(parent),
-    m_zServer(Zera::Net::ZeraServer::getInstance())
+    m_zServer(Zera::Net::cServer::getInstance())
   {
-    connect(m_zServer,SIGNAL(newClientAvailable(Zera::Net::ZeraClient*)),this,SLOT(newClient(Zera::Net::ZeraClient*)));
+    connect(m_zServer,SIGNAL(newClientAvailable(Zera::Net::cClient*)),this,SLOT(newClient(Zera::Net::cClient*)));
     m_zServer->startServer(12345); /// @todo Change port
   }
 

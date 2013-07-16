@@ -4,7 +4,7 @@
 #include <QObject>
 #include <zeraclient.h>
 
-#include "netmessages.pb.h"
+#include <netmessages.pb.h>
 
 namespace Server
 {
@@ -21,7 +21,7 @@ namespace Server
       @brief The default constructor
       @note Other constructors are invalid
       */
-    explicit Client(Zera::Net::ZeraClient* zClient, QObject *parent = 0);
+    explicit Client(Zera::Net::cClient* zClient, QObject *parent = 0);
 
     /**
      * @brief getName
@@ -31,10 +31,10 @@ namespace Server
 
     /**
      * @brief Checks if this client is equal with zClient
-     * @param zClient the Zera::Net::ZeraClient to check against
+     * @param zClient the Zera::Net::cClient to check against
      * @return
      */
-    bool isRepresenting(Zera::Net::ZeraClient* zClient);
+    bool isRepresenting(Zera::Net::cClient* zClient);
 
     /**
      * @brief getIpAdress
@@ -70,7 +70,7 @@ namespace Server
      */
     void sendError(const QString &message=QString());
     /**
-     * @brief Sends negative acknoledgement
+     * @brief Sends negative acknowledgement
      * @param message Optional text
      */
     void sendNACK(const QString &message=QString());
@@ -84,13 +84,13 @@ namespace Server
     /**
      * @brief The Client representated
      */
-    Zera::Net::ZeraClient* m_zClient;
+    Zera::Net::cClient* m_zClient;
 
     /**
      * @brief Internal code to send a ProtobufMessage to the client
      * @param message a ProtobufMessage
      */
-    void sendMessage(const ProtobufMessage::NetMessage& message);
+    void sendMessage(ProtobufMessage::NetMessage *message);
   };
 }
 

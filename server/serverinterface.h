@@ -54,9 +54,9 @@ namespace Server
 
     /**
      * @brief Is called when new clients arrive
-     * @param [in] *cl the Zera::Net::ZeraClient that just connected
+     * @param [in] *cl the Zera::Net::cClient that just connected
      */
-    void newClient(Zera::Net::ZeraClient *zcl);
+    void newClient(Zera::Net::cClient *zcl);
 
   protected:
     /**
@@ -78,7 +78,7 @@ namespace Server
     /**
      * @brief Internally used server
      */
-    Zera::Net::ZeraServer* m_zServer;
+    Zera::Net::cServer* m_zServer;
 
     /**
       @note Instances of this class should only get accessed through the getInstance method.

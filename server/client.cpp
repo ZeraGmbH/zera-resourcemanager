@@ -2,9 +2,11 @@
 
 #include "QDebug"
 
+#include <netmessages.pb.h>
+
 namespace Server
 {
-  Client::Client(Zera::Net::ZeraClient *zClient, QObject *parent) :
+  Client::Client(Zera::Net::cClient *zClient, QObject *parent) :
     QObject(parent)
   {
     m_zClient = zClient;
@@ -18,7 +20,7 @@ namespace Server
     return m_zClient->getName();
   }
 
-  bool Client::isRepresenting(Zera::Net::ZeraClient *zClient)
+  bool Client::isRepresenting(Zera::Net::cClient *zClient)
   {
     return (m_zClient==zClient);
   }
@@ -32,51 +34,47 @@ namespace Server
   {
     ProtobufMessage::NetMessage envelope;
     ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
-    envelope.set_type(ProtobufMessage::NetMessage::NET_REPLY);
     newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::ACK);
     newMessage->set_body(message.toStdString());
 
-    sendMessage(envelope);
+    sendMessage(&envelope);
   }
 
   void Client::sendDebug(const QString &message)
   {
     ProtobufMessage::NetMessage envelope;
     ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
-    envelope.set_type(ProtobufMessage::NetMessage::NET_REPLY);
     newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::DEBUG);
     newMessage->set_body(message.toStdString());
 
-    sendMessage(envelope);
+    sendMessage(&envelope);
   }
 
   void Client::sendError(const QString &message)
   {
     ProtobufMessage::NetMessage envelope;
     ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
-    envelope.set_type(ProtobufMessage::NetMessage::NET_REPLY);
     newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::ERROR);
     newMessage->set_body(message.toStdString());
 
-    sendMessage(envelope);
+    sendMessage(&envelope);
   }
 
   void Client::sendNACK(const QString &message)
   {
     ProtobufMessage::NetMessage envelope;
     ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
-    envelope.set_type(ProtobufMessage::NetMessage::NET_REPLY);
     newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::NACK);
     newMessage->set_body(message.toStdString());
 
-    sendMessage(envelope);
+    sendMessage(&envelope);
   }
 
   void Client::messageReceived(QByteArray message)
   {
     // return message to client to show that it was received
     ProtobufMessage::NetMessage envelope;
-    if(envelope.ParseFromArray(message, message.size()))
+    if(m_zClient->translateBA2Protobuf(&envelope, message))
     {
       if(envelope.has_reply())
       {
@@ -118,9 +116,9 @@ namespace Server
     }
   }
 
-  void Client::sendMessage(const ProtobufMessage::NetMessage &message)
+  void Client::sendMessage(ProtobufMessage::NetMessage *message)
   {
-    QByteArray block(message.SerializeAsString().c_str(), message.ByteSize());
+    QByteArray block = m_zClient->translatePB2ByteArray(message);
     m_zClient->writeClient(block);
   }
 }
