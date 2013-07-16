@@ -30,13 +30,6 @@ namespace Server
     const QString& getName();
 
     /**
-     * @brief Checks if this client is equal with zClient
-     * @param zClient the Zera::Net::cClient to check against
-     * @return
-     */
-    bool isRepresenting(Zera::Net::cClient* zClient);
-
-    /**
      * @brief getIpAdress
      * @return
      */

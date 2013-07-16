@@ -20,11 +20,6 @@ namespace Server
     return m_zClient->getName();
   }
 
-  bool Client::isRepresenting(Zera::Net::cClient *zClient)
-  {
-    return (m_zClient==zClient);
-  }
-
   QString Client::getIpAdress()
   {
     return m_zClient->getIpAddress().toString();
