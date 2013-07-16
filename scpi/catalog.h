@@ -15,6 +15,12 @@ namespace SCPI
   public:
     Catalog();
 
+    /**
+     * @brief executeSCPI Catalog implementation of the SCPI call
+     * @param sInput
+     * @param sOutput
+     * @return
+     */
     bool executeSCPI(const QString& sInput, QString& sOutput);
 
     /**

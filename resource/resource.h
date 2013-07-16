@@ -34,6 +34,7 @@ namespace Application
       @param name the name of the Application::Resource
       @param provider the provider socket id
       @param type the type of the resource
+      @param port the port
       @note Every Application::Resource object should only be adressed once
       */
     Resource(quint32 amount, const QString& description, const QString& name, Server::Client *provider, const QString& type, quint32 port=0 );
@@ -55,6 +56,9 @@ namespace Application
       */
     quint32 getAmount();
 
+    /**
+     * @brief getResourceObject Returns the SCPI object of this Resource
+     */
     SCPI::ResourceObject* getResourceObject();
     /**
       @brief Returns the type of the Application::Resource
@@ -69,6 +73,9 @@ namespace Application
       */
     QList<Server::Client*> getOccupiers();
 
+    /**
+     * @brief getPort Returns the service port where the resource is located
+     */
     quint32 getPort();
 
     /**
@@ -88,6 +95,9 @@ namespace Application
       */
     bool freeResource(Server::Client* occupier);
 
+    /**
+     * @brief setObject Sets the SCPI object of this resource if not already set
+     */
     void setObject(SCPI::ResourceObject* obj);
   private:
     /**
@@ -112,6 +122,9 @@ namespace Application
       */
     const QString resourceName;
 
+    /**
+     * @brief resourceObject The SCPI object of this Resource
+     */
     SCPI::ResourceObject* resourceObject;
 
     /**
