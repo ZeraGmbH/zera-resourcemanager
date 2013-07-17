@@ -42,10 +42,5 @@ INCLUDEPATH += $${ZERA_PROTOBUF_INCLUDEPATH}
 LIBS += -lprotobuf
 LIBS += -L$${SCPI_LIBPATH} -lSCPI
 LIBS += -L$${ZERANET_LIBPATH} -lzeranet
-LIBS += -L$${ZERA_PROTOBUF_LIBPATH} -lzera-protocol-buffers
-
-OTHER_FILES +=
-
-
-
+LIBS += -L$${ZERA_PROTOBUF_LIBPATH} -lzera-resourcemanager-protobuf
 
