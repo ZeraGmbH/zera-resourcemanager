@@ -172,7 +172,7 @@ namespace SCPI
             {
               tmpRes=ResourceManager::getInstance()->createResource(
                     command.getParam(CommandParams::amount).toUInt(),
-                    command.getParam(CommandParams::description),/// @todo remove temporary workaround
+                    command.getParam(CommandParams::description),
                     command.getParam(CommandParams::name),
                     currentClient,
                     command.getParam(CommandParams::type));
@@ -181,7 +181,7 @@ namespace SCPI
             {
               tmpRes=ResourceManager::getInstance()->createResource(
                     command.getParam(CommandParams::amount).toUInt(),
-                    command.getParam(CommandParams::description),/// @todo remove temporary workaround
+                    command.getParam(CommandParams::description),
                     command.getParam(CommandParams::name),
                     currentClient,
                     command.getParam(CommandParams::type),
