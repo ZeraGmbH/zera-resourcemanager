@@ -44,3 +44,6 @@ LIBS += $${SCPI_LIBPATH} -lSCPI
 LIBS += $${ZERANET_LIBPATH} -lzeranet
 LIBS += $${ZERA_PROTOBUF_LIBPATH} -lzera-resourcemanager-protobuf
 
+target.path = /usr/bin
+INSTALLS += target
+
