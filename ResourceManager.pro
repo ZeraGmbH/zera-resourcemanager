@@ -40,7 +40,7 @@ INCLUDEPATH += $${ZERANET_INCLUDEPATH}
 INCLUDEPATH += $${ZERA_PROTOBUF_INCLUDEPATH}
 
 LIBS += -lprotobuf
-LIBS += -L$${SCPI_LIBPATH} -lSCPI
-LIBS += -L$${ZERANET_LIBPATH} -lzeranet
-LIBS += -L$${ZERA_PROTOBUF_LIBPATH} -lzera-resourcemanager-protobuf
+LIBS += $${SCPI_LIBPATH} -lSCPI
+LIBS += $${ZERANET_LIBPATH} -lzeranet
+LIBS += $${ZERA_PROTOBUF_LIBPATH} -lzera-resourcemanager-protobuf
 
