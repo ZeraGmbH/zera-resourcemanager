@@ -1,5 +1,6 @@
 #include "catalog.h"
 #include "resourcemanager.h"
+#include <QStringList>
 
 namespace SCPI
 {
