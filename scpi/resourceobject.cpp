@@ -16,7 +16,7 @@ namespace SCPI
 
     if(sInput.contains('?')) ///< Queries the resource
     {
-      sOutput=QString("%1;%2;%3;").arg(res->getAmount()).arg(res->getFreeAmount()).arg(res->getDescription());
+      sOutput=QString("%1;%2;%3;%4;").arg(res->getAmount()).arg(res->getFreeAmount()).arg(res->getDescription()).arg(res->getPort());
       retVal=true;
     }
     return retVal;
