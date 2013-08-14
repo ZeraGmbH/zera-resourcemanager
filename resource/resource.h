@@ -44,7 +44,7 @@ namespace Application
       */
     const QString &getName();
     /**
-      @brief Returns the provider socket id
+      @brief Returns a pointer to the provider
       */
     Server::Client *getProvider();
     /**
