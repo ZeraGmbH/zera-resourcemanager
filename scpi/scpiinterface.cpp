@@ -168,16 +168,7 @@ namespace SCPI
           if(command.getParamCount()==CommandParams::_paramcount)
           {
             port=command.getParam(CommandParams::port).toUInt(&portConvert);
-            if(!portConvert) // check if the provider has a TCP/IP port where the resource is located
-            {
-              tmpRes=ResourceManager::getInstance()->createResource(
-                    command.getParam(CommandParams::amount).toUInt(),
-                    command.getParam(CommandParams::description),
-                    command.getParam(CommandParams::name),
-                    currentClient,
-                    command.getParam(CommandParams::type));
-            }
-            else
+            if(portConvert) // check if the provider has a TCP/IP port where the resource is located
             {
               tmpRes=ResourceManager::getInstance()->createResource(
                     command.getParam(CommandParams::amount).toUInt(),
@@ -190,7 +181,10 @@ namespace SCPI
             emit resourceAdded(tmpRes);
             retVal=true;
           }
-          retVal=false;
+          else
+          {
+            answer=tr("Invalid parameter count: %1 (expected: %2)").arg(command.getParamCount()).arg(CommandParams::_paramcount);
+          }
         }
         else if(tmpObject==removeResource)
         {
