@@ -1,17 +1,21 @@
 #include "delegate.h"
 
-Delegate::Delegate() : cSCPIObject()
+namespace SCPI
 {
-}
+  Delegate::Delegate() : cSCPIObject()
+  {
+  }
 
-Delegate::Delegate(const QString &name, quint8 type) : cSCPIObject(name, type)
-{
-}
+  Delegate::Delegate(const QString &name, quint8 type) : cSCPIObject(name, type)
+  {
+  }
 
-bool Delegate::executeSCPI(const QString &sInput, QString &sOutput)
-{
-  Q_UNUSED(sInput)
-  Q_UNUSED(sOutput)
-  //error
-  return false;
+  bool Delegate::executeSCPI(const QString &sInput, QString &sOutput)
+  {
+    Q_UNUSED(sInput)
+    Q_UNUSED(sOutput)
+    //error
+    return false;
+  }
+
 }

@@ -41,7 +41,7 @@ namespace Server
     m_zServer(Zera::Net::cServer::getInstance())
   {
     connect(m_zServer,SIGNAL(newClientAvailable(Zera::Net::cClient*)),this,SLOT(newClient(Zera::Net::cClient*)));
-    m_zServer->startServer(12345); /// @todo Change port
+    m_zServer->startServer(6312); /// @todo Change port
   }
 
   ServerInterface::~ServerInterface()

@@ -8,8 +8,8 @@
 namespace SCPI
 {
   /**
-    @brief Allows to list resources of a given type
-    */
+   * @brief Provides functions to list resources of a given type
+   */
   class Catalog : public cSCPIObject
   {
   public:
@@ -17,9 +17,9 @@ namespace SCPI
 
     /**
      * @brief executeSCPI Catalog implementation of the SCPI call
-     * @param sInput
-     * @param sOutput
-     * @return
+     * @param sInput Query address string
+     * @param sOutput List of query result nodes
+     * @return true for success
      */
     bool executeSCPI(const QString& sInput, QString& sOutput);
 
@@ -34,8 +34,9 @@ namespace SCPI
      */
     quint16 getRefCount();
     /**
-      @brief sets catalogType
-      */
+     * @brief setCatalogType Changes the type of the SCPI::Catalog
+     * @param type The new type
+     */
     void setCatalogType(const QString &type);
     /**
       @brief increments the reference count

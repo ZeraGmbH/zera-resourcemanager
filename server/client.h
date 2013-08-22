@@ -48,7 +48,7 @@ namespace Server
 
   public slots:
     /**
-     * @brief Sends acknoledgement
+     * @brief Sends acknowledgement
      * @param message Optional text
      */
     void sendACK(const QString &message=QString());

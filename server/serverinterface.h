@@ -54,7 +54,7 @@ namespace Server
 
     /**
      * @brief Is called when new clients arrive
-     * @param [in] *cl the Zera::Net::cClient that just connected
+     * @param [in] *zcl the Zera::Net::cClient that just connected
      */
     void newClient(Zera::Net::cClient *zcl);
 
