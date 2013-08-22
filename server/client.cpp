@@ -76,27 +76,28 @@ namespace Server
         switch(envelope.reply().rtype())
         {
           case ProtobufMessage::NetMessage::NetReply::IDENT:
-            {
-              m_zClient->setName(QString::fromStdString(envelope.reply().body()));
-              qDebug() << "Client identified" << getName();
-              break;
-            }
+          {
+            m_zClient->setName(QString::fromStdString(envelope.reply().body()));
+            qDebug() << "Client identified" << getName();
+            sendACK();
+            break;
+          }
           case ProtobufMessage::NetMessage::NetReply::ACK:
-            {
-              /// @todo are we expecting a reply from a client or is this a defect?
-              break;
-            }
+          {
+            /// @todo are we expecting a reply from a client or is this a defect?
+            break;
+          }
           case ProtobufMessage::NetMessage::NetReply::DEBUG:
-            {
-              qDebug() << QString("Client '%1' sent debug message:\n%2").arg(this->getName()).arg(QString::fromStdString(envelope.reply().body()));
-              break;
-            }
+          {
+            qDebug() << QString("Client '%1' sent debug message:\n%2").arg(this->getName()).arg(QString::fromStdString(envelope.reply().body()));
+            break;
+          }
           default:
-            {
-              qWarning("Something went wrong with network messages!");
-              /// @todo this is the error case
-              break;
-            }
+          {
+            qWarning("Something went wrong with network messages!");
+            /// @todo this is the error case
+            break;
+          }
         }
       }
       if(envelope.has_scpi())
