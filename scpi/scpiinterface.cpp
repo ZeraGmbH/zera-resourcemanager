@@ -241,6 +241,7 @@ namespace SCPI
         else if(tmpObject==catalogType)
         {
           answer=listTypes();
+          retVal=true;
         }
         else // this is a true cSCPIObject try the standard routine
         {
