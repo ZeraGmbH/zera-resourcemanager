@@ -78,7 +78,7 @@ namespace Server
           case ProtobufMessage::NetMessage::NetReply::IDENT:
           {
             m_zClient->setName(QString::fromStdString(envelope.reply().body()));
-            qDebug() << "Client identified" << getName();
+            qDebug() << "Resourcemanager: Client identified" << getName();
             sendACK();
             break;
           }
@@ -94,7 +94,7 @@ namespace Server
           }
           default:
           {
-            qWarning("Something went wrong with network messages!");
+            qWarning("Resourcemanager: Something went wrong with network messages!");
             /// @todo this is the error case
             break;
           }
@@ -108,7 +108,7 @@ namespace Server
     else
     {
       sendNACK(tr("Protocol error"));
-      qDebug()<<"Error parsing protobuf";
+      qDebug()<<"Resourcemanager: Error parsing protobuf";
     }
   }
 
