@@ -197,7 +197,7 @@ namespace SCPI
             tmpDelete=QString("%1:%2").arg(tmpDelete).arg(command.getParam(i));
           }
           qDebug()<<"Deleting with:  "<<tmpDelete;
-          toDelete = tmpDelete;
+          toDelete = QString("RESOURCE:%1").arg(tmpDelete);
           tmpRes=ResourceManager::getInstance()->getResourceByObject(static_cast<ResourceObject*>(scpiInstance->getSCPIObject(toDelete)));
           if(tmpRes!=0)
           {
