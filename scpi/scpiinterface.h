@@ -123,6 +123,14 @@ namespace SCPI
       */
     bool resourceRemove(Application::Resource * res, Server::Client* client);
 
+    /**
+     * @brief resourceRemoveByProvider Deletes all resources the Server::Client provided
+     *
+     * Will be called when the Server::Client disconnects
+     * @param client The provider of the resources
+     */
+    void resourceRemoveByProvider(Server::Client* client);
+
   private:
     /**
       @brief represents the RESOURCE:ADD in the SCPI tree

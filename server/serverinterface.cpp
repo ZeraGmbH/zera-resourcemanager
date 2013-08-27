@@ -22,6 +22,9 @@ namespace Server
       Client* cl = static_cast<Server::Client*> (QObject::sender());
 
       qDebug()<<"Client disconnected:"<<cl->getName();
+
+      SCPI::SCPIInterface::getInstance()->resourceRemoveByProvider(cl);
+
       clients.removeAll(cl);
       cl->deleteLater();
     }

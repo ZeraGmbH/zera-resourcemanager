@@ -110,6 +110,8 @@ namespace SCPI
     {
       ResourceManager::getInstance()->deleteResource(res);
       res->deleteLater();
+      scpiInstance->delSCPICmds(QString("RESOURCE:%1:%2").arg(res->getType()).arg(res->getName()));
+      delete res->getResourceObject();
       foreach(Catalog* tmpCat, catalogList)
       {
         if(tmpCat->getCatalogType()==res->getType())
@@ -132,6 +134,21 @@ namespace SCPI
       client->sendError(tr("Not owner of resource: %1").arg(res->getName()));
     }
     return retVal;
+  }
+
+  void SCPIInterface::resourceRemoveByProvider(Server::Client *client)
+  {
+    ResourceObject *resObj;
+    Application::Resource* res;
+    foreach(resObj, resourceList)
+    {
+      res = ResourceManager::getInstance()->getResourceByObject(resObj);
+      if(res!=0 && res->getProvider()==client)
+      {
+        resourceRemove(res, client);
+        qDebug() << "Deleting" << resObj->getName();
+      }
+    }
   }
 
   void SCPIInterface::scpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand)
