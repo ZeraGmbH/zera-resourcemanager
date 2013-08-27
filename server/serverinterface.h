@@ -31,21 +31,6 @@ namespace Server
       */
     static ServerInterface* getInstance();
 
-  signals:
-    /**
-      @brief Will be triggered when a Server::Client provides a new SCPI::ResourceObject
-      @param [in] *resource the SCPI::ResourceObject that will be added in ResourceManager
-      @param [in] *client the Server::Client that requested the operation
-      */
-    void newResource(Application::Resource* resource, Client* client);
-
-    /**
-      @brief Will be triggered when a Server::Client wants to delete a SCPI::ResourceObject
-      @param [in] *resource the SCPI::ResourceObject that will be  deleted in ResourceManager
-      @param [in] *client the Server::Client that requested the operation
-      */
-    void deleteResource(Application::Resource* resource, Client* client);
-
   public slots:
     /**
       @brief Will be triggered when the Server::Client disconnects
