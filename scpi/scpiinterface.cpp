@@ -180,12 +180,12 @@ namespace SCPI
         if(tmpObject==addResource) //A resource is about to be added
         {
           Application::Resource* tmpRes=0;
-          quint32 port=0;
+          quint16 port=0;
           bool portConvert;
           if(command.getParamCount()==CommandParams::_paramcount)
           {
-            port=command.getParam(CommandParams::port).toUInt(&portConvert);
-            if(portConvert) // check if the provider has a TCP/IP port where the resource is located
+            port=command.getParam(CommandParams::port).toUShort(&portConvert);
+            if(portConvert) // check if the provider has a valid TCP/IP port where the resource is located
             {
               tmpRes=ResourceManager::getInstance()->createResource(
                     command.getParam(CommandParams::amount).toUInt(),
@@ -194,9 +194,14 @@ namespace SCPI
                     currentClient,
                     command.getParam(CommandParams::type),
                     port);
+              emit resourceAdded(tmpRes);
+              retVal=true;
             }
-            emit resourceAdded(tmpRes);
-            retVal=true;
+            else
+            {
+              answer=tr("Invalid parameter %1: expected 16 bit positive unsigned integer").arg(CommandParams::port+1);
+              retVal=false;
+            }
           }
           else
           {
