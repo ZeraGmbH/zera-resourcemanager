@@ -5,20 +5,27 @@
 #include <QObject>
 #include <QList>
 
-#include "server/client.h"
-#include <zeraserver.h>
 
 namespace Application
 {
   class Resource;
 }
 
+namespace Zera
+{
+  namespace Net
+  {
+    class cServer;
+    class cClient;
+  }
+}
 
 /**
   @brief The Server Namespace encapsulates all networking logic into a separate namespace.
  */
 namespace Server
 {
+  class Client;
   /**
     @brief Represents the interface between the network implementations and the ResourceManager
     */

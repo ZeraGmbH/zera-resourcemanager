@@ -1,9 +1,8 @@
 #ifndef CATALOG_H
 #define CATALOG_H
 
+#include <scpiobject.h>
 #include <QString>
-#include "scpiobject.h"
-
 
 namespace SCPI
 {

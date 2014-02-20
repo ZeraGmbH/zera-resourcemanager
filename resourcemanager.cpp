@@ -1,5 +1,8 @@
 #include "resourcemanager.h"
 #include "scpistring.h"
+#include "server/client.h"
+#include "server/serverinterface.h"
+#include "resource/resource.h"
 
 ResourceManager::ResourceManager(QObject* parent) :
   QObject(parent)

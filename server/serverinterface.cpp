@@ -1,6 +1,10 @@
 #include "server/serverinterface.h"
 #include "scpi/scpiinterface.h"
 #include "resource/resource.h"
+#include "server/client.h"
+
+#include <zeraserver.h>
+
 #include <QDebug>
 
 
@@ -19,7 +23,7 @@ namespace Server
   {
     if(QObject::sender()!=0)
     {
-      Client* cl = static_cast<Server::Client*> (QObject::sender());
+      Client* cl = qobject_cast<Server::Client*> (QObject::sender());
 
       qDebug()<<"Client disconnected:"<<cl->getName();
 

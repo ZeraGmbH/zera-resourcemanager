@@ -2,7 +2,16 @@
 #define H2012_CLIENT_H
 
 #include <QObject>
-#include <zeraclient.h>
+#include <QQueue>
+
+
+namespace Zera
+{
+  namespace Net
+  {
+    class cClient;
+  }
+}
 
 #include <netmessages.pb.h>
 
@@ -84,6 +93,10 @@ namespace Server
      * @param message a ProtobufMessage
      */
     void sendMessage(ProtobufMessage::NetMessage *message);
+
+    /// @todo PIMPL
+    QQueue<std::string> clientIdQueue;
+    QQueue<qint64> messageIdQueue;
   };
 }
 

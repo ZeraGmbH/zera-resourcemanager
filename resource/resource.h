@@ -1,9 +1,9 @@
 #ifndef H2012_RESOURCEOBJECT_H
 #define H2012_RESOURCEOBJECT_H
 
+#include <QObject>
 #include <QMap>
 #include <QString>
-#include <QObject>
 
 namespace Server
 {

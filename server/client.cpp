@@ -1,7 +1,7 @@
 #include "server/client.h"
 
 #include "QDebug"
-
+#include <zeraclient.h>
 #include <netmessages.pb.h>
 
 namespace Server
@@ -71,6 +71,20 @@ namespace Server
     ProtobufMessage::NetMessage envelope;
     if(m_zClient->translateBA2Protobuf(&envelope, message))
     {
+      if(envelope.has_clientid())
+      {
+        clientIdQueue.enqueue(envelope.clientid());
+      }
+      if(envelope.has_messagenr())
+      {
+        messageIdQueue.enqueue(envelope.messagenr());
+      }
+      else
+      {
+        //legacy mode
+        clientIdQueue.enqueue("");
+        messageIdQueue.enqueue(-1);
+      }
       if(envelope.has_reply())
       {
         switch(envelope.reply().rtype())
@@ -89,11 +103,17 @@ namespace Server
           }
           case ProtobufMessage::NetMessage::NetReply::DEBUG:
           {
+            //no reply is being sent
+            clientIdQueue.removeLast();
+            messageIdQueue.removeLast();
             qDebug() << QString("Client '%1' sent debug message:\n%2").arg(this->getName()).arg(QString::fromStdString(envelope.reply().body()));
             break;
           }
           default:
           {
+            //no reply is being sent
+            clientIdQueue.removeLast();
+            messageIdQueue.removeLast();
             qWarning("Resourcemanager: Something went wrong with network messages!");
             /// @todo this is the error case
             break;
@@ -107,6 +127,9 @@ namespace Server
     }
     else
     {
+      //the clientId could not be read because parsing protobuf failed, so fall back to legacy mode
+      clientIdQueue.enqueue("");
+      messageIdQueue.enqueue(-1);
       sendNACK(tr("Protocol error"));
       qDebug()<<"Resourcemanager: Error parsing protobuf";
     }
@@ -114,6 +137,16 @@ namespace Server
 
   void Client::sendMessage(ProtobufMessage::NetMessage *message)
   {
+    std::string tmp_cID = clientIdQueue.dequeue();
+    qint64 tmp_mID = messageIdQueue.dequeue();
+    if(tmp_cID!="") //check for legacy mode
+    {
+      message->set_clientid(tmp_cID);
+    }
+    if(tmp_mID>0 && tmp_mID<4294967296) // check for legacy mode, the value has to fit into a uint32
+    {
+      message->set_messagenr(tmp_mID);
+    }
     QByteArray block = m_zClient->translatePB2ByteArray(message);
     m_zClient->writeClient(block);
   }

@@ -1,12 +1,12 @@
 #ifndef RESOURCEOBJECT_H
 #define RESOURCEOBJECT_H
-#include "scpiobject.h"
+
+#include <scpiobject.h>
 
 namespace Application
 {
   class Resource;
 }
-
 
 namespace SCPI
 {

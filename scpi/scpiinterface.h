@@ -2,13 +2,12 @@
 #define SCPIINTERFACE_H
 
 #include <QObject>
-#include <QMutex>
 #include <QList>
-#include <scpi.h>
+#include <QStandardItemModel>
 
-#include "delegate.h"
-#include "catalog.h"
-#include "netmessages.pb.h"
+#include <netmessages.pb.h>
+
+class cSCPI;
 
 namespace Server
 {
@@ -26,6 +25,8 @@ namespace Application
   */
 namespace SCPI
 {
+  class Catalog;
+  class Delegate;
   /**
     @brief this encapsulates redundant entries for the add / remove parameters
     */

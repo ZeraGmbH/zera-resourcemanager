@@ -1,12 +1,18 @@
+#include "catalog.h"
+#include "delegate.h"
+#include "resourcemanager.h"
+#include "resourceobject.h"
+#include "resource/resource.h"
 #include "scpiinterface.h"
 #include "server/client.h"
-#include "resourceobject.h"
-#include "resourcemanager.h"
 
+
+#include <scpi.h>
 #include <scpiobject.h>
 #include <scpicommand.h>
 
 #include <QStringList>
+#include <QDebug>
 
 namespace SCPI
 {
@@ -156,7 +162,7 @@ namespace SCPI
     bool retVal=false;
     Server::Client* currentClient=0;
     QString answer="";
-    currentClient = static_cast<Server::Client*> (sender());
+    currentClient = qobject_cast<Server::Client*> (sender());
     if(currentClient!=0)
     {
       cSCPICommand command=QString("%1 %2").arg(QString::fromStdString(pbSCPICommand.command())).arg(QString::fromStdString(pbSCPICommand.parameter()));
@@ -164,8 +170,6 @@ namespace SCPI
       tmpObject=scpiInstance->getSCPIObject(command); //check which scpi node is triggered
       if(tmpObject!=0)
       {
-
-
         /// @todo remove debug code
         QString dbgString;
         for(quint32 i=0; i<command.getParamCount(); i++)
@@ -200,7 +204,6 @@ namespace SCPI
             else
             {
               answer=tr("Invalid parameter %1: expected 16 bit positive unsigned integer").arg(CommandParams::port+1);
-              retVal=false;
             }
           }
           else

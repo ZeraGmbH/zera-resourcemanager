@@ -4,10 +4,21 @@
 #include <QObject>
 #include <QReadWriteLock>
 #include <QTextStream>
-#include "server/client.h"
-#include "server/serverinterface.h"
-#include "resource/resource.h"
 
+namespace Application
+{
+  class Resource;
+}
+
+namespace SCPI
+{
+  class ResourceObject;
+}
+
+namespace Server
+{
+  class Client;
+}
 /**
   @brief Represents the managing instance in this application that holds SCPI::ResourceObjects and Application::ResourceLock
   */
