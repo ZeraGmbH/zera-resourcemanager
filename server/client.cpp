@@ -1,23 +1,23 @@
 #include "server/client.h"
 
 #include "QDebug"
-#include <zeraclient.h>
+#include <protonetpeer.h>
 #include <netmessages.pb.h>
 
 namespace Server
 {
-  Client::Client(Zera::Net::cClient *zClient, QObject *parent) :
+  Client::Client(ProtoNetPeer *zClient, QObject *parent) :
     QObject(parent)
   {
     m_zClient = zClient;
     m_zClient->setParent(this);
-    connect(m_zClient,SIGNAL(messageReceived(QByteArray)),this,SLOT(messageReceived(QByteArray)));
-    connect(m_zClient,SIGNAL(clientDisconnected()),this, SIGNAL(aboutToDisconnect()));
+    connect(m_zClient,SIGNAL(sigMessageReceived(google::protobuf::Message*)), this, SLOT(messageReceived(google::protobuf::Message*)));
+    connect(m_zClient,SIGNAL(sigConnectionClosed()),this, SIGNAL(aboutToDisconnect()));
   }
 
   const QString &Client::getName()
   {
-    return m_zClient->getName();
+    return m_name;
   }
 
   QString Client::getIpAdress()
@@ -65,73 +65,62 @@ namespace Server
     sendMessage(&envelope);
   }
 
-  void Client::messageReceived(QByteArray message)
+  void Client::messageReceived(google::protobuf::Message *message)
   {
+    ProtobufMessage::NetMessage *envelope = static_cast<ProtobufMessage::NetMessage *>(message);
     // return message to client to show that it was received
-    ProtobufMessage::NetMessage envelope;
-    if(m_zClient->translateBA2Protobuf(&envelope, message))
+    if(envelope->has_clientid())
     {
-      if(envelope.has_clientid())
-      {
-        clientIdQueue.enqueue(envelope.clientid());
-      }
-      if(envelope.has_messagenr())
-      {
-        messageIdQueue.enqueue(envelope.messagenr());
-      }
-      else
-      {
-        //legacy mode
-        clientIdQueue.enqueue("");
-        messageIdQueue.enqueue(-1);
-      }
-      if(envelope.has_reply())
-      {
-        switch(envelope.reply().rtype())
-        {
-          case ProtobufMessage::NetMessage::NetReply::IDENT:
-          {
-            m_zClient->setName(QString::fromStdString(envelope.reply().body()));
-            qDebug() << "Resourcemanager: Client identified" << getName();
-            sendACK();
-            break;
-          }
-          case ProtobufMessage::NetMessage::NetReply::ACK:
-          {
-            /// @todo are we expecting a reply from a client or is this a defect?
-            break;
-          }
-          case ProtobufMessage::NetMessage::NetReply::DEBUG:
-          {
-            //no reply is being sent
-            clientIdQueue.removeLast();
-            messageIdQueue.removeLast();
-            qDebug() << QString("Client '%1' sent debug message:\n%2").arg(this->getName()).arg(QString::fromStdString(envelope.reply().body()));
-            break;
-          }
-          default:
-          {
-            //no reply is being sent
-            clientIdQueue.removeLast();
-            messageIdQueue.removeLast();
-            qWarning("Resourcemanager: Something went wrong with network messages!");
-            /// @todo this is the error case
-            break;
-          }
-        }
-      }
-      if(envelope.has_scpi())
-      {
-        emit scpiCommandSent(envelope.scpi());
-      }
+      clientIdQueue.enqueue(envelope->clientid());
+    }
+    if(envelope->has_messagenr())
+    {
+      messageIdQueue.enqueue(envelope->messagenr());
     }
     else
     {
-      //the clientId could not be read because parsing protobuf failed, so fall back to legacy mode
+      //legacy mode
       clientIdQueue.enqueue("");
       messageIdQueue.enqueue(-1);
-      sendNACK(tr("Protocol error"));
-      qDebug()<<"Resourcemanager: Error parsing protobuf";
+    }
+    if(envelope->has_reply())
+    {
+      switch(envelope->reply().rtype())
+      {
+        case ProtobufMessage::NetMessage::NetReply::IDENT:
+        {
+          m_name = QString::fromStdString(envelope->reply().body());
+          qDebug() << "Resourcemanager: Client identified" << getName();
+          sendACK();
+          break;
+        }
+        case ProtobufMessage::NetMessage::NetReply::ACK:
+        {
+          /// @todo are we expecting a reply from a client or is this a defect?
+          break;
+        }
+        case ProtobufMessage::NetMessage::NetReply::DEBUG:
+        {
+          //no reply is being sent
+          clientIdQueue.removeLast();
+          messageIdQueue.removeLast();
+          qDebug() << QString("Client '%1' sent debug message:\n%2").arg(this->getName()).arg(QString::fromStdString(envelope->reply().body()));
+          break;
+        }
+        default:
+        {
+          //no reply is being sent
+          clientIdQueue.removeLast();
+          messageIdQueue.removeLast();
+          qWarning("Resourcemanager: Something went wrong with network messages!");
+          /// @todo this is the error case
+          break;
+        }
+      }
+    }
+    if(envelope->has_scpi())
+    {
+      emit scpiCommandSent(envelope->scpi());
     }
   }
 
@@ -147,7 +136,6 @@ namespace Server
     {
       message->set_messagenr(tmp_mID);
     }
-    QByteArray block = m_zClient->translatePB2ByteArray(message);
-    m_zClient->writeClient(block);
+    m_zClient->sendMessage(message);
   }
 }

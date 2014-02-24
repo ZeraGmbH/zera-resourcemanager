@@ -3,7 +3,10 @@
 #include "resource/resource.h"
 #include "server/client.h"
 
-#include <zeraserver.h>
+#include "rmprotobufwrapper.h"
+
+#include <protonetserver.h>
+
 
 #include <QDebug>
 
@@ -34,7 +37,7 @@ namespace Server
     }
   }
 
-  void ServerInterface::newClient(Zera::Net::cClient* zcl)
+  void ServerInterface::newClient(ProtoNetPeer *zcl)
   {
     Client* tmpClient = new Client(zcl);
     clients.append(tmpClient);
@@ -42,12 +45,13 @@ namespace Server
     connect(tmpClient,SIGNAL(scpiCommandSent(ProtobufMessage::NetMessage::ScpiCommand)),SCPI::SCPIInterface::getInstance(),SLOT(scpiTransaction(ProtobufMessage::NetMessage::ScpiCommand)));
   }
 
-
   ServerInterface::ServerInterface(QObject* parent) :
     QObject(parent),
-    m_zServer(Zera::Net::cServer::getInstance())
+    m_zServer(new ProtoNetServer(this)),
+    m_defaultWrapper(new RMProtobufWrapper())
   {
-    connect(m_zServer,SIGNAL(newClientAvailable(Zera::Net::cClient*)),this,SLOT(newClient(Zera::Net::cClient*)));
+    m_zServer->setDefaultWrapper(m_defaultWrapper);
+    connect(m_zServer,SIGNAL(sigClientConnected(ProtoNetPeer*)),this,SLOT(newClient(ProtoNetPeer*)));
     m_zServer->startServer(6312); /// @todo Change port
   }
 
@@ -59,7 +63,5 @@ namespace Server
     }
   }
   ServerInterface* ServerInterface::singletonInstance=0;
-
-
 
 }

@@ -7,8 +7,10 @@ include(resourcemanager.user.pri)
 
 
 TEMPLATE = app
-QT += network
-TARGET = 
+QT += core gui network
+QT += widgets
+
+TARGET = resman
 DEPENDPATH += . resource server scpi
 INCLUDEPATH += . resource server scpi
 
@@ -20,7 +22,8 @@ HEADERS += resourcemanager.h \
     scpi/resourceobject.h \
     resource/resource.h \
     scpi/scpiinterface.h \
-    scpi/delegate.h
+    scpi/delegate.h \
+    rmprotobufwrapper.h
 SOURCES += main.cpp \
     resourcemanager.cpp \
     server/client.cpp \
@@ -29,20 +32,21 @@ SOURCES += main.cpp \
     scpi/resourceobject.cpp \
     resource/resource.cpp \
     scpi/scpiinterface.cpp \
-    scpi/delegate.cpp
+    scpi/delegate.cpp \
+    rmprotobufwrapper.cpp
 
 
 # Library
 
 
 INCLUDEPATH += $${SCPI_INCLUDEPATH}
-INCLUDEPATH += $${ZERANET_INCLUDEPATH}
 INCLUDEPATH += $${ZERA_PROTOBUF_INCLUDEPATH}
+INCLUDEPATH += $${PROTONET_INCLUDEDIR}
 
 LIBS += -lprotobuf
 LIBS += $${SCPI_LIBPATH} -lSCPI
-LIBS += $${ZERANET_LIBPATH} -lzeranet
 LIBS += $${ZERA_PROTOBUF_LIBPATH} -lzera-resourcemanager-protobuf
+LIBS += $${PROTONET_LIBDIR} -lproto-net-qt
 
 target.path = /usr/bin
 INSTALLS += target

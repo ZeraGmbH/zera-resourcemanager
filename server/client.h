@@ -4,16 +4,9 @@
 #include <QObject>
 #include <QQueue>
 
-
-namespace Zera
-{
-  namespace Net
-  {
-    class cClient;
-  }
-}
-
 #include <netmessages.pb.h>
+
+class ProtoNetPeer;
 
 namespace Server
 {
@@ -30,7 +23,7 @@ namespace Server
       @brief The default constructor
       @note Other constructors are invalid
       */
-    explicit Client(Zera::Net::cClient* zClient, QObject *parent = 0);
+    explicit Client(ProtoNetPeer* zClient, QObject *parent = 0);
 
     /**
      * @brief getName
@@ -80,23 +73,24 @@ namespace Server
      * @brief Decodes incoming messages into a ProtobufMessage
      * @param message Unparsed message
      */
-    void messageReceived(QByteArray message);
+    void messageReceived(google::protobuf::Message *message);
 
   private:
     /**
      * @brief The Client representated
      */
-    Zera::Net::cClient* m_zClient;
+    ProtoNetPeer* m_zClient;
 
     /**
      * @brief Internal code to send a ProtobufMessage to the client
      * @param message a ProtobufMessage
      */
-    void sendMessage(ProtobufMessage::NetMessage *message);
+    void sendMessage(ProtobufMessage::NetMessage *envelope);
 
     /// @todo PIMPL
     QQueue<std::string> clientIdQueue;
     QQueue<qint64> messageIdQueue;
+    QString m_name;
   };
 }
 
