@@ -22,7 +22,7 @@ namespace Server
 
   QString Client::getIpAdress()
   {
-    return m_zClient->getIpAddress().toString();
+    return m_zClient->getIpAddress();
   }
 
   void Client::sendACK(const QString &message)
