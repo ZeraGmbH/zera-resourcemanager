@@ -3,7 +3,7 @@
 ######################################################################
 
 # see user defined paths
-include(resourcemanager.user.pri)
+include(../../include/project-paths.pri)
 
 
 TEMPLATE = app
@@ -39,13 +39,13 @@ SOURCES += main.cpp \
 # Library
 
 
-INCLUDEPATH += $${SCPI_INCLUDEPATH}
-INCLUDEPATH += $${ZERA_PROTOBUF_INCLUDEPATH}
+INCLUDEPATH += $${SCPI_INCLUDEDIR}
+INCLUDEPATH += $${RESOURCE_PROTOBUF_INCLUDEDIR}
 INCLUDEPATH += $${PROTONET_INCLUDEDIR}
 
 LIBS += -lprotobuf
-LIBS += $${SCPI_LIBPATH} -lSCPI
-LIBS += $${ZERA_PROTOBUF_LIBPATH} -lzera-resourcemanager-protobuf
+LIBS += $${SCPI_LIBDIR} -lSCPI-qt5
+LIBS += $${RESOURCE_PROTOBUF_LIBDIR} -lzera-resourcemanager-protobuf
 LIBS += $${PROTONET_LIBDIR} -lproto-net-qt
 
 target.path = /usr/bin

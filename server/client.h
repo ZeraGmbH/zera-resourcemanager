@@ -88,7 +88,7 @@ namespace Server
     void sendMessage(ProtobufMessage::NetMessage *envelope);
 
     /// @todo PIMPL
-    QQueue<std::string> clientIdQueue;
+    QQueue<QByteArray> clientIdQueue;
     QQueue<qint64> messageIdQueue;
     QString m_name;
   };

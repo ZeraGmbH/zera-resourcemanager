@@ -4,6 +4,8 @@
 #include <protonetpeer.h>
 #include <netmessages.pb.h>
 
+#include <QDebug>
+
 namespace Server
 {
   Client::Client(ProtoNetPeer *zClient, QObject *parent) :
@@ -71,7 +73,8 @@ namespace Server
     // return message to client to show that it was received
     if(envelope->has_clientid())
     {
-      clientIdQueue.enqueue(envelope->clientid());
+      qDebug() << "queued clientid:"<< QByteArray(envelope->clientid().c_str(), envelope->clientid().length()).toBase64();
+      clientIdQueue.enqueue(QByteArray(envelope->clientid().data(),envelope->clientid().size()));
     }
     if(envelope->has_messagenr())
     {
@@ -80,7 +83,7 @@ namespace Server
     else
     {
       //legacy mode
-      clientIdQueue.enqueue("");
+      clientIdQueue.enqueue(QByteArray());
       messageIdQueue.enqueue(-1);
     }
     if(envelope->has_reply())
@@ -126,11 +129,12 @@ namespace Server
 
   void Client::sendMessage(ProtobufMessage::NetMessage *message)
   {
-    std::string tmp_cID = clientIdQueue.dequeue();
+    QByteArray tmp_cID = clientIdQueue.dequeue();
     qint64 tmp_mID = messageIdQueue.dequeue();
-    if(tmp_cID!="") //check for legacy mode
+    if(!tmp_cID.isEmpty()) //check for legacy mode
     {
-      message->set_clientid(tmp_cID);
+      qDebug()  << "clientid sent:" << tmp_cID.toBase64();
+      message->set_clientid(tmp_cID.data(),tmp_cID.size());
     }
     if(tmp_mID>0 && tmp_mID<4294967296) // check for legacy mode, the value has to fit into a uint32
     {
