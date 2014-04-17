@@ -3,7 +3,7 @@
 ######################################################################
 
 # see user defined paths
-include(../../include/project-paths.pri)
+include(resourcemanager.user.pri)
 
 
 TEMPLATE = app
@@ -44,7 +44,7 @@ INCLUDEPATH += $${RESOURCE_PROTOBUF_INCLUDEDIR}
 INCLUDEPATH += $${PROTONET_INCLUDEDIR}
 
 LIBS += -lprotobuf
-LIBS += $${SCPI_LIBDIR} -lSCPI-qt5
+LIBS += $${SCPI_LIBDIR} -lSCPI
 LIBS += $${RESOURCE_PROTOBUF_LIBDIR} -lzera-resourcemanager-protobuf
 LIBS += $${PROTONET_LIBDIR} -lproto-net-qt
 
