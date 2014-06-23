@@ -1,6 +1,7 @@
 #include "resource/resource.h"
 #include "resourcemanager.h"
 
+#include "server/client.h"
 
 namespace Application
 {
@@ -63,6 +64,7 @@ namespace Application
     {
       if(amount<=resourceAmount)
       {
+        occupier->addOccupation(this);
         occupiers.insert(occupier,amount);
         freeAmount=freeAmount-amount;
         retVal = true;
@@ -72,6 +74,7 @@ namespace Application
     {
       if(occupiers.isEmpty())
       {
+        occupier->addOccupation(this);
         occupiers.insert(occupier,1); //1 means the whole resource here
         retVal = true;
       }
@@ -86,6 +89,7 @@ namespace Application
     tmpVal=occupiers.value(occupier,0); // this will also detect if the occupier isn't currently holding any resource amount
     if(tmpVal>0) //remove the occupier
     {
+      occupier->removeOccupation(this);
       occupiers.remove(occupier);
       freeAmount=freeAmount+tmpVal;
       retVal=true;

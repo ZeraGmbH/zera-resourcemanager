@@ -15,6 +15,7 @@ namespace Server
     m_zClient->setParent(this);
     connect(m_zClient,SIGNAL(sigMessageReceived(google::protobuf::Message*)), this, SLOT(messageReceived(google::protobuf::Message*)));
     connect(m_zClient,SIGNAL(sigConnectionClosed()),this, SIGNAL(aboutToDisconnect()));
+    connect(this,SIGNAL(aboutToDisconnect()),this,SLOT(onDisconnectCleanup()));
   }
 
   const QString &Client::getName()
@@ -25,6 +26,16 @@ namespace Server
   QString Client::getIpAdress()
   {
     return m_zClient->getIpAddress();
+  }
+
+  void Client::addOccupation(Application::Resource *res)
+  {
+    occupies.insert(res);
+  }
+
+  void Client::removeOccupation(Application::Resource *res)
+  {
+    occupies.remove(res);
   }
 
   void Client::sendACK(const QString &message)
@@ -124,6 +135,13 @@ namespace Server
     if(envelope->has_scpi())
     {
       emit scpiCommandSent(envelope->scpi());
+    }
+  }
+
+  void Client::onDisconnectCleanup()
+  {
+    foreach (Application::Resource *tmpRes, occupies) {
+      tmpRes->freeResource(this);
     }
   }
 

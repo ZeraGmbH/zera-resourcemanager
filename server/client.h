@@ -3,8 +3,11 @@
 
 #include <QObject>
 #include <QQueue>
+#include <QSet>
 
 #include <netmessages.pb.h>
+
+#include "resource/resource.h"
 
 class ProtoNetPeer;
 
@@ -36,6 +39,9 @@ namespace Server
      * @return
      */
     QString getIpAdress();
+
+    void addOccupation(Application::Resource *res);
+    void removeOccupation(Application::Resource *res);
 
   signals:
     /**
@@ -75,6 +81,12 @@ namespace Server
      */
     void messageReceived(google::protobuf::Message *message);
 
+  private slots:
+    /**
+     * @brief cleanup all occupied resources
+     */
+    void onDisconnectCleanup();
+
   private:
     /**
      * @brief The Client representated
@@ -87,9 +99,9 @@ namespace Server
      */
     void sendMessage(ProtobufMessage::NetMessage *envelope);
 
-    /// @todo PIMPL
     QQueue<QByteArray> clientIdQueue;
     QQueue<qint64> messageIdQueue;
+    QSet<Application::Resource *> occupies;
     QString m_name;
   };
 }
