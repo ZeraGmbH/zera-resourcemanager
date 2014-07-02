@@ -2,12 +2,19 @@
 #include "resourcemanager.h"
 
 #include "server/client.h"
-
+#include <QDebug>
 namespace Application
 {
-  Resource::Resource(quint32 amount, const QString& description, const QString& name, Server::Client * provider, const QString& type , quint32 port) :
-    m_resourceAmount(amount), m_resourceDescription(description), m_resourceName(name), m_resourcePort(port), m_resourceProvider(provider), m_resourceType(type)
+  Resource::Resource(quint32 amount, const QString& description, const QString& name, Server::Client * provider, const QString& type , quint32 port, const QByteArray providerId) :
+    m_resourceAmount(amount),
+    m_resourceDescription(description),
+    m_resourceName(name),
+    m_resourcePort(port),
+    m_resourceProvider(provider),
+    m_resourceProviderId(providerId),
+    m_resourceType(type)
   {
+    //qDebug() << "providerId:" << providerId;
     m_resourceObject=0;
     m_freeAmount=amount;
   }
@@ -52,9 +59,14 @@ namespace Application
     return m_occupiers.keys();
   }
 
-  quint32 Resource::getPort()
+  quint32 Resource::getPort() const
   {
     return m_resourcePort;
+  }
+
+  const QByteArray &Resource::getProviderId() const
+  {
+    return m_resourceProviderId;
   }
 
   bool Resource::occupyResource(Server::Client *occupier, quint32 amount)

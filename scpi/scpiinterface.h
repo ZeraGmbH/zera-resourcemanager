@@ -110,7 +110,7 @@ namespace SCPI
     /**
       @brief The clients SCPI data is handled here
       */
-    void onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand);
+    void onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand, QByteArray clientId);
     /**
       @brief Adds a SCPI::ResourceObject to the SCPI tree
 
@@ -131,6 +131,14 @@ namespace SCPI
      * @param client The provider of the resources
      */
     void doResourceRemoveByProvider(Server::Client* client);
+
+    /**
+     * @brief resourceRemoveByProvider Deletes all resources the Server::Client provided
+     *
+     * Will be called when the Server::Client disconnects
+     * @param client The provider of the resources
+     */
+    void doResourceRemoveByProviderId(Server::Client *client, const QByteArray &providerId);
 
   private:
     /**

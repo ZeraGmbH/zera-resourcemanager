@@ -84,8 +84,13 @@ namespace Server
     // return message to client to show that it was received
     if(envelope->has_clientid())
     {
-      qDebug() << "queued clientid:"<< QByteArray(envelope->clientid().c_str(), envelope->clientid().length()).toBase64();
+      //qDebug() << "queued clientid:"<< QByteArray(envelope->clientid().c_str(), envelope->clientid().length()).toBase64();
       m_clientIdQueue.enqueue(QByteArray(envelope->clientid().data(),envelope->clientid().size()));
+    }
+    else
+    {
+      //legacy mode
+      m_clientIdQueue.enqueue(QByteArray());
     }
     if(envelope->has_messagenr())
     {
@@ -94,8 +99,18 @@ namespace Server
     else
     {
       //legacy mode
-      m_clientIdQueue.enqueue(QByteArray());
       m_messageIdQueue.enqueue(-1);
+    }
+    if(envelope->has_netcommand())
+    {
+      //qDebug() << "## clientId:" << m_clientIdQueue;
+      foreach (Application::Resource *tmpRes, m_occupies) {
+        if(tmpRes->getProviderId()==m_clientIdQueue.last())
+        {
+          tmpRes->freeResource(this);
+        }
+      }
+      emit sigDisconnectedClientId(m_clientIdQueue.last());
     }
     if(envelope->has_reply())
     {
@@ -110,22 +125,15 @@ namespace Server
         }
         case ProtobufMessage::NetMessage::NetReply::ACK:
         {
-          /// @todo are we expecting a reply from a client or is this a defect?
           break;
         }
         case ProtobufMessage::NetMessage::NetReply::DEBUG:
         {
-          //no reply is being sent
-          m_clientIdQueue.removeLast();
-          m_messageIdQueue.removeLast();
           qDebug() << QString("Client '%1' sent debug message:\n%2").arg(this->getName()).arg(QString::fromStdString(envelope->reply().body()));
           break;
         }
         default:
         {
-          //no reply is being sent
-          m_clientIdQueue.removeLast();
-          m_messageIdQueue.removeLast();
           qWarning("Resourcemanager: Something went wrong with network messages!");
           /// @todo this is the error case
           break;
@@ -134,8 +142,10 @@ namespace Server
     }
     if(envelope->has_scpi())
     {
-      emit sigScpiTransaction(envelope->scpi());
+      emit sigScpiTransaction(envelope->scpi(),m_clientIdQueue.last());
     }
+    m_clientIdQueue.removeLast();
+    m_messageIdQueue.removeLast();
   }
 
   void Client::onDisconnectCleanup()
@@ -147,11 +157,11 @@ namespace Server
 
   void Client::sendMessage(ProtobufMessage::NetMessage *message)
   {
-    QByteArray tmp_cID = m_clientIdQueue.dequeue();
-    qint64 tmp_mID = m_messageIdQueue.dequeue();
+    QByteArray tmp_cID = m_clientIdQueue.last();
+    qint64 tmp_mID = m_messageIdQueue.last();
     if(!tmp_cID.isEmpty()) //check for legacy mode
     {
-      qDebug()  << "clientid sent:" << tmp_cID.toBase64();
+      //qDebug()  << "clientid sent:" << tmp_cID.toBase64();
       message->set_clientid(tmp_cID.data(),tmp_cID.size());
     }
     if(tmp_mID>0 && tmp_mID<4294967296) // check for legacy mode, the value has to fit into a uint32

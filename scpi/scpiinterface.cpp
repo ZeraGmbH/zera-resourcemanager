@@ -157,7 +157,22 @@ namespace SCPI
     }
   }
 
-  void SCPIInterface::onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand)
+  void SCPIInterface::doResourceRemoveByProviderId(Server::Client *client, const QByteArray &providerId)
+  {
+    ResourceObject *resObj;
+    Application::Resource* res;
+    foreach(resObj, m_resourceList)
+    {
+      res = ResourceManager::getInstance()->getResourceByObject(resObj);
+      if(res!=0 && res->getProvider()==client && res->getProviderId()==providerId)
+      {
+        doResourceRemove(res, client);
+        qDebug() << "Deleting" << resObj->getName();
+      }
+    }
+  }
+
+  void SCPIInterface::onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand, QByteArray clientId)
   {
     bool retVal=false;
     Server::Client* currentClient=0;
@@ -197,7 +212,8 @@ namespace SCPI
                     command.getParam(CommandParams::name),
                     currentClient,
                     command.getParam(CommandParams::type),
-                    port);
+                    port,
+                    clientId);
               emit sigResourceAdded(tmpRes);
               retVal=true;
             }

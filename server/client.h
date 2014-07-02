@@ -52,7 +52,12 @@ namespace Server
     /**
       @brief Notifies the SCPI::SCPIInterface of new SCPI commands
       */
-    void sigScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &command);
+    void sigScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &command, QByteArray clientId);
+
+    /**
+     * @brief Used by shared connections
+     */
+    void sigDisconnectedClientId(const QByteArray& clientId);
 
   public slots:
     /**

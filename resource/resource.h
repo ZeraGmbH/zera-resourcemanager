@@ -37,7 +37,7 @@ namespace Application
       @param port the port
       @note Every Application::Resource object should only be adressed once
       */
-    Resource(quint32 amount, const QString& description, const QString& name, Server::Client *provider, const QString& type, quint32 port=0 );
+    Resource(quint32 amount, const QString& description, const QString& name, Server::Client *provider, const QString& type, quint32 port=0 , const QByteArray providerId=0);
 
     /**
       @brief Returns the name of the Application::Resource
@@ -76,7 +76,13 @@ namespace Application
     /**
      * @brief getPort Returns the service port where the resource is located
      */
-    quint32 getPort();
+    quint32 getPort() const;
+
+    /**
+     * @brief Used for shared connections
+     * @return
+     */
+    const QByteArray &getProviderId() const;
 
     /**
       @brief occupies the resource
@@ -99,6 +105,7 @@ namespace Application
      * @brief setObject Sets the SCPI object of this resource if not already set
      */
     void setObject(SCPI::ResourceObject* obj);
+
   private:
     /**
       @brief free amount of the SCPI::ResourceObject if the resource has  a quantity
@@ -136,6 +143,11 @@ namespace Application
       @brief socket id of the provider of this SCPI::ResourceObject
       */
     Server::Client * m_resourceProvider;
+
+    /**
+     * @brief Used to identify providers on a shared connection
+     */
+    QByteArray m_resourceProviderId;
 
     /**
       @brief type of the SCPI::ResourceObject, e.g. Sense for sensors

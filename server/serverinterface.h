@@ -40,6 +40,11 @@ namespace Server
     void clientDisconnected();
 
     /**
+      @brief Will be triggered when a client disconnects on a shared connection
+      */
+    void onClientDisconnectedPerId(const QByteArray &clientId);
+
+    /**
      * @brief Is called when new clients arrive
      * @param [in] *zcl the Zera::Net::cClient that just connected
      */

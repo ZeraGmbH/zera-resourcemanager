@@ -38,11 +38,24 @@ namespace Server
     }
   }
 
+  void ServerInterface::onClientDisconnectedPerId(const QByteArray &clientId)
+  {
+    if(QObject::sender()!=0)
+    {
+      Client* cl = qobject_cast<Server::Client*> (QObject::sender());
+
+      qDebug()<<"Client disconnected:"<<cl->getName();
+
+      SCPI::SCPIInterface::getInstance()->doResourceRemoveByProviderId(cl,clientId);
+    }
+  }
+
   void ServerInterface::newClient(ProtoNetPeer *zcl)
   {
     Client* tmpClient = new Client(zcl);
     m_clients.append(tmpClient);
     connect(tmpClient, &Client::sigAboutToDisconnect, this, &ServerInterface::clientDisconnected);
+    connect(tmpClient, &Client::sigDisconnectedClientId, this, &ServerInterface::onClientDisconnectedPerId);
     connect(tmpClient, &Client::sigScpiTransaction, SCPI::SCPIInterface::getInstance(), &SCPI::SCPIInterface::onScpiTransaction);
   }
 

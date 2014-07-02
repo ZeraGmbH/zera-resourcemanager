@@ -22,7 +22,5 @@ int main(int argc, char* argv[])
   Q_UNUSED(scpiIface)
   Q_UNUSED(sInterface)
 
-
-
   return a.exec();
 }
