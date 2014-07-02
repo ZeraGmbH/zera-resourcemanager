@@ -35,7 +35,7 @@ namespace SCPI
     aTMP<<"TYPE";
     scpiInstance->genSCPICmd(aTMP,catalogType);
 
-    connect(this,SIGNAL(resourceAdded(Application::Resource*)),this,SLOT(resourceAdd(Application::Resource*)));
+    connect(this, &SCPIInterface::resourceAdded,this, &SCPIInterface::resourceAdd);
   }
 
   SCPIInterface* SCPIInterface::singletonInstance=0;

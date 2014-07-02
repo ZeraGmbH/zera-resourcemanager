@@ -13,9 +13,9 @@ namespace Server
   {
     m_zClient = zClient;
     m_zClient->setParent(this);
-    connect(m_zClient,SIGNAL(sigMessageReceived(google::protobuf::Message*)), this, SLOT(messageReceived(google::protobuf::Message*)));
-    connect(m_zClient,SIGNAL(sigConnectionClosed()),this, SIGNAL(aboutToDisconnect()));
-    connect(this,SIGNAL(aboutToDisconnect()),this,SLOT(onDisconnectCleanup()));
+    connect(m_zClient, &ProtoNetPeer::sigMessageReceived, this, &Client::messageReceived);
+    connect(m_zClient, &ProtoNetPeer::sigConnectionClosed,this, &Client::aboutToDisconnect);
+    connect(this, &Client::aboutToDisconnect,this, &Client::onDisconnectCleanup);
   }
 
   const QString &Client::getName()

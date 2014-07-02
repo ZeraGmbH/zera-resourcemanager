@@ -6,6 +6,7 @@
 #include "rmprotobufwrapper.h"
 
 #include <protonetserver.h>
+#include <protonetpeer.h>
 
 
 #include <QDebug>
@@ -41,8 +42,8 @@ namespace Server
   {
     Client* tmpClient = new Client(zcl);
     clients.append(tmpClient);
-    connect(tmpClient,SIGNAL(aboutToDisconnect()),this,SLOT(clientDisconnected()));
-    connect(tmpClient,SIGNAL(scpiCommandSent(ProtobufMessage::NetMessage::ScpiCommand)),SCPI::SCPIInterface::getInstance(),SLOT(scpiTransaction(ProtobufMessage::NetMessage::ScpiCommand)));
+    connect(tmpClient, &Client::aboutToDisconnect, this, &ServerInterface::clientDisconnected);
+    connect(tmpClient, &Client::scpiCommandSent, SCPI::SCPIInterface::getInstance(), &SCPI::SCPIInterface::scpiTransaction);
   }
 
   ServerInterface::ServerInterface(QObject* parent) :
@@ -51,7 +52,7 @@ namespace Server
     m_defaultWrapper(new RMProtobufWrapper())
   {
     m_zServer->setDefaultWrapper(m_defaultWrapper);
-    connect(m_zServer,SIGNAL(sigClientConnected(ProtoNetPeer*)),this,SLOT(newClient(ProtoNetPeer*)));
+    connect(m_zServer, &ProtoNetServer::sigClientConnected,this, &ServerInterface::newClient);
     m_zServer->startServer(6312); /// @todo Change port
   }
 
