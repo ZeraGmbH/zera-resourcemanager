@@ -45,7 +45,7 @@ const QString ResourceManager::listResources(const QString &Type)
 Application::Resource *ResourceManager::createResource(quint32 amount, const QString &description, const QString &name, Server::Client * provider, const QString &type, quint32 port)
 {
   Application::Resource* tmpRes=new Application::Resource(amount, description, name, provider, type, port);
-  newResource(tmpRes);
+  onResourceAdded(tmpRes);
   return tmpRes;
 }
 
@@ -87,12 +87,12 @@ Application::Resource *ResourceManager::getResourceByName(const QString &name, c
   return retVal;
 }
 
-void ResourceManager::newResource(Application::Resource* resource)
+void ResourceManager::onResourceAdded(Application::Resource* resource)
 {
   resourceList.append(resource);
 }
 
-void ResourceManager::deleteResource(Application::Resource* resource)
+void ResourceManager::onResourceRemoved(Application::Resource* resource)
 {
   resourceList.removeAll(resource);
 }

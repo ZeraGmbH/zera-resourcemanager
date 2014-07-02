@@ -47,39 +47,39 @@ namespace Server
     /**
      * @brief The client disconnected from the server
      */
-    void aboutToDisconnect();
+    void sigAboutToDisconnect();
 
     /**
       @brief Notifies the SCPI::SCPIInterface of new SCPI commands
       */
-    void scpiCommandSent(const ProtobufMessage::NetMessage::ScpiCommand &command);
+    void sigScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &command);
 
   public slots:
     /**
      * @brief Sends acknowledgement
      * @param message Optional text
      */
-    void sendACK(const QString &message=QString());
+    void doSendACK(const QString &message=QString());
     /**
      * @brief Sends debug informations
      * @param message Required text
      */
-    void sendDebug(const QString &message);
+    void doSendDebug(const QString &message);
     /**
      * @brief Sends an error message
      * @param message Optional text
      */
-    void sendError(const QString &message=QString());
+    void doSendError(const QString &message=QString());
     /**
      * @brief Sends negative acknowledgement
      * @param message Optional text
      */
-    void sendNACK(const QString &message=QString());
+    void doSendNACK(const QString &message=QString());
     /**
      * @brief Decodes incoming messages into a ProtobufMessage
      * @param message Unparsed message
      */
-    void messageReceived(google::protobuf::Message *message);
+    void onMessageReceived(google::protobuf::Message *message);
 
   private slots:
     /**

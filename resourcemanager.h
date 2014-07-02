@@ -66,13 +66,13 @@ public slots:
     @brief Will be triggered when the a Server::Client provides a new Resource:ResourceObject
     @param [in] *resource the SCPI::ResourceObject that will be added in ResourceManager
     */
-  void newResource(Application::Resource* resource);
+  void onResourceAdded(Application::Resource* resource);
 
   /**
     @brief Will be triggered when the a Server::Client wants to delete a Resource:ResourceObject
     @param [in] *resource the SCPI::ResourceObject that will be  deleted in ResourceManager
     */
-  void deleteResource(Application::Resource* resource);
+  void onResourceRemoved(Application::Resource* resource);
 
 private:
   /**

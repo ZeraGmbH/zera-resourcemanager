@@ -13,9 +13,9 @@ namespace Server
   {
     m_zClient = zClient;
     m_zClient->setParent(this);
-    connect(m_zClient, &ProtoNetPeer::sigMessageReceived, this, &Client::messageReceived);
-    connect(m_zClient, &ProtoNetPeer::sigConnectionClosed,this, &Client::aboutToDisconnect);
-    connect(this, &Client::aboutToDisconnect,this, &Client::onDisconnectCleanup);
+    connect(m_zClient, &ProtoNetPeer::sigMessageReceived, this, &Client::onMessageReceived);
+    connect(m_zClient, &ProtoNetPeer::sigConnectionClosed,this, &Client::sigAboutToDisconnect);
+    connect(this, &Client::sigAboutToDisconnect,this, &Client::onDisconnectCleanup);
   }
 
   const QString &Client::getName()
@@ -38,7 +38,7 @@ namespace Server
     occupies.remove(res);
   }
 
-  void Client::sendACK(const QString &message)
+  void Client::doSendACK(const QString &message)
   {
     ProtobufMessage::NetMessage envelope;
     ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
@@ -48,7 +48,7 @@ namespace Server
     sendMessage(&envelope);
   }
 
-  void Client::sendDebug(const QString &message)
+  void Client::doSendDebug(const QString &message)
   {
     ProtobufMessage::NetMessage envelope;
     ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
@@ -58,7 +58,7 @@ namespace Server
     sendMessage(&envelope);
   }
 
-  void Client::sendError(const QString &message)
+  void Client::doSendError(const QString &message)
   {
     ProtobufMessage::NetMessage envelope;
     ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
@@ -68,7 +68,7 @@ namespace Server
     sendMessage(&envelope);
   }
 
-  void Client::sendNACK(const QString &message)
+  void Client::doSendNACK(const QString &message)
   {
     ProtobufMessage::NetMessage envelope;
     ProtobufMessage::NetMessage::NetReply* newMessage = envelope.mutable_reply();
@@ -78,7 +78,7 @@ namespace Server
     sendMessage(&envelope);
   }
 
-  void Client::messageReceived(google::protobuf::Message *message)
+  void Client::onMessageReceived(google::protobuf::Message *message)
   {
     ProtobufMessage::NetMessage *envelope = static_cast<ProtobufMessage::NetMessage *>(message);
     // return message to client to show that it was received
@@ -105,7 +105,7 @@ namespace Server
         {
           m_name = QString::fromStdString(envelope->reply().body());
           qDebug() << "Resourcemanager: Client identified" << getName();
-          sendACK();
+          doSendACK();
           break;
         }
         case ProtobufMessage::NetMessage::NetReply::ACK:
@@ -134,7 +134,7 @@ namespace Server
     }
     if(envelope->has_scpi())
     {
-      emit scpiCommandSent(envelope->scpi());
+      emit sigScpiTransaction(envelope->scpi());
     }
   }
 

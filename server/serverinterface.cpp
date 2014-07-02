@@ -31,7 +31,7 @@ namespace Server
 
       qDebug()<<"Client disconnected:"<<cl->getName();
 
-      SCPI::SCPIInterface::getInstance()->resourceRemoveByProvider(cl);
+      SCPI::SCPIInterface::getInstance()->doResourceRemoveByProvider(cl);
 
       clients.removeAll(cl);
       cl->deleteLater();
@@ -42,8 +42,8 @@ namespace Server
   {
     Client* tmpClient = new Client(zcl);
     clients.append(tmpClient);
-    connect(tmpClient, &Client::aboutToDisconnect, this, &ServerInterface::clientDisconnected);
-    connect(tmpClient, &Client::scpiCommandSent, SCPI::SCPIInterface::getInstance(), &SCPI::SCPIInterface::scpiTransaction);
+    connect(tmpClient, &Client::sigAboutToDisconnect, this, &ServerInterface::clientDisconnected);
+    connect(tmpClient, &Client::sigScpiTransaction, SCPI::SCPIInterface::getInstance(), &SCPI::SCPIInterface::onScpiTransaction);
   }
 
   ServerInterface::ServerInterface(QObject* parent) :

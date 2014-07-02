@@ -103,26 +103,26 @@ namespace SCPI
     /**
       @brief This signal will inform the Resourcemanager of new resources, it will also call SCPIInterface::resourceAdd()
       */
-    void resourceAdded(Application::Resource* res);
+    void sigResourceAdded(Application::Resource* res);
 
 
   public slots:
     /**
       @brief The clients SCPI data is handled here
       */
-    void scpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand);
+    void onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand);
     /**
       @brief Adds a SCPI::ResourceObject to the SCPI tree
 
       Also adds a SCPI::Catalog if the resource's type is a new type
       */
-    void resourceAdd(Application::Resource * res);
+    void onResourceAdded(Application::Resource * res);
     /**
       @brief Removes a SCPI::ResourceObject from the SCPI tree
 
       @todo Also remove the SCPI::Catalog if the refcounter hits 0 and remove the node of the type
       */
-    bool resourceRemove(Application::Resource * res, Server::Client* client);
+    bool doResourceRemove(Application::Resource * res, Server::Client* client);
 
     /**
      * @brief resourceRemoveByProvider Deletes all resources the Server::Client provided
@@ -130,7 +130,7 @@ namespace SCPI
      * Will be called when the Server::Client disconnects
      * @param client The provider of the resources
      */
-    void resourceRemoveByProvider(Server::Client* client);
+    void doResourceRemoveByProvider(Server::Client* client);
 
   private:
     /**

@@ -35,7 +35,7 @@ namespace SCPI
     aTMP<<"TYPE";
     scpiInstance->genSCPICmd(aTMP,catalogType);
 
-    connect(this, &SCPIInterface::resourceAdded,this, &SCPIInterface::resourceAdd);
+    connect(this, &SCPIInterface::sigResourceAdded,this, &SCPIInterface::onResourceAdded);
   }
 
   SCPIInterface* SCPIInterface::singletonInstance=0;
@@ -72,7 +72,7 @@ namespace SCPI
     return ResourceManager::getInstance()->listResources(type);
   }
 
-  void SCPIInterface::resourceAdd(Application::Resource *res)
+  void SCPIInterface::onResourceAdded(Application::Resource *res)
   {
     ResourceObject* newRes= new ResourceObject(res);
     res->setObject(newRes);
@@ -109,12 +109,12 @@ namespace SCPI
     scpiInstance->genSCPICmd(position,newRes);
   }
 
-  bool SCPIInterface::resourceRemove(Application::Resource *res, Server::Client *client)
+  bool SCPIInterface::doResourceRemove(Application::Resource *res, Server::Client *client)
   {
     bool retVal=false;
     if(client==res->getProvider())
     {
-      ResourceManager::getInstance()->deleteResource(res);
+      ResourceManager::getInstance()->onResourceRemoved(res);
       res->deleteLater();
       scpiInstance->delSCPICmds(QString("RESOURCE:%1:%2").arg(res->getType()).arg(res->getName()));
       delete res->getResourceObject();
@@ -137,12 +137,12 @@ namespace SCPI
     else
     {
       // this would be a strange error, someone tries to delete an existing resource he did not provide?#
-      client->sendError(tr("Not owner of resource: %1").arg(res->getName()));
+      client->doSendError(tr("Not owner of resource: %1").arg(res->getName()));
     }
     return retVal;
   }
 
-  void SCPIInterface::resourceRemoveByProvider(Server::Client *client)
+  void SCPIInterface::doResourceRemoveByProvider(Server::Client *client)
   {
     ResourceObject *resObj;
     Application::Resource* res;
@@ -151,13 +151,13 @@ namespace SCPI
       res = ResourceManager::getInstance()->getResourceByObject(resObj);
       if(res!=0 && res->getProvider()==client)
       {
-        resourceRemove(res, client);
+        doResourceRemove(res, client);
         qDebug() << "Deleting" << resObj->getName();
       }
     }
   }
 
-  void SCPIInterface::scpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand)
+  void SCPIInterface::onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand)
   {
     bool retVal=false;
     Server::Client* currentClient=0;
@@ -198,7 +198,7 @@ namespace SCPI
                     currentClient,
                     command.getParam(CommandParams::type),
                     port);
-              emit resourceAdded(tmpRes);
+              emit sigResourceAdded(tmpRes);
               retVal=true;
             }
             else
@@ -226,7 +226,7 @@ namespace SCPI
           tmpRes=ResourceManager::getInstance()->getResourceByObject(static_cast<ResourceObject*>(scpiInstance->getSCPIObject(toDelete)));
           if(tmpRes!=0)
           {
-            if(resourceRemove(tmpRes,currentClient))
+            if(doResourceRemove(tmpRes,currentClient))
             {
               scpiInstance->delSCPICmds(tmpDelete);
               retVal=true;
@@ -298,18 +298,18 @@ namespace SCPI
 
         if(retVal)
         {
-          currentClient->sendACK(answer);
+          currentClient->doSendACK(answer);
         }
         else
         {
-          currentClient->sendNACK(answer);
+          currentClient->doSendNACK(answer);
         }
 
 
       }
       else //tmpObject was not found
       {
-        currentClient->sendError(tr("ERROR INVALID SCPI COMMAND"));
+        currentClient->doSendError(tr("ERROR INVALID SCPI COMMAND"));
       }
     }
 
