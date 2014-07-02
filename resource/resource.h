@@ -104,49 +104,49 @@ namespace Application
       @brief free amount of the SCPI::ResourceObject if the resource has  a quantity
       @note if a Server::Client occupies a resource and the resource has an amount > 0 the ResourceObject::Occupy call also needs to specify an amount > 0
       */
-    quint32 freeAmount;
+    quint32 m_freeAmount;
 
     /**
       @brief amount of the SCPI::ResourceObject
       @note if the amount is set to 0 then the resource can only be occupied once, and all occupy calls with amount>0 will fail with "bad amount"
       */
-    const quint32 resourceAmount;
+    const quint32 m_resourceAmount;
 
     /**
       @brief description of the SCPI::ResourceObject
       */
-    const QString resourceDescription;
+    const QString m_resourceDescription;
 
     /**
       @brief name of the SCPI::ResourceObject
       */
-    const QString resourceName;
+    const QString m_resourceName;
 
     /**
      * @brief resourceObject The SCPI object of this Resource
      */
-    SCPI::ResourceObject* resourceObject;
+    SCPI::ResourceObject* m_resourceObject;
 
     /**
      * @brief The port where the resource can be accessed
      */
-    quint32 resourcePort;
+    quint32 m_resourcePort;
 
     /**
       @brief socket id of the provider of this SCPI::ResourceObject
       */
-    Server::Client * resourceProvider;
+    Server::Client * m_resourceProvider;
 
     /**
       @brief type of the SCPI::ResourceObject, e.g. Sense for sensors
       */
-    const QString resourceType;
+    const QString m_resourceType;
 
     /**
       @brief occupiers (socket ids) of the SCPI::ResourceObject, quint32 is the amount
       @note if the resource has no quantity (amount=0) only one occupation is possible
       */
-    QMap<Server::Client*, quint32> occupiers;
+    QMap<Server::Client*, quint32> m_occupiers;
   };
 }
 #endif // H2012_RESOURCEOBJECT_H

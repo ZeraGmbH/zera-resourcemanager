@@ -18,45 +18,45 @@ namespace SCPI
 {
   SCPIInterface::SCPIInterface(QObject* parent) : QObject(parent)
   {
-    scpiInstance = new cSCPI("Resourcemanager");
-    addResource=new Delegate("ADD", isCmdwP);
-    catalogType=new Delegate("CATALOG", isCmd);
-    removeResource=new Delegate("REMOVE", isCmdwP);
-    resourceModel=new Delegate("MODEL",isQuery);
-    resourceProvider=new Delegate("PROVIDER",isCmdwP);
+    m_scpiInstance = new cSCPI("Resourcemanager");
+    m_addResource=new Delegate("ADD", isCmdwP);
+    m_catalogType=new Delegate("CATALOG", isCmd);
+    m_removeResource=new Delegate("REMOVE", isCmdwP);
+    m_resourceModel=new Delegate("MODEL",isQuery);
+    m_resourceProvider=new Delegate("PROVIDER",isCmdwP);
 
 
     //Add all default cSCPIObjects
     QStringList aTMP = QStringList("RESOURCE");
-    scpiInstance->genSCPICmd(aTMP,addResource);
-    scpiInstance->genSCPICmd(aTMP,removeResource);
-    scpiInstance->genSCPICmd(aTMP,resourceModel);
-    scpiInstance->genSCPICmd(aTMP,resourceProvider);
+    m_scpiInstance->genSCPICmd(aTMP,m_addResource);
+    m_scpiInstance->genSCPICmd(aTMP,m_removeResource);
+    m_scpiInstance->genSCPICmd(aTMP,m_resourceModel);
+    m_scpiInstance->genSCPICmd(aTMP,m_resourceProvider);
     aTMP<<"TYPE";
-    scpiInstance->genSCPICmd(aTMP,catalogType);
+    m_scpiInstance->genSCPICmd(aTMP,m_catalogType);
 
     connect(this, &SCPIInterface::sigResourceAdded,this, &SCPIInterface::onResourceAdded);
   }
 
-  SCPIInterface* SCPIInterface::singletonInstance=0;
+  SCPIInterface* SCPIInterface::m_singletonInstance=0;
   SCPIInterface* SCPIInterface::getInstance()
   {
-    if(singletonInstance==0)
+    if(m_singletonInstance==0)
     {
-      singletonInstance=new SCPIInterface;
+      m_singletonInstance=new SCPIInterface;
     }
-    return singletonInstance;
+    return m_singletonInstance;
   }
 
   QStandardItemModel *SCPIInterface::getModel()
   {
-    return scpiInstance->getSCPIModel();
+    return m_scpiInstance->getSCPIModel();
   }
 
   QString SCPIInterface::listTypes()
   {
     QString retVal;
-    foreach(Catalog* tmpCat, catalogList)
+    foreach(Catalog* tmpCat, m_catalogList)
     {
       if(!retVal.contains(tmpCat->getCatalogType()))
       {
@@ -82,7 +82,7 @@ namespace SCPI
 
     //look for an existing catalog for the type res->getType()
     bool catalogFound=false;
-    foreach(Catalog* tmpCat, catalogList)
+    foreach(Catalog* tmpCat, m_catalogList)
     {
       if(tmpCat->getCatalogType()==res->getType())
       {
@@ -98,15 +98,15 @@ namespace SCPI
       tmpCat->setType(isCmd);//catalog is a command
       tmpCat->setCatalogType(res->getType());
       tmpCat->upRef();//increment reference counter
-      catalogList.append(tmpCat);
-      scpiInstance->genSCPICmd(position,tmpCat);
+      m_catalogList.append(tmpCat);
+      m_scpiInstance->genSCPICmd(position,tmpCat);
     }
 
     //add the resource to the scpi tree and our internal list
     newRes->setName(res->getName());
     newRes->setType(isQuery);
-    resourceList.append(newRes);
-    scpiInstance->genSCPICmd(position,newRes);
+    m_resourceList.append(newRes);
+    m_scpiInstance->genSCPICmd(position,newRes);
   }
 
   bool SCPIInterface::doResourceRemove(Application::Resource *res, Server::Client *client)
@@ -116,17 +116,17 @@ namespace SCPI
     {
       ResourceManager::getInstance()->onResourceRemoved(res);
       res->deleteLater();
-      scpiInstance->delSCPICmds(QString("RESOURCE:%1:%2").arg(res->getType()).arg(res->getName()));
+      m_scpiInstance->delSCPICmds(QString("RESOURCE:%1:%2").arg(res->getType()).arg(res->getName()));
       delete res->getResourceObject();
-      foreach(Catalog* tmpCat, catalogList)
+      foreach(Catalog* tmpCat, m_catalogList)
       {
         if(tmpCat->getCatalogType()==res->getType())
         {
           tmpCat->unRef();
           if(tmpCat->getRefCount()==0)
           {
-            catalogList.removeAll(tmpCat);
-            scpiInstance->delSCPICmds(QString("RESOURCE:%1:CATALOG").arg(tmpCat->getCatalogType()));
+            m_catalogList.removeAll(tmpCat);
+            m_scpiInstance->delSCPICmds(QString("RESOURCE:%1:CATALOG").arg(tmpCat->getCatalogType()));
             delete tmpCat;
           }
           break;
@@ -146,7 +146,7 @@ namespace SCPI
   {
     ResourceObject *resObj;
     Application::Resource* res;
-    foreach(resObj, resourceList)
+    foreach(resObj, m_resourceList)
     {
       res = ResourceManager::getInstance()->getResourceByObject(resObj);
       if(res!=0 && res->getProvider()==client)
@@ -167,7 +167,7 @@ namespace SCPI
     {
       cSCPICommand command=QString("%1 %2").arg(QString::fromStdString(pbSCPICommand.command())).arg(QString::fromStdString(pbSCPICommand.parameter()));
       cSCPIObject* tmpObject=0;
-      tmpObject=scpiInstance->getSCPIObject(command); //check which scpi node is triggered
+      tmpObject=m_scpiInstance->getSCPIObject(command); //check which scpi node is triggered
       if(tmpObject!=0)
       {
         /// @todo remove debug code
@@ -181,13 +181,13 @@ namespace SCPI
 
 
         // check the delegates
-        if(tmpObject==addResource) //A resource is about to be added
+        if(tmpObject==m_addResource) //A resource is about to be added
         {
-          Application::Resource* tmpRes=0;
-          quint16 port=0;
-          bool portConvert;
           if(command.getParamCount()==CommandParams::_paramcount)
           {
+            Application::Resource* tmpRes=0;
+            quint16 port=0;
+            bool portConvert;
             port=command.getParam(CommandParams::port).toUShort(&portConvert);
             if(portConvert) // check if the provider has a valid TCP/IP port where the resource is located
             {
@@ -211,7 +211,7 @@ namespace SCPI
             answer=tr("Invalid parameter count: %1 (expected: %2)").arg(command.getParamCount()).arg(CommandParams::_paramcount);
           }
         }
-        else if(tmpObject==removeResource)
+        else if(tmpObject==m_removeResource)
         {
           QString tmpDelete=command.getParam(0); //get the first parameter
           cSCPICommand toDelete;
@@ -223,12 +223,12 @@ namespace SCPI
           }
           qDebug()<<"Deleting with:  "<<tmpDelete;
           toDelete = QString("RESOURCE:%1").arg(tmpDelete);
-          tmpRes=ResourceManager::getInstance()->getResourceByObject(static_cast<ResourceObject*>(scpiInstance->getSCPIObject(toDelete)));
+          tmpRes=ResourceManager::getInstance()->getResourceByObject(static_cast<ResourceObject*>(m_scpiInstance->getSCPIObject(toDelete)));
           if(tmpRes!=0)
           {
             if(doResourceRemove(tmpRes,currentClient))
             {
-              scpiInstance->delSCPICmds(tmpDelete);
+              m_scpiInstance->delSCPICmds(tmpDelete);
               retVal=true;
             }
           }
@@ -237,13 +237,13 @@ namespace SCPI
             answer=tr("Resource not found: %1").arg(command.getParam(CommandParams::name));
           }
         }
-        else if(tmpObject==resourceModel) // return XMLized qstandarditem model
+        else if(tmpObject==m_resourceModel) // return XMLized qstandarditem model
         {
           answer="";
-          scpiInstance->exportSCPIModelXML(answer);
+          m_scpiInstance->exportSCPIModelXML(answer);
           retVal=true;
         }
-        else if(tmpObject==resourceProvider) // return IP address and port
+        else if(tmpObject==m_resourceProvider) // return IP address and port
         {
           QString tmpSearch=command.getParam(0); //get the first parameter
           cSCPICommand searchCommand;
@@ -255,7 +255,7 @@ namespace SCPI
 
           searchCommand=tmpSearch;
 
-          tmpRes=ResourceManager::getInstance()->getResourceByObject(static_cast<ResourceObject*>(scpiInstance->getSCPIObject(searchCommand)));
+          tmpRes=ResourceManager::getInstance()->getResourceByObject(static_cast<ResourceObject*>(m_scpiInstance->getSCPIObject(searchCommand)));
           if(tmpRes!=0)
           {
             retVal=true;
@@ -263,7 +263,7 @@ namespace SCPI
           }
 
         }
-        else if(tmpObject==catalogType)
+        else if(tmpObject==m_catalogType)
         {
           answer=listTypes();
           retVal=true;

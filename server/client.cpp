@@ -30,12 +30,12 @@ namespace Server
 
   void Client::addOccupation(Application::Resource *res)
   {
-    occupies.insert(res);
+    m_occupies.insert(res);
   }
 
   void Client::removeOccupation(Application::Resource *res)
   {
-    occupies.remove(res);
+    m_occupies.remove(res);
   }
 
   void Client::doSendACK(const QString &message)
@@ -85,17 +85,17 @@ namespace Server
     if(envelope->has_clientid())
     {
       qDebug() << "queued clientid:"<< QByteArray(envelope->clientid().c_str(), envelope->clientid().length()).toBase64();
-      clientIdQueue.enqueue(QByteArray(envelope->clientid().data(),envelope->clientid().size()));
+      m_clientIdQueue.enqueue(QByteArray(envelope->clientid().data(),envelope->clientid().size()));
     }
     if(envelope->has_messagenr())
     {
-      messageIdQueue.enqueue(envelope->messagenr());
+      m_messageIdQueue.enqueue(envelope->messagenr());
     }
     else
     {
       //legacy mode
-      clientIdQueue.enqueue(QByteArray());
-      messageIdQueue.enqueue(-1);
+      m_clientIdQueue.enqueue(QByteArray());
+      m_messageIdQueue.enqueue(-1);
     }
     if(envelope->has_reply())
     {
@@ -116,16 +116,16 @@ namespace Server
         case ProtobufMessage::NetMessage::NetReply::DEBUG:
         {
           //no reply is being sent
-          clientIdQueue.removeLast();
-          messageIdQueue.removeLast();
+          m_clientIdQueue.removeLast();
+          m_messageIdQueue.removeLast();
           qDebug() << QString("Client '%1' sent debug message:\n%2").arg(this->getName()).arg(QString::fromStdString(envelope->reply().body()));
           break;
         }
         default:
         {
           //no reply is being sent
-          clientIdQueue.removeLast();
-          messageIdQueue.removeLast();
+          m_clientIdQueue.removeLast();
+          m_messageIdQueue.removeLast();
           qWarning("Resourcemanager: Something went wrong with network messages!");
           /// @todo this is the error case
           break;
@@ -140,15 +140,15 @@ namespace Server
 
   void Client::onDisconnectCleanup()
   {
-    foreach (Application::Resource *tmpRes, occupies) {
+    foreach (Application::Resource *tmpRes, m_occupies) {
       tmpRes->freeResource(this);
     }
   }
 
   void Client::sendMessage(ProtobufMessage::NetMessage *message)
   {
-    QByteArray tmp_cID = clientIdQueue.dequeue();
-    qint64 tmp_mID = messageIdQueue.dequeue();
+    QByteArray tmp_cID = m_clientIdQueue.dequeue();
+    qint64 tmp_mID = m_messageIdQueue.dequeue();
     if(!tmp_cID.isEmpty()) //check for legacy mode
     {
       qDebug()  << "clientid sent:" << tmp_cID.toBase64();

@@ -60,7 +60,7 @@ namespace Server
     /**
       @brief  list of all Server::Client instances this server handles
       */
-    QList<Client*> clients;
+    QList<Client*> m_clients;
 
     /**
      * @brief Internally used server

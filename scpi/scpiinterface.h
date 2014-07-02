@@ -136,42 +136,42 @@ namespace SCPI
     /**
       @brief represents the RESOURCE:ADD in the SCPI tree
       */
-    Delegate* addResource;
+    Delegate* m_addResource;
     /**
       @brief represents the RESOURCE:(TYPE):CATALOG in the SCPI tree
       */
-    Delegate* catalogType;
+    Delegate* m_catalogType;
     /**
       @brief represents the RESOURCE:REMOVE in the SCPI tree
       */
-    Delegate* removeResource;
+    Delegate* m_removeResource;
 
     /**
      * @brief Retrieves the XMLized model of the SCPI tree structure
      */
-    Delegate* resourceModel;
+    Delegate* m_resourceModel;
     /**
       @brief Retrieves the service information for the resource
       */
-    Delegate* resourceProvider;
+    Delegate* m_resourceProvider;
 
     /**
       @brief SCPI library interaction is held here
       */
-    cSCPI* scpiInstance;
+    cSCPI* m_scpiInstance;
     /**
       @brief Singleton instance, no other instances of this object are possible
       */
-    static SCPIInterface* singletonInstance;
+    static SCPIInterface* m_singletonInstance;
 
     /**
       @brief The list that holds the SCPI::Catalog for each catalogType
       */
-    QList<Catalog *> catalogList;
+    QList<Catalog *> m_catalogList;
     /**
       @brief Holds the cSCPIObjects for the tree
       */
-    QList<ResourceObject *> resourceList;
+    QList<ResourceObject *> m_resourceList;
 
     /**
       @brief Disables copying due to Singleton pattern

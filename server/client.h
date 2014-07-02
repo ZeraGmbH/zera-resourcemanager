@@ -89,19 +89,18 @@ namespace Server
 
   private:
     /**
-     * @brief The Client representated
-     */
-    ProtoNetPeer* m_zClient;
-
-    /**
      * @brief Internal code to send a ProtobufMessage to the client
      * @param message a ProtobufMessage
      */
     void sendMessage(ProtobufMessage::NetMessage *envelope);
 
-    QQueue<QByteArray> clientIdQueue;
-    QQueue<qint64> messageIdQueue;
-    QSet<Application::Resource *> occupies;
+    /**
+     * @brief The Client representated
+     */
+    ProtoNetPeer* m_zClient;
+    QQueue<QByteArray> m_clientIdQueue;
+    QQueue<qint64> m_messageIdQueue;
+    QSet<Application::Resource *> m_occupies;
     QString m_name;
   };
 }

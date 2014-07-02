@@ -33,7 +33,7 @@ namespace Server
 
       SCPI::SCPIInterface::getInstance()->doResourceRemoveByProvider(cl);
 
-      clients.removeAll(cl);
+      m_clients.removeAll(cl);
       cl->deleteLater();
     }
   }
@@ -41,7 +41,7 @@ namespace Server
   void ServerInterface::newClient(ProtoNetPeer *zcl)
   {
     Client* tmpClient = new Client(zcl);
-    clients.append(tmpClient);
+    m_clients.append(tmpClient);
     connect(tmpClient, &Client::sigAboutToDisconnect, this, &ServerInterface::clientDisconnected);
     connect(tmpClient, &Client::sigScpiTransaction, SCPI::SCPIInterface::getInstance(), &SCPI::SCPIInterface::onScpiTransaction);
   }
@@ -58,7 +58,7 @@ namespace Server
 
   ServerInterface::~ServerInterface()
   {
-    foreach(Client *c, clients)
+    foreach(Client *c, m_clients)
     {
       c->deleteLater();
     }

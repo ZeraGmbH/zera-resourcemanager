@@ -6,7 +6,7 @@ namespace SCPI
 {
   Catalog::Catalog() : cSCPIObject()
   {
-    refCount=0;
+    m_refCount=0;
   }
 
   bool Catalog::executeSCPI(const QString &sInput, QString &sOutput)
@@ -25,29 +25,29 @@ namespace SCPI
 
   const QString &Catalog::getCatalogType()
   {
-    return catalogType;
+    return m_catalogType;
   }
 
   quint16 Catalog::getRefCount()
   {
-    return refCount;
+    return m_refCount;
   }
 
   void Catalog::setCatalogType(const QString& type)
   {
-    catalogType=type;
+    m_catalogType=type;
   }
 
   void Catalog::upRef()
   {
-    refCount++;
+    m_refCount++;
   }
 
   void Catalog::unRef()
   {
-    if(refCount>0)
+    if(m_refCount>0)
     {
-      refCount--;
+      m_refCount--;
     }
     else
     {

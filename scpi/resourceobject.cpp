@@ -6,7 +6,7 @@ namespace SCPI
 {
   ResourceObject::ResourceObject(Application::Resource *resource) :
     cSCPIObject(),
-    res(resource)
+    m_res(resource)
   {
   }
 
@@ -16,7 +16,7 @@ namespace SCPI
 
     if(sInput.contains('?')) ///< Queries the resource
     {
-      sOutput=QString("%1;%2;%3;%4;").arg(res->getAmount()).arg(res->getFreeAmount()).arg(res->getDescription()).arg(res->getPort());
+      sOutput=QString("%1;%2;%3;%4;").arg(m_res->getAmount()).arg(m_res->getFreeAmount()).arg(m_res->getDescription()).arg(m_res->getPort());
       retVal=true;
     }
     return retVal;

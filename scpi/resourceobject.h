@@ -26,7 +26,7 @@ namespace SCPI
     /**
       @brief A link to the corresponding Application::Resource
       */
-    Application::Resource* res;
+    Application::Resource* m_res;
   };
 }
 #endif // RESOURCEOBJECT_H

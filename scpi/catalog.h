@@ -50,11 +50,11 @@ namespace SCPI
     /**
       @brief the Type which the catalog represents
       */
-    QString catalogType;
+    QString m_catalogType;
     /**
       @brief reference counter
       */
-    quint16 refCount;
+    quint16 m_refCount;
   };
 }
 

@@ -78,12 +78,12 @@ private:
   /**
     @brief See [P.157+ Design patterns Gang of Four]
     */
-  static ResourceManager* singletonInstance;
+  static ResourceManager* m_singletonInstance;
 
   /**
     @brief Holds the resources
     */
-  QList<Application::Resource*> resourceList;
+  QList<Application::Resource*> m_resourceList;
   /**
     @note Instances of this class should only get accessed through the getInstance method.
     */

@@ -6,76 +6,76 @@
 namespace Application
 {
   Resource::Resource(quint32 amount, const QString& description, const QString& name, Server::Client * provider, const QString& type , quint32 port) :
-    resourceAmount(amount), resourceDescription(description), resourceName(name), resourcePort(port), resourceProvider(provider), resourceType(type)
+    m_resourceAmount(amount), m_resourceDescription(description), m_resourceName(name), m_resourcePort(port), m_resourceProvider(provider), m_resourceType(type)
   {
-    resourceObject=0;
-    freeAmount=amount;
+    m_resourceObject=0;
+    m_freeAmount=amount;
   }
 
   const QString &Resource::getName()
   {
-    return resourceName;
+    return m_resourceName;
   }
 
   Server::Client * Resource::getProvider()
   {
-    return resourceProvider;
+    return m_resourceProvider;
   }
 
   const QString &Resource::getDescription()
   {
-    return resourceDescription;
+    return m_resourceDescription;
   }
 
   quint32 Resource::getAmount()
   {
-    return resourceAmount;
+    return m_resourceAmount;
   }
 
   SCPI::ResourceObject *Resource::getResourceObject()
   {
-    return resourceObject;
+    return m_resourceObject;
   }
 
   const QString &Resource::getType()
   {
-    return resourceType;
+    return m_resourceType;
   }
 
   quint32 Resource::getFreeAmount()
   {
-    return freeAmount;
+    return m_freeAmount;
   }
 
   QList<Server::Client *> Resource::getOccupiers()
   {
-    return occupiers.keys();
+    return m_occupiers.keys();
   }
 
   quint32 Resource::getPort()
   {
-    return resourcePort;
+    return m_resourcePort;
   }
 
   bool Resource::occupyResource(Server::Client *occupier, quint32 amount)
   {
     bool retVal = false;
-    if(amount>0 && resourceAmount >0)
+    if(amount>0 && m_resourceAmount >0)
     {
-      if(amount<=resourceAmount)
+      if(amount<=m_resourceAmount)
       {
         occupier->addOccupation(this);
-        occupiers.insert(occupier,amount);
-        freeAmount=freeAmount-amount;
+        m_occupiers.insert(occupier,amount);
+        m_freeAmount=m_freeAmount-amount;
         retVal = true;
       }
     }
-    else if(amount==0 && resourceAmount==0)
+    else if(amount==0 && m_resourceAmount==0)
     {
-      if(occupiers.isEmpty())
+      if(m_occupiers.isEmpty())
       {
         occupier->addOccupation(this);
-        occupiers.insert(occupier,1); //1 means the whole resource here
+        m_occupiers.insert(occupier,1); //1 means the whole resource here
         retVal = true;
       }
     }
@@ -86,12 +86,12 @@ namespace Application
   {
     bool retVal = false;
     quint32 tmpVal;
-    tmpVal=occupiers.value(occupier,0); // this will also detect if the occupier isn't currently holding any resource amount
+    tmpVal=m_occupiers.value(occupier,0); // this will also detect if the occupier isn't currently holding any resource amount
     if(tmpVal>0) //remove the occupier
     {
       occupier->removeOccupation(this);
-      occupiers.remove(occupier);
-      freeAmount=freeAmount+tmpVal;
+      m_occupiers.remove(occupier);
+      m_freeAmount=m_freeAmount+tmpVal;
       retVal=true;
     }
     return retVal;
@@ -99,9 +99,9 @@ namespace Application
 
   void Resource::setObject(SCPI::ResourceObject *obj)
   {
-    if(!resourceObject)
+    if(!m_resourceObject)
     {
-      resourceObject=obj;
+      m_resourceObject=obj;
     }
   }
 }

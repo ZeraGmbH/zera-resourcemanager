@@ -11,21 +11,21 @@ ResourceManager::ResourceManager(QObject* parent) :
 
 ResourceManager::~ResourceManager()
 {
-  foreach(Application::Resource* r, resourceList)
+  foreach(Application::Resource* r, m_resourceList)
   {
     r->deleteLater();
   }
 }
 
-ResourceManager  *ResourceManager::singletonInstance=0;
+ResourceManager  *ResourceManager::m_singletonInstance=0;
 
 ResourceManager *ResourceManager::getInstance()
 {
-  if(singletonInstance==0)
+  if(m_singletonInstance==0)
   {
-    singletonInstance=new ResourceManager;
+    m_singletonInstance=new ResourceManager;
   }
-  return singletonInstance;
+  return m_singletonInstance;
 }
 
 const QString ResourceManager::listResources(const QString &Type)
@@ -33,7 +33,7 @@ const QString ResourceManager::listResources(const QString &Type)
   cSCPIString a, b;
   QString retVal;
   a=Type;
-  foreach(Application::Resource* tmpRO, resourceList)
+  foreach(Application::Resource* tmpRO, m_resourceList)
   {
     b=tmpRO->getType();
     if(a==b)
@@ -53,7 +53,7 @@ Application::Resource *ResourceManager::getResourceByObject(SCPI::ResourceObject
 {
   Application::Resource *retVal=0;
   quint32 sanityCounter=0;
-  foreach (Application::Resource *res, resourceList)
+  foreach (Application::Resource *res, m_resourceList)
   {
     if(res->getResourceObject()==obj)
     {
@@ -72,7 +72,7 @@ Application::Resource *ResourceManager::getResourceByName(const QString &name, c
 {
   Application::Resource *retVal=0;
   quint32 sanityCounter=0;
-  foreach (Application::Resource *res, resourceList)
+  foreach (Application::Resource *res, m_resourceList)
   {
     if(res->getName()==name&&res->getType()==type)
     {
@@ -89,10 +89,10 @@ Application::Resource *ResourceManager::getResourceByName(const QString &name, c
 
 void ResourceManager::onResourceAdded(Application::Resource* resource)
 {
-  resourceList.append(resource);
+  m_resourceList.append(resource);
 }
 
 void ResourceManager::onResourceRemoved(Application::Resource* resource)
 {
-  resourceList.removeAll(resource);
+  m_resourceList.removeAll(resource);
 }
