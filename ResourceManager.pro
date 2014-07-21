@@ -23,7 +23,9 @@ HEADERS += resourcemanager.h \
     resource/resource.h \
     scpi/scpiinterface.h \
     scpi/delegate.h \
-    rmprotobufwrapper.h
+    rmprotobufwrapper.h \
+    server/clientmultiton.h
+
 SOURCES += main.cpp \
     resourcemanager.cpp \
     server/client.cpp \
@@ -33,7 +35,8 @@ SOURCES += main.cpp \
     resource/resource.cpp \
     scpi/scpiinterface.cpp \
     scpi/delegate.cpp \
-    rmprotobufwrapper.cpp
+    rmprotobufwrapper.cpp \
+    server/clientmultiton.cpp
 
 
 # Library
