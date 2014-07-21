@@ -2,6 +2,7 @@
 #include "scpi/scpiinterface.h"
 #include "resource/resource.h"
 #include "server/client.h"
+#include "server/clientmultiton.h"
 
 #include "rmprotobufwrapper.h"
 
@@ -27,26 +28,9 @@ namespace Server
   {
     if(QObject::sender()!=0)
     {
-      Client* cl = qobject_cast<Server::Client*> (QObject::sender());
-
-      qDebug()<<"Client disconnected:"<<cl->getName();
+      ClientMultiton* cl = qobject_cast<Server::ClientMultiton*> (QObject::sender());
 
       SCPI::SCPIInterface::getInstance()->doResourceRemoveByProvider(cl);
-
-      m_clients.removeAll(cl);
-      cl->deleteLater();
-    }
-  }
-
-  void ServerInterface::onClientDisconnectedPerId(const QByteArray &clientId)
-  {
-    if(QObject::sender()!=0)
-    {
-      Client* cl = qobject_cast<Server::Client*> (QObject::sender());
-
-      qDebug()<<"Client disconnected:"<<cl->getName();
-
-      SCPI::SCPIInterface::getInstance()->doResourceRemoveByProviderId(cl,clientId);
     }
   }
 
@@ -55,8 +39,6 @@ namespace Server
     Client* tmpClient = new Client(zcl);
     m_clients.append(tmpClient);
     connect(tmpClient, &Client::sigAboutToDisconnect, this, &ServerInterface::clientDisconnected);
-    connect(tmpClient, &Client::sigDisconnectedClientId, this, &ServerInterface::onClientDisconnectedPerId);
-    connect(tmpClient, &Client::sigScpiTransaction, SCPI::SCPIInterface::getInstance(), &SCPI::SCPIInterface::onScpiTransaction);
   }
 
   ServerInterface::ServerInterface(QObject* parent) :

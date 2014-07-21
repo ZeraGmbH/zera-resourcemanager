@@ -4,7 +4,7 @@
 #include "resourceobject.h"
 #include "resource/resource.h"
 #include "scpiinterface.h"
-#include "server/client.h"
+#include "server/clientmultiton.h"
 
 
 #include <scpi.h>
@@ -109,7 +109,7 @@ namespace SCPI
     m_scpiInstance->genSCPICmd(position,newRes);
   }
 
-  bool SCPIInterface::doResourceRemove(Application::Resource *res, Server::Client *client)
+  bool SCPIInterface::doResourceRemove(Application::Resource *res, Server::ClientMultiton *client)
   {
     bool retVal=false;
     if(client==res->getProvider())
@@ -142,7 +142,7 @@ namespace SCPI
     return retVal;
   }
 
-  void SCPIInterface::doResourceRemoveByProvider(Server::Client *client)
+  void SCPIInterface::doResourceRemoveByProvider(Server::ClientMultiton *client)
   {
     ResourceObject *resObj;
     Application::Resource* res;
@@ -153,31 +153,17 @@ namespace SCPI
       {
         doResourceRemove(res, client);
         qDebug() << "Deleting" << resObj->getName();
+        delete res;
       }
     }
   }
 
-  void SCPIInterface::doResourceRemoveByProviderId(Server::Client *client, const QByteArray &providerId)
-  {
-    ResourceObject *resObj;
-    Application::Resource* res;
-    foreach(resObj, m_resourceList)
-    {
-      res = ResourceManager::getInstance()->getResourceByObject(resObj);
-      if(res!=0 && res->getProvider()==client && res->getProviderId()==providerId)
-      {
-        doResourceRemove(res, client);
-        qDebug() << "Deleting" << resObj->getName();
-      }
-    }
-  }
-
-  void SCPIInterface::onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand, QByteArray clientId)
+  void SCPIInterface::onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand)
   {
     bool retVal=false;
-    Server::Client* currentClient=0;
+    Server::ClientMultiton* currentClient=0;
     QString answer="";
-    currentClient = qobject_cast<Server::Client*> (sender());
+    currentClient = qobject_cast<Server::ClientMultiton*> (sender());
     if(currentClient!=0)
     {
       cSCPICommand command=QString("%1 %2").arg(QString::fromStdString(pbSCPICommand.command())).arg(QString::fromStdString(pbSCPICommand.parameter()));
@@ -212,8 +198,7 @@ namespace SCPI
                     command.getParam(CommandParams::name),
                     currentClient,
                     command.getParam(CommandParams::type),
-                    port,
-                    clientId);
+                    port);
               emit sigResourceAdded(tmpRes);
               retVal=true;
             }
@@ -275,7 +260,7 @@ namespace SCPI
           if(tmpRes!=0)
           {
             retVal=true;
-            answer=QString("%1;%2;").arg(tmpRes->getProvider()->getIpAdress()).arg(tmpRes->getPort());
+            answer=QString("%1;%2;").arg(tmpRes->getProvider()->getIpAddress()).arg(tmpRes->getPort());
           }
 
         }

@@ -7,7 +7,7 @@
 
 namespace Server
 {
-  class Client;
+  class ClientMultiton;
 }
 
 namespace SCPI
@@ -37,7 +37,7 @@ namespace Application
       @param port the port
       @note Every Application::Resource object should only be adressed once
       */
-    Resource(quint32 amount, const QString& description, const QString& name, Server::Client *provider, const QString& type, quint32 port=0 , const QByteArray providerId=0);
+    Resource(quint32 amount, const QString& description, const QString& name, Server::ClientMultiton *provider, const QString& type, quint32 port=0 , const QByteArray providerId=0);
 
     /**
       @brief Returns the name of the Application::Resource
@@ -46,7 +46,7 @@ namespace Application
     /**
       @brief Returns a pointer to the provider
       */
-    Server::Client *getProvider();
+    Server::ClientMultiton *getProvider();
     /**
       @brief Returns the description of the Application::Resource
       */
@@ -71,7 +71,7 @@ namespace Application
     /**
       @brief Returns the occupiers of the Application::Resource
       */
-    QList<Server::Client*> getOccupiers();
+    QList<Server::ClientMultiton*> getOccupiers();
 
     /**
      * @brief getPort Returns the service port where the resource is located
@@ -92,14 +92,14 @@ namespace Application
       @note the amount cannot be more than the resourceAmount
       @returns true if the occupation succeeded
       */
-    bool occupyResource(Server::Client* occupier, quint32 amount=0);
+    bool occupyResource(Server::ClientMultiton *occupier, quint32 amount=0);
 
     /**
       @brief frees the resource
       @param occupier the client requesting the operation
       @returns true if succeeds
       */
-    bool freeResource(Server::Client* occupier);
+    bool freeResource(Server::ClientMultiton* occupier);
 
     /**
      * @brief setObject Sets the SCPI object of this resource if not already set
@@ -142,7 +142,7 @@ namespace Application
     /**
       @brief socket id of the provider of this SCPI::ResourceObject
       */
-    Server::Client * m_resourceProvider;
+    Server::ClientMultiton * m_resourceProvider;
 
     /**
      * @brief Used to identify providers on a shared connection
@@ -158,7 +158,7 @@ namespace Application
       @brief occupiers (socket ids) of the SCPI::ResourceObject, quint32 is the amount
       @note if the resource has no quantity (amount=0) only one occupation is possible
       */
-    QMap<Server::Client*, quint32> m_occupiers;
+    QMap<Server::ClientMultiton*, quint32> m_occupiers;
   };
 }
 #endif // H2012_RESOURCEOBJECT_H

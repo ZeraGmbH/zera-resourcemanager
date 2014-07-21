@@ -11,7 +11,7 @@ class cSCPI;
 
 namespace Server
 {
-  class Client;
+  class ClientMultiton;
 }
 
 
@@ -110,7 +110,7 @@ namespace SCPI
     /**
       @brief The clients SCPI data is handled here
       */
-    void onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand, QByteArray clientId);
+    void onScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &pbSCPICommand);
     /**
       @brief Adds a SCPI::ResourceObject to the SCPI tree
 
@@ -122,7 +122,7 @@ namespace SCPI
 
       @todo Also remove the SCPI::Catalog if the refcounter hits 0 and remove the node of the type
       */
-    bool doResourceRemove(Application::Resource * res, Server::Client* client);
+    bool doResourceRemove(Application::Resource * res, Server::ClientMultiton* client);
 
     /**
      * @brief resourceRemoveByProvider Deletes all resources the Server::Client provided
@@ -130,15 +130,7 @@ namespace SCPI
      * Will be called when the Server::Client disconnects
      * @param client The provider of the resources
      */
-    void doResourceRemoveByProvider(Server::Client* client);
-
-    /**
-     * @brief resourceRemoveByProvider Deletes all resources the Server::Client provided
-     *
-     * Will be called when the Server::Client disconnects
-     * @param client The provider of the resources
-     */
-    void doResourceRemoveByProviderId(Server::Client *client, const QByteArray &providerId);
+    void doResourceRemoveByProvider(Server::ClientMultiton* client);
 
   private:
     /**

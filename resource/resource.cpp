@@ -1,11 +1,11 @@
 #include "resource/resource.h"
 #include "resourcemanager.h"
 
-#include "server/client.h"
+#include "server/clientmultiton.h"
 #include <QDebug>
 namespace Application
 {
-  Resource::Resource(quint32 amount, const QString& description, const QString& name, Server::Client * provider, const QString& type , quint32 port, const QByteArray providerId) :
+  Resource::Resource(quint32 amount, const QString& description, const QString& name, Server::ClientMultiton *provider, const QString& type , quint32 port, const QByteArray providerId) :
     m_resourceAmount(amount),
     m_resourceDescription(description),
     m_resourceName(name),
@@ -24,7 +24,7 @@ namespace Application
     return m_resourceName;
   }
 
-  Server::Client * Resource::getProvider()
+  Server::ClientMultiton *Resource::getProvider()
   {
     return m_resourceProvider;
   }
@@ -54,7 +54,7 @@ namespace Application
     return m_freeAmount;
   }
 
-  QList<Server::Client *> Resource::getOccupiers()
+  QList<Server::ClientMultiton *> Resource::getOccupiers()
   {
     return m_occupiers.keys();
   }
@@ -69,7 +69,7 @@ namespace Application
     return m_resourceProviderId;
   }
 
-  bool Resource::occupyResource(Server::Client *occupier, quint32 amount)
+  bool Resource::occupyResource(Server::ClientMultiton *occupier, quint32 amount)
   {
     bool retVal = false;
     if(amount>0 && m_resourceAmount >0)
@@ -94,7 +94,7 @@ namespace Application
     return retVal;
   }
 
-  bool Resource::freeResource(Server::Client *occupier)
+  bool Resource::freeResource(Server::ClientMultiton *occupier)
   {
     bool retVal = false;
     quint32 tmpVal;

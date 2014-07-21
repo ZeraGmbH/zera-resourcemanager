@@ -29,30 +29,16 @@ namespace Server
     explicit Client(ProtoNetPeer* zClient, QObject *parent = 0);
 
     /**
-     * @brief getName
-     * @return Name of the client
-     */
-    const QString& getName();
-
-    /**
      * @brief getIpAdress
      * @return
      */
     QString getIpAdress();
-
-    void addOccupation(Application::Resource *res);
-    void removeOccupation(Application::Resource *res);
 
   signals:
     /**
      * @brief The client disconnected from the server
      */
     void sigAboutToDisconnect();
-
-    /**
-      @brief Notifies the SCPI::SCPIInterface of new SCPI commands
-      */
-    void sigScpiTransaction(const ProtobufMessage::NetMessage::ScpiCommand &command, QByteArray clientId);
 
     /**
      * @brief Used by shared connections
@@ -64,22 +50,22 @@ namespace Server
      * @brief Sends acknowledgement
      * @param message Optional text
      */
-    void doSendACK(const QString &message=QString());
+    void doSendACK(const QString &message=QString(), const QByteArray &cID=QByteArray());
     /**
      * @brief Sends debug informations
      * @param message Required text
      */
-    void doSendDebug(const QString &message);
+    void doSendDebug(const QString &message, const QByteArray &cID=QByteArray());
     /**
      * @brief Sends an error message
      * @param message Optional text
      */
-    void doSendError(const QString &message=QString());
+    void doSendError(const QString &message=QString(), const QByteArray &cID=QByteArray());
     /**
      * @brief Sends negative acknowledgement
      * @param message Optional text
      */
-    void doSendNACK(const QString &message=QString());
+    void doSendNACK(const QString &message=QString(), const QByteArray &cID=QByteArray());
     /**
      * @brief Decodes incoming messages into a ProtobufMessage
      * @param message Unparsed message
@@ -103,10 +89,11 @@ namespace Server
      * @brief The Client representated
      */
     ProtoNetPeer* m_zClient;
-    QQueue<QByteArray> m_clientIdQueue;
     QQueue<qint64> m_messageIdQueue;
-    QSet<Application::Resource *> m_occupies;
-    QString m_name;
+
+    //QSet<QByteArray> m_clientIds;
+
+    QHash<QByteArray, ClientMultiton*> m_clients;
   };
 }
 

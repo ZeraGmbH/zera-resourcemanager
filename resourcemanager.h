@@ -17,7 +17,7 @@ namespace SCPI
 
 namespace Server
 {
-  class Client;
+  class ClientMultiton;
 }
 /**
   @brief Represents the managing instance in this application that holds SCPI::ResourceObjects and Application::ResourceLock
@@ -47,7 +47,7 @@ public:
   /**
     @brief Creates a Application::Resource and appends it to the resourceList
     */
-  Application::Resource *createResource(quint32 amount, const QString &description, const QString &name, Server::Client * provider, const QString &type, quint32 port=0, const QByteArray &providerId=0);
+  Application::Resource *createResource(quint32 amount, const QString &description, const QString &name, Server::ClientMultiton * provider, const QString &type, quint32 port=0, const QByteArray &providerId=0);
 
   /**
     @brief retrieves the resource with the given name and type
