@@ -2,88 +2,95 @@
 #define H2012_RESOURCEMANAGER_H
 
 #include <QObject>
-#include <QReadWriteLock>
-#include <QTextStream>
+#include <QSet>
+#include "resource/resman_resourceidentity.h"
 
-namespace Application
-{
-  class Resource;
-}
-
-namespace SCPI
-{
-  class ResourceObject;
-}
-
-namespace Server
-{
-  class ClientMultiton;
-}
 /**
   @brief Represents the managing instance in this application that holds SCPI::ResourceObjects and Application::ResourceLock
   */
 class ResourceManager : public QObject
 {
   Q_OBJECT
-protected:
-  /**
-    @brief The class is a Singleton so the constructor is protected [P.157+ Design patterns Gang of Four]
-    */
-  ResourceManager(QObject* parent = 0);
-  ~ResourceManager();
 
 public:
-  /**
-    @brief See [P.157+ Design patterns Gang of Four]
-    */
-  static ResourceManager* getInstance();
+  explicit ResourceManager(QObject *t_parent = 0);
 
   /**
-    @brief Lists all resources of a given type as QString
-    @returns QString with resources separated by a semicolon
-    */
-  const QString listResources(const QString &Type);
-
-  /**
-    @brief Creates a Application::Resource and appends it to the resourceList
-    */
-  Application::Resource *createResource(quint32 amount, const QString &description, const QString &name, Server::ClientMultiton * provider, const QString &type, quint32 port=0, const QByteArray &providerId=0);
-
-  /**
-    @brief retrieves the resource with the given name and type
-    */
-  Application::Resource *getResourceByName(const QString &name, const QString &type);
-
-  /**
-   * @brief Find a Resource with its ResourceObject
-   * @param obj the objec that represents the resource
-   * @return the resource
+   * @brief keeps track of the new Application::ResourceIdentity instances
+   * @param t_resourceIdentity
    */
-  Application::Resource *getResourceByObject(SCPI::ResourceObject* obj);
-
-public slots:
+  void addResourceIdentity(Application::ResourceIdentity *t_resourceIdentity);
   /**
-    @brief Will be triggered when the a Server::Client provides a new Resource:ResourceObject
-    @param [in] *resource the SCPI::ResourceObject that will be added in ResourceManager
-    */
-  void onResourceAdded(Application::Resource* resource);
+   * @brief clean up the m_resourceIdentitySet from removed Application::ResourceIdentity instances
+   * @param t_resourceIdentity
+   */
+  void removeResourceIdentity(Application::ResourceIdentity *t_resourceIdentity);
 
   /**
-    @brief Will be triggered when the a Server::Client wants to delete a Resource:ResourceObject
-    @param [in] *resource the SCPI::ResourceObject that will be  deleted in ResourceManager
-    */
-  void onResourceRemoved(Application::Resource* resource);
+   * @brief collects a list of Application::ResourceIdentity instances the ResourceServer::ClientMultiton has occupied
+   * @param t_clientMultiton
+   * @return
+   */
+  QList<Application::ResourceIdentity *> getOccupationsByClient(ResourceServer::ClientMultiton *t_clientMultiton);
+  /**
+   * @brief returns a copy of the intern m_resourceIdentitySet
+   * @return
+   */
+  QSet<Application::ResourceIdentity *> getResourceIdentitySet() const;
+
+  template <typename T>
+  /**
+   * @brief getResourceIdentitiesOf
+   * @param t_filter
+   * @return a list with all matches is returned
+   * @note comparing with Resource *, cSCPIObject * or cSCPICommand will only return one match as they only exist in 1:1 association with the resource identities
+   */
+  QList<Application::ResourceIdentity *> getResourceIdentitiesOf(T t_filter) const
+  {
+    QList<Application::ResourceIdentity *> retVal;
+    QSetIterator<Application::ResourceIdentity *> setIterator(m_resourceIdentitySet);
+    while(setIterator.hasNext())
+    {
+      Application::ResourceIdentity *riToCompare = setIterator.next();
+      if(riToCompare->isAffiliatedWith<T>(t_filter))
+      {
+        retVal.append(riToCompare);
+      }
+    }
+
+    return retVal;
+  }
+
+  template <typename T>
+  /**
+   * @brief getResourceIdentityOf
+   * @param t_filter
+   * @return the first match is returned
+   * @warning comparing with Catalog * and the providing ResourceServer::ClientMultiton * can have multiple matches
+   */
+  Application::ResourceIdentity *getResourceIdentityOf(T t_filter) const
+  {
+    Application::ResourceIdentity *retVal = nullptr;
+    QSetIterator<Application::ResourceIdentity *> setIterator(m_resourceIdentitySet);
+    while(setIterator.hasNext())
+    {
+      Application::ResourceIdentity *riToCompare = setIterator.next();
+      if(riToCompare->isAffiliatedWith<T>(t_filter))
+      {
+        retVal = riToCompare;
+        break;
+      }
+    }
+
+    return retVal;
+  }
+
 
 private:
   /**
-    @brief See [P.157+ Design patterns Gang of Four]
-    */
-  static ResourceManager* m_singletonInstance;
-
-  /**
-    @brief Holds the resources
-    */
-  QList<Application::Resource*> m_resourceList;
+   * @brief the ResourceManager owns the Application::ResourceIdentity entries
+   */
+  QSet<Application::ResourceIdentity *> m_resourceIdentitySet;
   /**
     @note Instances of this class should only get accessed through the getInstance method.
     */

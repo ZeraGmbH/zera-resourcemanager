@@ -8,18 +8,18 @@ RMProtobufWrapper::RMProtobufWrapper()
 }
 
 
-google::protobuf::Message *RMProtobufWrapper::byteArrayToProtobuf(QByteArray bA)
+google::protobuf::Message *RMProtobufWrapper::byteArrayToProtobuf(QByteArray t_data)
 {
   ProtobufMessage::NetMessage *proto = new ProtobufMessage::NetMessage();
-  if(!proto->ParseFromArray(bA, bA.size()))
+  if(!proto->ParseFromArray(t_data, t_data.size()))
   {
-    qCritical() << "Error parsing protobuf:\n" << bA.toBase64();
+    qCritical() << "Error parsing protobuf:\n" << t_data.toBase64();
     Q_ASSERT(false);
   }
   return proto;
 }
 
-QByteArray RMProtobufWrapper::protobufToByteArray(google::protobuf::Message *pMessage)
+QByteArray RMProtobufWrapper::protobufToByteArray(google::protobuf::Message *t_protobufMessage)
 {
-  return QByteArray(pMessage->SerializeAsString().c_str(), pMessage->ByteSize());
+  return QByteArray(t_protobufMessage->SerializeAsString().c_str(), t_protobufMessage->ByteSize());
 }

@@ -17,11 +17,11 @@ namespace SCPI
     /**
     @brief Reimplemented constructor
     */
-    Delegate(const QString& name, quint8 type);
+    Delegate(const QString& t_name, quint8 t_type);
     /**
-    @brief Leave this up to the SCPIInterface
+    @brief Leave this up to the SCPI::SCPIInterface
     */
-    bool executeSCPI(const QString &sInput, QString &sOutput);
+    bool executeSCPI(const QString &t_input, QString &t_output) override;
   };
 }
 #endif // DELEGATE_H

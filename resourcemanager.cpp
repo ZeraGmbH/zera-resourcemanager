@@ -1,98 +1,45 @@
 #include "resourcemanager.h"
-#include "scpistring.h"
-#include "server/client.h"
-#include "server/serverinterface.h"
-#include "resource/resource.h"
 
-ResourceManager::ResourceManager(QObject* parent) :
-  QObject(parent)
+
+ResourceManager::ResourceManager(QObject *t_parent) :
+  QObject(t_parent)
 {
 }
 
-ResourceManager::~ResourceManager()
+void ResourceManager::addResourceIdentity(Application::ResourceIdentity *t_resourceIdentity)
 {
-  foreach(Application::Resource* r, m_resourceList)
+  Q_ASSERT(t_resourceIdentity != nullptr);
+  m_resourceIdentitySet.insert(t_resourceIdentity);
+}
+
+void ResourceManager::removeResourceIdentity(Application::ResourceIdentity *t_resourceIdentity)
+{
+  Q_ASSERT(t_resourceIdentity != nullptr);
+  if(m_resourceIdentitySet.contains(t_resourceIdentity))
   {
-    r->deleteLater();
+    m_resourceIdentitySet.remove(t_resourceIdentity);
+    delete t_resourceIdentity;
   }
 }
 
-ResourceManager  *ResourceManager::m_singletonInstance=0;
-
-ResourceManager *ResourceManager::getInstance()
+QList<Application::ResourceIdentity *> ResourceManager::getOccupationsByClient(ResourceServer::ClientMultiton *t_clientMultiton)
 {
-  if(m_singletonInstance==0)
+  QList<Application::ResourceIdentity *> retVal;
+  QSetIterator<Application::ResourceIdentity *> setIterator(m_resourceIdentitySet);
+  while(setIterator.hasNext())
   {
-    m_singletonInstance=new ResourceManager;
-  }
-  return m_singletonInstance;
-}
-
-const QString ResourceManager::listResources(const QString &Type)
-{
-  cSCPIString a, b;
-  QString retVal;
-  a=Type;
-  foreach(Application::Resource* tmpRO, m_resourceList)
-  {
-    b=tmpRO->getType();
-    if(a==b)
-      retVal+=tmpRO->getName()+";";
-  }
-  return retVal;
-}
-
-Application::Resource *ResourceManager::createResource(quint32 amount, const QString &description, const QString &name, Server::ClientMultiton * provider, const QString &type, quint32 port, const QByteArray &providerId)
-{
-  Application::Resource* tmpRes=new Application::Resource(amount, description, name, provider, type, port, providerId);
-  onResourceAdded(tmpRes);
-  return tmpRes;
-}
-
-Application::Resource *ResourceManager::getResourceByObject(SCPI::ResourceObject* obj)
-{
-  Application::Resource *retVal=0;
-  quint32 sanityCounter=0;
-  foreach (Application::Resource *res, m_resourceList)
-  {
-    if(res->getResourceObject()==obj)
+    Application::ResourceIdentity *riToCompare = setIterator.next();
+    if(riToCompare->getOccupationAmountOf(t_clientMultiton) > 0)
     {
-      sanityCounter++;
-      retVal=res;
+      retVal.append(riToCompare);
+      break;
     }
   }
-  if (sanityCounter>1)
-  {
-    //error
-  }
+
   return retVal;
 }
 
-Application::Resource *ResourceManager::getResourceByName(const QString &name, const QString &type)
+QSet<Application::ResourceIdentity *> ResourceManager::getResourceIdentitySet() const
 {
-  Application::Resource *retVal=0;
-  quint32 sanityCounter=0;
-  foreach (Application::Resource *res, m_resourceList)
-  {
-    if(res->getName()==name&&res->getType()==type)
-    {
-      sanityCounter++;
-      retVal=res;
-    }
-  }
-  if (sanityCounter>1)
-  {
-    //error
-  }
-  return retVal;
-}
-
-void ResourceManager::onResourceAdded(Application::Resource* resource)
-{
-  m_resourceList.append(resource);
-}
-
-void ResourceManager::onResourceRemoved(Application::Resource* resource)
-{
-  m_resourceList.removeAll(resource);
+  return m_resourceIdentitySet;
 }

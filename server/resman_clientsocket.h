@@ -3,22 +3,31 @@
 
 #include <QObject>
 #include <QQueue>
-#include <QSet>
+#include <QHash>
 
-#include <netmessages.pb.h>
+class XiQNetPeer;
 
-#include "resource/resource.h"
-
-class ProtoNetPeer;
-
-namespace Server
+namespace google
 {
+  namespace protobuf
+  {
+    class Message;
+  }
+}
 
+namespace ProtobufMessage
+{
+  class NetMessage;
+}
+
+namespace ResourceServer
+{
+  class ClientMultiton;
   /**
     @brief Server::Client represents an abstract client implementation, with a timeout/refresh function
     @todo This class needs unique identifiers for implementation clients.
     */
-  class Client : public QObject
+  class ClientSocket : public QObject
   {
     Q_OBJECT
   public:
@@ -26,13 +35,14 @@ namespace Server
       @brief The default constructor
       @note Other constructors are invalid
       */
-    explicit Client(ProtoNetPeer* zClient, QObject *parent = 0);
+    explicit ClientSocket(XiQNetPeer *t_clientSocket, QObject *parent = 0);
+    ~ClientSocket();
 
     /**
      * @brief getIpAdress
      * @return
      */
-    QString getIpAdress();
+    QString getIpAdress() const;
 
   signals:
     /**
@@ -43,34 +53,46 @@ namespace Server
     /**
      * @brief Used by shared connections
      */
-    void sigDisconnectedClientId(const QByteArray& clientId);
+    void sigDisconnectedClientId(const QByteArray &t_clientId);
+
+    /**
+     * @brief is called when a ClientMultiton received the IDENT command
+     * @param t_clientMultiton
+     */
+    void sigClientIdentified(ClientMultiton *t_clientMultiton);
+
+    /**
+     * @brief is called when the ClientMultiton is disconnected
+     * @param t_clientMultiton
+     */
+    void sigClientMultitonDisconnected(ClientMultiton *t_clientMultiton);
 
   public slots:
     /**
      * @brief Sends acknowledgement
      * @param message Optional text
      */
-    void doSendACK(const QString &message=QString(), const QByteArray &cID=QByteArray());
+    void doSendACK(const QString &t_message=QString(), const QByteArray &t_cID=QByteArray()) const;
     /**
      * @brief Sends debug informations
      * @param message Required text
      */
-    void doSendDebug(const QString &message, const QByteArray &cID=QByteArray());
+    void doSendDebug(const QString &t_message, const QByteArray &t_cID=QByteArray()) const;
     /**
      * @brief Sends an error message
      * @param message Optional text
      */
-    void doSendError(const QString &message=QString(), const QByteArray &cID=QByteArray());
+    void doSendError(const QString &t_message=QString(), const QByteArray &t_cID=QByteArray()) const;
     /**
      * @brief Sends negative acknowledgement
      * @param message Optional text
      */
-    void doSendNACK(const QString &message=QString(), const QByteArray &cID=QByteArray());
+    void doSendNACK(const QString &t_message=QString(), const QByteArray &t_cID=QByteArray()) const;
     /**
      * @brief Decodes incoming messages into a ProtobufMessage
      * @param message Unparsed message
      */
-    void onMessageReceived(google::protobuf::Message *message);
+    void onMessageReceived(google::protobuf::Message *t_message);
 
   private slots:
     /**
@@ -83,17 +105,18 @@ namespace Server
      * @brief Internal code to send a ProtobufMessage to the client
      * @param message a ProtobufMessage
      */
-    void sendMessage(ProtobufMessage::NetMessage *envelope);
+    void sendMessage(ProtobufMessage::NetMessage *t_message) const;
 
     /**
      * @brief The Client representated
      */
-    ProtoNetPeer* m_zClient;
+    XiQNetPeer* m_zClient;
     QQueue<qint64> m_messageIdQueue;
 
     //QSet<QByteArray> m_clientIds;
 
-    QHash<QByteArray, ClientMultiton*> m_clients;
+    QHash<QByteArray, ClientMultiton*> m_clientSockets;
+    Q_DISABLE_COPY(ClientSocket)
   };
 }
 

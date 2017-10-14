@@ -4,6 +4,8 @@
 #include <scpiobject.h>
 #include <QString>
 
+class ResourceManager;
+
 namespace SCPI
 {
   /**
@@ -12,31 +14,31 @@ namespace SCPI
   class Catalog : public cSCPIObject
   {
   public:
-    Catalog();
+    Catalog(ResourceManager *t_resMan);
 
     /**
      * @brief executeSCPI Catalog implementation of the SCPI call
-     * @param sInput Query address string
-     * @param sOutput List of query result nodes
+     * @param t_input Query address string
+     * @param t_output List of query result nodes
      * @return true for success
      */
-    bool executeSCPI(const QString& sInput, QString& sOutput);
+    bool executeSCPI(const QString& t_input, QString& t_output) override;
 
     /**
       @brief returns catalogType
       */
-    const QString &getCatalogType();
+    const QString &getCatalogType() const;
 
     /**
      * @brief getRefCount
      * @return reference counter
      */
-    quint16 getRefCount();
+    quint16 getRefCount() const;
     /**
      * @brief setCatalogType Changes the type of the SCPI::Catalog
-     * @param type The new type
+     * @param t_type The new type
      */
-    void setCatalogType(const QString &type);
+    void setCatalogType(const QString &t_type);
     /**
       @brief increments the reference count
       */
@@ -54,7 +56,10 @@ namespace SCPI
     /**
       @brief reference counter
       */
-    quint16 m_refCount;
+    quint16 m_refCount = 0;
+
+    const ResourceManager *m_resMan = nullptr;
+    Q_DISABLE_COPY(Catalog)
   };
 }
 
