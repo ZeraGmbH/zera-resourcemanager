@@ -166,12 +166,14 @@ namespace SCPI
     const QList<Application::ResourceIdentity *> occupiedResourcesToRelease = m_resourceManager->getOccupationsByClient(t_clientMultiton);
     for(Application::ResourceIdentity *tmpResourceToRelease : occupiedResourcesToRelease)
     {
+      qDebug() << "Releasing resource: " << tmpResourceToRelease->getResource()->getName() << "on behalf of:" << t_clientMultiton->getName();
       tmpResourceToRelease->releaseResource(t_clientMultiton);
     }
 
     const QList<Application::ResourceIdentity *> providedResourcesToRemove = m_resourceManager->getResourceIdentitiesOf<ResourceServer::ClientMultiton *>(t_clientMultiton);
     for(Application::ResourceIdentity *tmpResourceToRemove : providedResourcesToRemove)
     {
+      qDebug() << "Removing resource: " << tmpResourceToRemove->getResource()->getName() << "on behalf of:" << t_clientMultiton->getName();
       m_resourceManager->removeResourceIdentity(tmpResourceToRemove);
     }
   }

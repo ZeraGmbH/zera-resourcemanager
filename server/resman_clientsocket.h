@@ -24,7 +24,7 @@ namespace ResourceServer
 {
   class ClientMultiton;
   /**
-    @brief Server::Client represents an abstract client implementation, with a timeout/refresh function
+    @brief Server::Client represents an abstract client implementation
     @todo This class needs unique identifiers for implementation clients.
     */
   class ClientSocket : public QObject

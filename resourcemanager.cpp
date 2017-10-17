@@ -32,7 +32,6 @@ QList<Application::ResourceIdentity *> ResourceManager::getOccupationsByClient(R
     if(riToCompare->getOccupationAmountOf(t_clientMultiton) > 0)
     {
       retVal.append(riToCompare);
-      break;
     }
   }
 
