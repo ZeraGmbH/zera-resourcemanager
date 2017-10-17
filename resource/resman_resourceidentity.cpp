@@ -38,9 +38,9 @@ namespace Application
 //  {
 //    return (t_other.m_catalog == m_catalog &&
 //            t_other.m_provider == m_provider &&
-//        t_other.m_resource == m_resource &&
-//        t_other.m_scpiObject == m_scpiObject &&
-//        t_other.m_scpiCommand.getCommand() == m_scpiCommand.getCommand());
+//            t_other.m_resource == m_resource &&
+//            t_other.m_scpiObject == m_scpiObject &&
+//            t_other.m_scpiCommand.getCommand() == m_scpiCommand.getCommand());
 //  }
 
   bool ResourceIdentity::occupyResource(ResourceServer::ClientMultiton *t_clientMultiton, quint32 t_amount)
@@ -55,17 +55,21 @@ namespace Application
       freeAmount = 1;
       t_amount = 1;
     }
-    const QList<quint32> alreadyOccupied = m_occupiers.values();
-    for(const quint32 occupationAmount : qAsConst(alreadyOccupied))
-    {
-      freeAmount -= occupationAmount;
-    }
 
-    if(freeAmount >= t_amount)
+    if(t_amount>0)
     {
-      quint32 newOccupationAmount = m_occupiers.value(t_clientMultiton, 0) + t_amount;
-      m_occupiers.insert(t_clientMultiton, newOccupationAmount);
-      retVal = true;
+      const QList<quint32> alreadyOccupied = m_occupiers.values();
+      for(const quint32 occupationAmount : qAsConst(alreadyOccupied))
+      {
+        freeAmount -= occupationAmount;
+      }
+
+      if(freeAmount >= t_amount)
+      {
+        quint32 newOccupationAmount = m_occupiers.value(t_clientMultiton, 0) + t_amount;
+        m_occupiers.insert(t_clientMultiton, newOccupationAmount);
+        retVal = true;
+      }
     }
     return retVal;
   }
