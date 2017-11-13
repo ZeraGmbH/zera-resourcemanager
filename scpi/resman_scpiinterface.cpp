@@ -70,22 +70,16 @@ namespace SCPI
       }
       else if(tmpObject==m_removeResource)
       {
-        Application::ResourceIdentity *resourceIdentityToRemove = m_resourceManager->getResourceIdentityOf<cSCPIObject *>(tmpObject);
-        if(resourceIdentityToRemove != nullptr)
+        const QString resourceName = command.getParamList().last();
+        const QList<Application::ResourceIdentity *> providedResourcesToRemove = m_resourceManager->getResourceIdentitiesOf<ResourceServer::ClientMultiton *>(t_clientMultiton);
+        for(Application::ResourceIdentity *tmpResourceToRemove : providedResourcesToRemove)
         {
-          if(resourceIdentityToRemove->getProvider() == t_clientMultiton)
+          if(resourceName == tmpResourceToRemove->getResource()->getName())
           {
-            m_resourceManager->removeResourceIdentity(resourceIdentityToRemove);
+            qDebug() << "Removing resource: " << tmpResourceToRemove->getResource()->getName() << "on behalf of:" << t_clientMultiton->getName();
+            m_resourceManager->removeResourceIdentity(tmpResourceToRemove);
             retVal = true;
           }
-          else
-          {
-            answer=tr("Not owner of resource: %1").arg(resourceIdentityToRemove->getResource()->getName());
-          }
-        }
-        else
-        {
-          answer=tr("Resource not found: %1").arg(command.getParam(CommandParams::name));
         }
       }
       else if(tmpObject==m_resourceModel) // return XMLized qstandarditem model
