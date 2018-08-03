@@ -8,9 +8,9 @@ class RMProtobufWrapper : public XiQNetWrapper
 public:
   RMProtobufWrapper();
 
-  google::protobuf::Message *byteArrayToProtobuf(QByteArray t_data) override;
+  ProtobufPointer byteArrayToProtobuf(QByteArray t_data) override;
 
-  QByteArray protobufToByteArray(google::protobuf::Message *t_protobufMessage) override;
+  QByteArray protobufToByteArray(const google::protobuf::Message &t_protobufMessage) override;
 };
 
 #endif // PROTOBUFWRAPPER_H

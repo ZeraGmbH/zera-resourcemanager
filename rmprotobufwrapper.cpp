@@ -8,9 +8,9 @@ RMProtobufWrapper::RMProtobufWrapper()
 }
 
 
-google::protobuf::Message *RMProtobufWrapper::byteArrayToProtobuf(QByteArray t_data)
+ProtobufPointer RMProtobufWrapper::byteArrayToProtobuf(QByteArray t_data)
 {
-  ProtobufMessage::NetMessage *proto = new ProtobufMessage::NetMessage();
+  ProtobufPointer proto {new ProtobufMessage::NetMessage()};
   if(!proto->ParseFromArray(t_data, t_data.size()))
   {
     qCritical() << "Error parsing protobuf:\n" << t_data.toBase64();
@@ -19,7 +19,7 @@ google::protobuf::Message *RMProtobufWrapper::byteArrayToProtobuf(QByteArray t_d
   return proto;
 }
 
-QByteArray RMProtobufWrapper::protobufToByteArray(google::protobuf::Message *t_protobufMessage)
+QByteArray RMProtobufWrapper::protobufToByteArray(const google::protobuf::Message &t_protobufMessage)
 {
-  return QByteArray(t_protobufMessage->SerializeAsString().c_str(), t_protobufMessage->ByteSize());
+  return QByteArray(t_protobufMessage.SerializeAsString().c_str(), t_protobufMessage.ByteSize());
 }

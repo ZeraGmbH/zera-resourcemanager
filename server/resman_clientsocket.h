@@ -5,6 +5,8 @@
 #include <QQueue>
 #include <QHash>
 
+#include <memory>
+
 class XiQNetPeer;
 
 namespace google
@@ -92,7 +94,7 @@ namespace ResourceServer
      * @brief Decodes incoming messages into a ProtobufMessage
      * @param message Unparsed message
      */
-    void onMessageReceived(google::protobuf::Message *t_message);
+    void onMessageReceived(std::shared_ptr<google::protobuf::Message> t_message);
 
   private slots:
     /**
@@ -105,7 +107,7 @@ namespace ResourceServer
      * @brief Internal code to send a ProtobufMessage to the client
      * @param message a ProtobufMessage
      */
-    void sendMessage(ProtobufMessage::NetMessage *t_message) const;
+    void sendMessage(ProtobufMessage::NetMessage &t_message) const;
 
     /**
      * @brief The Client representated

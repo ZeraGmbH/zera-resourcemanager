@@ -51,7 +51,7 @@ namespace Application
     quint32 freeAmount = m_resource->getAmount();
     if(freeAmount == 0 && t_amount == 0) //special case for resources with amount 0 (they really should have amount 1 instead)
     {
-      qDebug() << "Resources with amount 0 are deprecated, resource:" << m_resource->getName() << "caller:" << t_clientMultiton->getName();
+      qWarning() << "Resources with amount 0 are deprecated, resource:" << m_resource->getName() << "caller:" << t_clientMultiton->getName();
       freeAmount = 1;
       t_amount = 1;
     }

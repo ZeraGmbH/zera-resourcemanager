@@ -33,72 +33,68 @@ namespace ResourceServer
 
   void ClientSocket::doSendACK(const QString &t_message, const QByteArray &t_cID) const
   {
-    ProtobufMessage::NetMessage *envelope = new ProtobufMessage::NetMessage();
-    ProtobufMessage::NetMessage::NetReply *newMessage = envelope->mutable_reply();
+    ProtobufMessage::NetMessage envelope = ProtobufMessage::NetMessage();
+    ProtobufMessage::NetMessage::NetReply *newMessage = envelope.mutable_reply();
     newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::ACK);
     newMessage->set_body(t_message.toStdString());
 
     if(!t_cID.isEmpty())
     {
-      envelope->set_clientid(t_cID.data(),t_cID.size());
+      envelope.set_clientid(t_cID.data(),t_cID.size());
     }
 
     sendMessage(envelope);
-    delete envelope;
   }
 
   void ClientSocket::doSendDebug(const QString &t_message, const QByteArray &t_cID) const
   {
-    ProtobufMessage::NetMessage *envelope = new ProtobufMessage::NetMessage();
-    ProtobufMessage::NetMessage::NetReply *newMessage = envelope->mutable_reply();
+    ProtobufMessage::NetMessage envelope = ProtobufMessage::NetMessage();
+    ProtobufMessage::NetMessage::NetReply *newMessage = envelope.mutable_reply();
     newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::DEBUG);
     newMessage->set_body(t_message.toStdString());
 
     if(!t_cID.isEmpty())
     {
-      envelope->set_clientid(t_cID.data(),t_cID.size());
+      envelope.set_clientid(t_cID.data(),t_cID.size());
     }
 
     sendMessage(envelope);
-    delete envelope;
   }
 
   void ClientSocket::doSendError(const QString &t_message, const QByteArray &t_cID) const
   {
-    ProtobufMessage::NetMessage *envelope = new ProtobufMessage::NetMessage();
-    ProtobufMessage::NetMessage::NetReply *newMessage = envelope->mutable_reply();
+    ProtobufMessage::NetMessage envelope = ProtobufMessage::NetMessage();
+    ProtobufMessage::NetMessage::NetReply *newMessage = envelope.mutable_reply();
     newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::ERROR);
     newMessage->set_body(t_message.toStdString());
 
     if(!t_cID.isEmpty())
     {
-      envelope->set_clientid(t_cID.data(),t_cID.size());
+      envelope.set_clientid(t_cID.data(),t_cID.size());
     }
 
     sendMessage(envelope);
-    delete envelope;
   }
 
   void ClientSocket::doSendNACK(const QString &t_message, const QByteArray &t_cID) const
   {
-    ProtobufMessage::NetMessage *envelope = new ProtobufMessage::NetMessage();
-    ProtobufMessage::NetMessage::NetReply *newMessage = envelope->mutable_reply();
+    ProtobufMessage::NetMessage envelope = ProtobufMessage::NetMessage();
+    ProtobufMessage::NetMessage::NetReply *newMessage = envelope.mutable_reply();
     newMessage->set_rtype(ProtobufMessage::NetMessage::NetReply::NACK);
     newMessage->set_body(t_message.toStdString());
 
     if(!t_cID.isEmpty())
     {
-      envelope->set_clientid(t_cID.data(),t_cID.size());
+      envelope.set_clientid(t_cID.data(),t_cID.size());
     }
 
     sendMessage(envelope);
-    delete envelope;
   }
 
-  void ClientSocket::onMessageReceived(google::protobuf::Message *t_message)
+  void ClientSocket::onMessageReceived(ProtobufPointer t_message)
   {
     ProtobufMessage::NetMessage *envelope = nullptr;
-    envelope = static_cast<ProtobufMessage::NetMessage *>(t_message);
+    envelope = static_cast<ProtobufMessage::NetMessage *>(t_message.get());
     Q_ASSERT(envelope != nullptr);
 
     // return message to client to show that it was received
@@ -153,8 +149,6 @@ namespace ResourceServer
       }
     }
     m_messageIdQueue.removeLast();
-
-    delete envelope;
   }
 
   void ClientSocket::onDisconnectCleanup()
@@ -168,12 +162,12 @@ namespace ResourceServer
     m_clientSockets.clear();
   }
 
-  void ClientSocket::sendMessage(ProtobufMessage::NetMessage *t_message) const
+  void ClientSocket::sendMessage(ProtobufMessage::NetMessage &t_message) const
   {
     qint64 tmp_mID = m_messageIdQueue.last();
     if(tmp_mID>0 && tmp_mID<4294967296) // check for legacy mode, the value has to fit into a uint32
     {
-      t_message->set_messagenr(tmp_mID);
+      t_message.set_messagenr(tmp_mID);
     }
     m_zClient->sendMessage(t_message);
   }
