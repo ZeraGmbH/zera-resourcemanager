@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSet>
 #include <netmessages.pb.h>
+#include <memory>
 
 namespace Application
 {
@@ -62,7 +63,7 @@ namespace ResourceServer
       * @brief Decodes incoming messages into a ProtobufMessage
       * @param message Unparsed message
       */
-    void onMessageReceived(ProtobufMessage::NetMessage *t_envelope);
+    void onMessageReceived(std::shared_ptr<ProtobufMessage::NetMessage> t_envelope);
 
   private:
     QString m_name;

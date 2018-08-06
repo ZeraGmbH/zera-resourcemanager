@@ -49,7 +49,7 @@ namespace ResourceServer
     m_parent->doSendNACK(t_message, m_clientId);
   }
 
-  void ClientMultiton::onMessageReceived(ProtobufMessage::NetMessage *t_envelope)
+  void ClientMultiton::onMessageReceived(std::shared_ptr<ProtobufMessage::NetMessage> t_envelope)
   {
     Q_ASSERT(t_envelope != nullptr);
     if(t_envelope->has_reply())

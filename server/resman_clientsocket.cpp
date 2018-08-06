@@ -91,10 +91,10 @@ namespace ResourceServer
     sendMessage(envelope);
   }
 
-  void ClientSocket::onMessageReceived(ProtobufPointer t_message)
+  void ClientSocket::onMessageReceived(std::shared_ptr<google::protobuf::Message> t_message)
   {
-    ProtobufMessage::NetMessage *envelope = nullptr;
-    envelope = static_cast<ProtobufMessage::NetMessage *>(t_message.get());
+    std::shared_ptr<ProtobufMessage::NetMessage> envelope = nullptr;
+    envelope = std::static_pointer_cast<ProtobufMessage::NetMessage>(t_message);
     Q_ASSERT(envelope != nullptr);
 
     // return message to client to show that it was received
