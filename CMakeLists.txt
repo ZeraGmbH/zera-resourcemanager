@@ -11,9 +11,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #Set project Version
-set(resman_VERSION_MAJOR "0")
-set(resman_VERSION_MINOR "0")
-set(resman_VERSION_PATCH "1")
+set(resman_VERSION_MAJOR "2")
+set(resman_VERSION_MINOR "2")
+set(resman_VERSION_PATCH "0")
 
 set(PROJECT_VERSION "${resman_VERSION_MAJOR}.${resman_VERSION_MINOR}.${resman_VERSION_PATCH}")
 
