@@ -22,11 +22,10 @@ include(FeatureSummary)
 include(GNUInstallDirs)
 
 #Find dependecies
-find_package(Qt5 COMPONENTS Quick Core CONFIG REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Network CONFIG REQUIRED)
 find_package(xiqnet REQUIRED)
 find_package(zeraprotobuf REQUIRED)
 find_package(SCPI REQUIRED)
-find_package(VfStorageHash REQUIRED)
 
 
 #sum up project Files 
@@ -68,7 +67,8 @@ add_executable(resman
 target_link_libraries(resman
     PRIVATE
     Qt5::Core
-    Qt5::Quick
+    Qt5::Gui
+    Qt5:Network
     VeinMeta::xiqnet
     VeinMeta::zeraprotobuf 
     Zera::SCPI
