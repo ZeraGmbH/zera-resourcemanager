@@ -22,7 +22,9 @@ include(FeatureSummary)
 include(GNUInstallDirs)
 
 #Find dependecies
-find_package(Qt5 COMPONENTS Gui Network Core CONFIG REQUIRED)
+
+find_package(Qt5 COMPONENTS Core Gui Network CONFIG REQUIRED)
+
 find_package(xiqnet REQUIRED)
 find_package(zeraprotobuf REQUIRED)
 find_package(SCPI REQUIRED)
