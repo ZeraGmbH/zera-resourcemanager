@@ -36,6 +36,7 @@ namespace ResourceServer
   public:
     explicit ServerInterface(SCPI::SCPIInterface *t_scpiInterface, QObject *t_parent = 0);
     ~ServerInterface();
+    void start();
 
   public slots:
     /**
