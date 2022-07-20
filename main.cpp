@@ -14,8 +14,10 @@ int main(int argc, char* argv[])
 
   ResourceManager resMan;
   SCPI::SCPIInterface scpiInterface(&resMan);
-  Application::ResourceIdentity::setSCPIInterface(&scpiInterface);
   ResourceServer::ServerInterface serverInterface(&scpiInterface);
+
+  Application::ResourceIdentity::setSCPIInterface(&scpiInterface);
+  serverInterface.start();
 
   return a.exec();
 }

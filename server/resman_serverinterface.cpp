@@ -25,7 +25,6 @@ namespace ResourceServer
     Q_ASSERT(t_scpiInterface != nullptr);
     m_zServer->setDefaultWrapper(m_defaultWrapper);
     connect(m_zServer, &XiQNetServer::sigClientConnected,this, &ServerInterface::newClient);
-    m_zServer->startServer(6312);
   }
 
   ServerInterface::~ServerInterface()
@@ -36,6 +35,11 @@ namespace ResourceServer
     }
     m_clientSockets.clear();
     delete m_defaultWrapper;
+  }
+
+  void ServerInterface::start()
+  {
+      m_zServer->startServer(6312);
   }
 
   void ServerInterface::clientDisconnected(ClientSocket *t_clientSocket)
