@@ -22,6 +22,7 @@ find_package(zeraprotobuf REQUIRED)
 find_package(SCPI REQUIRED)
 
 file(GLOB SOURCES
+    resmanrunfacade.cpp
     resourcemanager.cpp
     rmprotobufwrapper.cpp
     resource/*.cpp
