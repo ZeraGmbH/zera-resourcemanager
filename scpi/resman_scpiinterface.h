@@ -8,10 +8,6 @@
 #include <scpi.h>
 #include "resman_delegate.h"
 
-QT_BEGIN_NAMESPACE
-class QStandardItemModel;
-QT_END_NAMESPACE
-
 namespace ResourceServer
 {
   class ClientMultiton;
@@ -78,11 +74,6 @@ namespace SCPI
     Q_OBJECT
   public:
     explicit SCPIInterface(ResourceManager *t_resourceManager, QObject *t_parent=0);
-
-    /**
-      @brief For debugging, returns the cSCPI::model
-      */
-    QStandardItemModel* getModel() const;
 
     /**
       @brief Lists types which have a Catalog command

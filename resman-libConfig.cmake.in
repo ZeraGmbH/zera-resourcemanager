@@ -1,6 +1,6 @@
 include(CMakeFindDependencyMacro)
 
-find_dependency(Qt5 COMPONENTS Core Gui Network CONFIG REQUIRED)
+find_dependency(Qt5 COMPONENTS Core Network CONFIG REQUIRED)
 find_dependency(xiqnet REQUIRED)
 find_dependency(zeraprotobuf REQUIRED)
 find_dependency(SCPI REQUIRED)
