@@ -30,11 +30,6 @@ namespace SCPI
     m_scpiInstance->genSCPICmd(aTMP,m_catalogType);
   }
 
-  QStandardItemModel *SCPIInterface::getModel() const
-  {
-    return m_scpiInstance->getSCPIModel();
-  }
-
   QString SCPIInterface::listTypes() const
   {
     QString retVal = getTypedCatalogHash().uniqueKeys().join(';');

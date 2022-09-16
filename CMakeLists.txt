@@ -16,7 +16,7 @@ include(FeatureSummary)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-find_package(Qt5 COMPONENTS Core Gui Network CONFIG REQUIRED)
+find_package(Qt5 COMPONENTS Core Network CONFIG REQUIRED)
 find_package(xiqnet REQUIRED)
 find_package(zeraprotobuf REQUIRED)
 find_package(SCPI REQUIRED)
@@ -45,7 +45,6 @@ add_library(resman-lib STATIC
 target_link_libraries(resman-lib
     PUBLIC
     Qt5::Core
-    Qt5::Gui
     Qt5::Network
     VeinMeta::xiqnet
     VeinMeta::zeraprotobuf
