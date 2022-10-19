@@ -22,12 +22,12 @@ namespace SCPI
     Q_ASSERT(m_resourceManager != nullptr);
     //Add all default cSCPIObjects
     QStringList aTMP = {{"RESOURCE"}};
-    m_scpiInstance->genSCPICmd(aTMP,m_addResource);
-    m_scpiInstance->genSCPICmd(aTMP,m_removeResource);
-    m_scpiInstance->genSCPICmd(aTMP,m_resourceModel);
-    m_scpiInstance->genSCPICmd(aTMP,m_resourceProvider);
+    m_scpiInstance->insertScpiCmd(aTMP,m_addResource);
+    m_scpiInstance->insertScpiCmd(aTMP,m_removeResource);
+    m_scpiInstance->insertScpiCmd(aTMP,m_resourceModel);
+    m_scpiInstance->insertScpiCmd(aTMP,m_resourceProvider);
     aTMP<<"TYPE";
-    m_scpiInstance->genSCPICmd(aTMP,m_catalogType);
+    m_scpiInstance->insertScpiCmd(aTMP,m_catalogType);
   }
 
   QString SCPIInterface::listTypes() const
@@ -197,7 +197,7 @@ namespace SCPI
         newResourceSCPIObject->setResourceIdentity(resourceIdentity);
 
         m_resourceManager->addResourceIdentity(resourceIdentity);
-        m_scpiInstance->genSCPICmd(scpiHierarchy,newResourceSCPIObject);
+        m_scpiInstance->insertScpiCmd(scpiHierarchy,newResourceSCPIObject);
 
         retVal=true;
       }
@@ -230,7 +230,7 @@ namespace SCPI
       newCatalog->setName("CATALOG");
       newCatalog->setType(isCmd);//catalog is a command
       newCatalog->setCatalogType(t_resourceType);
-      m_scpiInstance->genSCPICmd(t_scpiHierarchy, newCatalog);
+      m_scpiInstance->insertScpiCmd(t_scpiHierarchy, newCatalog);
       retVal = newCatalog;
     }
 
