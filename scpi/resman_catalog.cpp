@@ -6,8 +6,8 @@
 
 namespace SCPI
 {
-  Catalog::Catalog(ResourceManager *t_resMan) :
-    cSCPIObject(),
+  Catalog::Catalog(ResourceManager *t_resMan, const QString &scpiName, quint8 scpiType) :
+    cSCPIObject(scpiName, scpiType),
     m_resMan(t_resMan)
   {
   }

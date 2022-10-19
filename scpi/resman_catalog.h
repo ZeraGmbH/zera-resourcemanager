@@ -14,7 +14,7 @@ namespace SCPI
   class Catalog : public cSCPIObject
   {
   public:
-    Catalog(ResourceManager *t_resMan);
+    Catalog(ResourceManager *t_resMan, const QString &scpiName, quint8 scpiType);
 
     /**
      * @brief executeSCPI Catalog implementation of the SCPI call
