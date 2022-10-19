@@ -187,13 +187,11 @@ namespace SCPI
         const QString resourceType = newResource->getType();
         //the scpi subsections where the resource will be recognized
         const QStringList scpiHierarchy { "RESOURCE", resourceType};
-        ResourceSCPIObject* newResourceSCPIObject = new ResourceSCPIObject();
+        ResourceSCPIObject* newResourceSCPIObject = new ResourceSCPIObject(newResource->getName(), isQuery);
         Catalog *resCatalog = getOrCreateResourceTypeCatalog(resourceType, scpiHierarchy);
         cSCPICommand tmpCommand(QString("%1:%2").arg(scpiHierarchy.join(':')).arg(newResource->getName()));
         Application::ResourceIdentity *resourceIdentity = new Application::ResourceIdentity(newResource, t_clientMultiton, resCatalog, newResourceSCPIObject, tmpCommand);
 
-        newResourceSCPIObject->setName(newResource->getName());
-        newResourceSCPIObject->setType(isQuery);
         newResourceSCPIObject->setResourceIdentity(resourceIdentity);
 
         m_resourceManager->addResourceIdentity(resourceIdentity);
@@ -226,9 +224,7 @@ namespace SCPI
     }
     else //add a new catalog for the type
     {
-      Catalog* newCatalog= new Catalog(m_resourceManager);
-      newCatalog->setName("CATALOG");
-      newCatalog->setType(isCmd);//catalog is a command
+      Catalog* newCatalog= new Catalog(m_resourceManager, "CATALOG", isCmd);
       newCatalog->setCatalogType(t_resourceType);
       m_scpiInstance->insertScpiCmd(t_scpiHierarchy, newCatalog);
       retVal = newCatalog;

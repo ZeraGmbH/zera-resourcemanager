@@ -19,7 +19,7 @@ namespace SCPI
     /**
       @brief this constructor will set the const pointer to the Application::Resource
       */
-    explicit ResourceSCPIObject();
+    explicit ResourceSCPIObject(const QString &name, quint8 type);
     /**
      * @brief executeSCPI
      * @param t_input
