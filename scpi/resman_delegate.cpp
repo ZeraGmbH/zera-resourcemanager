@@ -2,10 +2,6 @@
 
 namespace SCPI
 {
-  Delegate::Delegate() : cSCPIObject()
-  {
-  }
-
   Delegate::Delegate(const QString &t_name, quint8 t_type) : cSCPIObject(t_name, t_type)
   {
   }
