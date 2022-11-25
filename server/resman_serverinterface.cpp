@@ -1,8 +1,8 @@
-#include "server/resman_serverinterface.h"
-#include "scpi/resman_scpiinterface.h"
-#include "resource/resman_resource.h"
-#include "server/resman_clientsocket.h"
-#include "server/resman_clientmultiton.h"
+#include "resman_serverinterface.h"
+#include "resman_scpiinterface.h"
+#include "resman_resource.h"
+#include "resman_clientsocket.h"
+#include "resman_clientmultiton.h"
 
 #include "rmprotobufwrapper.h"
 

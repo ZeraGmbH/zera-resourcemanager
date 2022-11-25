@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QSet>
-#include "resource/resman_resourceidentity.h"
+#include "resman_resourceidentity.h"
 
 /**
   @brief Represents the managing instance in this application that holds SCPI::ResourceObjects and Application::ResourceLock

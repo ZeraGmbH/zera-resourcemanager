@@ -1,6 +1,6 @@
-#include "resource/resman_resource.h"
+#include "resman_resource.h"
 
-#include "server/resman_clientmultiton.h"
+#include "resman_clientmultiton.h"
 #include <QDebug>
 namespace Application
 {

@@ -1,9 +1,9 @@
 #include "resman_resourceidentity.h"
 
-#include "resource/resman_resource.h"
-#include "scpi/resman_catalog.h"
-#include "scpi/resman_scpiinterface.h"
-#include "server/resman_clientmultiton.h"
+#include "resman_resource.h"
+#include "resman_catalog.h"
+#include "resman_scpiinterface.h"
+#include "resman_clientmultiton.h"
 #include <QDebug>
 
 namespace Application

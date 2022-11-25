@@ -1,7 +1,7 @@
 #include "resman_clientmultiton.h"
 
-#include "server/resman_clientsocket.h"
-#include "scpi/resman_scpiinterface.h"
+#include "resman_clientsocket.h"
+#include "resman_scpiinterface.h"
 #include "resman_resource.h"
 #include <netmessages.pb.h>
 

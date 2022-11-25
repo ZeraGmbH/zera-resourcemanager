@@ -3,9 +3,9 @@
 #include "resman_delegate.h"
 #include "resourcemanager.h"
 #include "resman_resourcescpiobject.h"
-#include "resource/resman_resource.h"
-#include "resource/resman_resourceidentity.h"
-#include "server/resman_clientmultiton.h"
+#include "resman_resource.h"
+#include "resman_resourceidentity.h"
+#include "resman_clientmultiton.h"
 
 #include <scpiobject.h>
 #include <scpicommand.h>

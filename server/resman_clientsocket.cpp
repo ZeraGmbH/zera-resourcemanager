@@ -1,6 +1,6 @@
-#include "server/resman_clientsocket.h"
+#include "resman_clientsocket.h"
 
-#include "server/resman_clientmultiton.h"
+#include "resman_clientmultiton.h"
 
 #include <xiqnetpeer.h>
 #include <QByteArray>
