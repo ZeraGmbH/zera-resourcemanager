@@ -78,7 +78,6 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/resman-libConfig.cmake"
 
 install(EXPORT resman-libExport
     FILE resman-libTargets.cmake
-    NAMESPACE ZeraClasses::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/resman-lib
     )
 

@@ -1,6 +1,6 @@
 #include "resman_resourcescpiobject.h"
-#include "resource/resman_resource.h"
-#include "resource/resman_resourceidentity.h"
+#include "resman_resource.h"
+#include "resman_resourceidentity.h"
 #include <QString>
 
 namespace SCPI

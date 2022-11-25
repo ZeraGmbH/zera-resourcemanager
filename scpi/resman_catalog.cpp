@@ -1,7 +1,7 @@
 #include "resman_catalog.h"
 #include "resourcemanager.h"
-#include "resource/resman_resource.h"
-#include "resource/resman_resourceidentity.h"
+#include "resman_resource.h"
+#include "resman_resourceidentity.h"
 #include <QStringList>
 
 namespace SCPI
