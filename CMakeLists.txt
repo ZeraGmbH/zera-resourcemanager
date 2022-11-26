@@ -16,7 +16,7 @@ include(FeatureSummary)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-find_package(Qt5 COMPONENTS Core Network CONFIG REQUIRED)
+find_package(Qt5 COMPONENTS Core Network Test CONFIG REQUIRED)
 find_package(xiqnet REQUIRED)
 find_package(zeraprotobuf REQUIRED)
 find_package(SCPI REQUIRED)
@@ -104,5 +104,8 @@ install(TARGETS resman
     EXPORT resmanExport
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+enable_testing()
+add_subdirectory(tests)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
