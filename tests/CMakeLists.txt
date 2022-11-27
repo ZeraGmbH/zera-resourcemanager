@@ -2,6 +2,8 @@
 # https://github.com/KDAB/kdabtv/blob/master/Qt-Widgets-and-more/UnitTests/Tests/CMakeLists.txt
 
 add_library(test-helpers STATIC
+    clientmultitontest.cpp
+    clientmultitontest.h
     )
 
 target_include_directories(test-helpers
@@ -12,6 +14,7 @@ target_include_directories(test-helpers
 target_link_libraries(test-helpers
     PUBLIC
     Qt5::Core
+    resman-lib
     )
 
 enable_testing()
@@ -34,11 +37,11 @@ function(SETUP_TESTS)
         target_link_libraries(${_testname}
             PUBLIC
             Qt5::Test
-            resman-lib
+            test-helpers
             )
     endforeach()
 endfunction()
 
 SETUP_TESTS(
-    test_legacy
+    test_scpi
 )
