@@ -35,7 +35,7 @@ namespace ResourceServer
      */
     void sigClientIdentified();
 
-  public slots:
+  public:
     /**
       * @brief Sends acknowledgement
       * @param message Optional text
@@ -56,6 +56,7 @@ namespace ResourceServer
       * @param message Optional text
       */
     void doSendNACK(const QString &t_message=QString()) const override;
+  public slots:
     /**
       * @brief Decodes incoming messages into a ProtobufMessage
       * @param message Unparsed message

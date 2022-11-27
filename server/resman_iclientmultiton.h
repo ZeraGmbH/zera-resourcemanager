@@ -18,7 +18,7 @@ signals:
       *@brief Notifies the SCPI::SCPIInterface of new SCPI commands
       */
     void sigScpiTransaction(IClientMultiton *t_clientMultiton, const ProtobufMessage::NetMessage_ScpiCommand &t_command);
-public slots:
+public:
     /**
     * @brief Sends acknowledgement
     * @param message Optional text
@@ -26,6 +26,7 @@ public slots:
     virtual void doSendACK(const QString &t_message = QString()) const = 0;
     virtual void doSendError(const QString &t_message = QString()) const = 0;
     virtual void doSendNACK(const QString &t_message = QString()) const = 0;
+public slots:
     virtual void onMessageReceived(std::shared_ptr<ProtobufMessage::NetMessage> t_envelope) = 0;
 };
 }
