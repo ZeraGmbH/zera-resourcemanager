@@ -8,6 +8,9 @@ class test_scpi : public QObject
     Q_OBJECT
 private slots:
     void addValidResource();
+    void addInvalidParamCount();
+    void addInvalidPort();
+    void invalidScpi();
 };
 
 #endif // TEST_SCPI_H
