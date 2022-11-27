@@ -61,8 +61,8 @@ namespace ResourceServer
     connect(tmpClient, &ClientSocket::sigClientMultitonDisconnected, m_scpiInterface, &SCPI::SCPIInterface::onClientMultitonDisconnected);
   }
 
-  void ServerInterface::onClientIdentified(ClientMultiton *t_clientMultiton)
+  void ServerInterface::onClientIdentified(IClientMultiton *t_clientMultiton)
   {
-    connect(t_clientMultiton, &ClientMultiton::sigScpiTransaction, m_scpiInterface, &SCPI::SCPIInterface::onScpiTransaction);
+    connect(t_clientMultiton, &IClientMultiton::sigScpiTransaction, m_scpiInterface, &SCPI::SCPIInterface::onScpiTransaction);
   }
 }

@@ -42,7 +42,7 @@ namespace SCPI
     m_scpiInstance->delSCPICmds(t_command);
   }
 
-  void SCPIInterface::onScpiTransaction(ResourceServer::ClientMultiton *t_clientMultiton, const ProtobufMessage::NetMessage_ScpiCommand &t_pbSCPICommand)
+  void SCPIInterface::onScpiTransaction(ResourceServer::IClientMultiton *t_clientMultiton, const ProtobufMessage::NetMessage_ScpiCommand &t_pbSCPICommand)
   {
     Q_ASSERT(t_clientMultiton != nullptr);
 
@@ -66,7 +66,7 @@ namespace SCPI
       else if(tmpObject==m_removeResource)
       {
         const QString resourceName = command.getParamList().last();
-        const QList<Application::ResourceIdentity *> providedResourcesToRemove = m_resourceManager->getResourceIdentitiesOf<ResourceServer::ClientMultiton *>(t_clientMultiton);
+        const QList<Application::ResourceIdentity *> providedResourcesToRemove = m_resourceManager->getResourceIdentitiesOf<ResourceServer::IClientMultiton *>(t_clientMultiton);
         for(Application::ResourceIdentity *tmpResourceToRemove : providedResourcesToRemove)
         {
           if(resourceName == tmpResourceToRemove->getResource()->getName())
@@ -149,7 +149,7 @@ namespace SCPI
     }
   }
 
-  void SCPIInterface::onClientMultitonDisconnected(ResourceServer::ClientMultiton *t_clientMultiton)
+  void SCPIInterface::onClientMultitonDisconnected(ResourceServer::IClientMultiton *t_clientMultiton)
   {
     Q_ASSERT(t_clientMultiton != nullptr);
     const QList<Application::ResourceIdentity *> occupiedResourcesToRelease = m_resourceManager->getOccupationsByClient(t_clientMultiton);
@@ -159,7 +159,7 @@ namespace SCPI
       tmpResourceToRelease->releaseResource(t_clientMultiton);
     }
 
-    const QList<Application::ResourceIdentity *> providedResourcesToRemove = m_resourceManager->getResourceIdentitiesOf<ResourceServer::ClientMultiton *>(t_clientMultiton);
+    const QList<Application::ResourceIdentity *> providedResourcesToRemove = m_resourceManager->getResourceIdentitiesOf<ResourceServer::IClientMultiton *>(t_clientMultiton);
     for(Application::ResourceIdentity *tmpResourceToRemove : providedResourcesToRemove)
     {
       qDebug() << "Removing resource: " << tmpResourceToRemove->getResource()->getName() << "on behalf of:" << t_clientMultiton->getName();
@@ -167,7 +167,7 @@ namespace SCPI
     }
   }
 
-  bool SCPIInterface::scpiAddResource(cSCPICommand t_command, ResourceServer::ClientMultiton *t_clientMultiton, QString &t_answerOut)
+  bool SCPIInterface::scpiAddResource(cSCPICommand t_command, ResourceServer::IClientMultiton *t_clientMultiton, QString &t_answerOut)
   {
     Q_ASSERT(t_clientMultiton != nullptr);
 
