@@ -4,6 +4,10 @@
 #include "resman_iclientmultiton.h"
 #include <QStringList>
 
+/**
+ * @brief ClientMultitonTest: Mock for resman client collecting responses on
+ * SCPI commands
+ */
 class ClientMultitonTest : public ResourceServer::IClientMultiton
 {
     Q_OBJECT
