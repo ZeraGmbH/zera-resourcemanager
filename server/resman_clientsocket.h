@@ -11,28 +11,28 @@ class XiQNetPeer;
 
 namespace google
 {
-  namespace protobuf
-  {
-    class Message;
-  }
+namespace protobuf
+{
+class Message;
+}
 }
 
 namespace ProtobufMessage
 {
-  class NetMessage;
+class NetMessage;
 }
 
 namespace ResourceServer
 {
-  class ClientMultiton;
-  /**
-    @brief Server::Client represents an abstract client implementation
-    @todo This class needs unique identifiers for implementation clients.
-    */
-  class ClientSocket : public QObject
-  {
+class ClientMultiton;
+/**
+  @brief Server::Client represents an abstract client implementation
+  @todo This class needs unique identifiers for implementation clients.
+  */
+class ClientSocket : public QObject
+{
     Q_OBJECT
-  public:
+public:
     /**
       @brief The default constructor
       @note Other constructors are invalid
@@ -46,7 +46,7 @@ namespace ResourceServer
      */
     QString getIpAdress() const;
 
-  signals:
+signals:
     /**
      * @brief The client disconnected from the server
      */
@@ -69,7 +69,7 @@ namespace ResourceServer
      */
     void sigClientMultitonDisconnected(ClientMultiton *t_clientMultiton);
 
-  public slots:
+public slots:
     /**
      * @brief Sends acknowledgement
      * @param message Optional text
@@ -96,13 +96,13 @@ namespace ResourceServer
      */
     void onMessageReceived(std::shared_ptr<google::protobuf::Message> t_message);
 
-  private slots:
+private slots:
     /**
      * @brief cleanup all occupied resources
      */
     void onDisconnectCleanup();
 
-  private:
+private:
     /**
      * @brief Internal code to send a ProtobufMessage to the client
      * @param message a ProtobufMessage
@@ -119,7 +119,7 @@ namespace ResourceServer
 
     QHash<QByteArray, ClientMultiton*> m_clientSockets;
     Q_DISABLE_COPY(ClientSocket)
-  };
+};
 }
 
 #endif // H2012_CLIENT_H

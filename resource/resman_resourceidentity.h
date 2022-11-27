@@ -8,22 +8,22 @@ class cSCPIObject;
 
 namespace SCPI
 {
-  class Catalog;
-  class SCPIInterface;
+class Catalog;
+class SCPIInterface;
 }
 
 namespace ResourceServer
 {
-  class IClientMultiton;
+class IClientMultiton;
 }
 
 namespace Application
 {
-  class Resource;
+class Resource;
 
-  class ResourceIdentity
-  {
-  public:
+class ResourceIdentity
+{
+public:
     /**
      * @brief ResourceIdentity
      * @param t_resource ResourceIdentity takes ownership of the Application::Resource
@@ -40,8 +40,6 @@ namespace Application
      * @badcode must be called before the constructor
      */
     static void setSCPIInterface(SCPI::SCPIInterface *t_interface);
-
-    //bool operator ==(const ResourceIdentity &t_other) const;
 
     /**
      * @brief occupies the resource for client t_clientMultiton
@@ -83,10 +81,10 @@ namespace Application
      */
     bool isAffiliatedWith(T t_filter) const
     {
-      return isAffiliatedWithImpl(t_filter);
+        return isAffiliatedWithImpl(t_filter);
     }
 
-  private:
+private:
     /**
      * @brief Reference houskeeping for Catalog instances
      */
@@ -135,7 +133,7 @@ namespace Application
     static SCPI::SCPIInterface *s_scpiInterface;
 
     Q_DISABLE_COPY(ResourceIdentity)
-  };
+};
 } // namespace Application
 
 #endif // APPLICATION_RESOURCEIDENTITY_H

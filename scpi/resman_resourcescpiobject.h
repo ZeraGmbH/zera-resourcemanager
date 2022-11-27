@@ -5,17 +5,17 @@
 
 namespace Application
 {
-  class ResourceIdentity;
+class ResourceIdentity;
 }
 
 namespace SCPI
 {
-  /**
+/**
     @brief Represents the resource in the SCPI world
     */
-  class ResourceSCPIObject : public cSCPIObject
-  {
-  public:
+class ResourceSCPIObject : public cSCPIObject
+{
+public:
     /**
       @brief this constructor will set the const pointer to the Application::Resource
       */
@@ -33,8 +33,8 @@ namespace SCPI
      */
     void setResourceIdentity(Application::ResourceIdentity *t_resourceIdentity);
 
-  private:
+private:
     Application::ResourceIdentity *m_resourceIdentity = nullptr;
-  };
+};
 }
 #endif // RESOURCEOBJECT_H
