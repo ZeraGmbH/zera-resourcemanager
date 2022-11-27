@@ -25,7 +25,7 @@ namespace SCPI
  */
 namespace ResourceServer
 {
-  class ClientMultiton;
+  class IClientMultiton;
   class ClientSocket;
   /**
     @brief Represents the interface between the network implementations and the ResourceManager
@@ -51,17 +51,17 @@ namespace ResourceServer
     void newClient(XiQNetPeer *t_newClient);
 
     /**
-     * @brief sets up ClientMultiton instances to communicate with the SCPI::SCPIInterface
+     * @brief sets up IClientMultiton instances to communicate with the SCPI::SCPIInterface
      * @param t_clientMultiton
      */
-    void onClientIdentified(ClientMultiton *t_clientMultiton);
+    void onClientIdentified(ResourceServer::IClientMultiton *t_clientMultiton);
 
   signals:
     /**
      * @brief notifies the SCPI::SCPIInterface if a client is disconnected
      * @param t_clientMultiton
      */
-    void sigClientDisconnected(ResourceServer::ClientMultiton *t_clientMultiton);
+    void sigClientDisconnected(ResourceServer::IClientMultiton *t_clientMultiton);
 
   private:
     /**

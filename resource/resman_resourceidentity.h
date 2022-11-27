@@ -14,7 +14,7 @@ namespace SCPI
 
 namespace ResourceServer
 {
-  class ClientMultiton;
+  class IClientMultiton;
 }
 
 namespace Application
@@ -27,12 +27,12 @@ namespace Application
     /**
      * @brief ResourceIdentity
      * @param t_resource ResourceIdentity takes ownership of the Application::Resource
-     * @param t_provider ResourceIdentity does not take ownership of the ResourceServer::ClientMultiton
+     * @param t_provider ResourceIdentity does not take ownership of the ResourceServer::IClientMultiton
      * @param t_catalog ResourceIdentity takes ownership of the SCPI::Catalog
      * @param t_scpiObject ResourceIdentity takes ownership of the cSCPIObject
      * @param t_scpiCommand
      */
-    ResourceIdentity(Resource *t_resource, ResourceServer::ClientMultiton *t_provider, SCPI::Catalog *t_catalog, cSCPIObject *t_scpiObject, cSCPICommand t_scpiCommand);
+    ResourceIdentity(Resource *t_resource, ResourceServer::IClientMultiton *t_provider, SCPI::Catalog *t_catalog, cSCPIObject *t_scpiObject, cSCPICommand t_scpiCommand);
     ~ResourceIdentity();
     /**
      * @brief sets the interface
@@ -49,16 +49,16 @@ namespace Application
      * @param t_amount the amount to occupy
      * @return true for success
      */
-    bool occupyResource(ResourceServer::ClientMultiton *t_clientMultiton, quint32 t_amount);
+    bool occupyResource(ResourceServer::IClientMultiton *t_clientMultiton, quint32 t_amount);
     /**
      * @brief releases the occupation of the resource made previously from client t_clientMultiton
      * @param t_clientMultiton
      * @return true for success
      */
-    bool releaseResource(ResourceServer::ClientMultiton *t_clientMultiton);
+    bool releaseResource(ResourceServer::IClientMultiton *t_clientMultiton);
 
     const Resource *getResource() const;
-    const ResourceServer::ClientMultiton *getProvider() const;
+    const ResourceServer::IClientMultiton *getProvider() const;
     SCPI::Catalog *getCatalog() const;
     const cSCPIObject *getSCPIObject() const;
     cSCPICommand getSCPICommand() const;
@@ -68,7 +68,7 @@ namespace Application
      * @param t_clientMultiton
      * @return returns the occupation amount of t_clientMultiton
      */
-    quint32 getOccupationAmountOf(const ResourceServer::ClientMultiton *t_clientMultiton) const;
+    quint32 getOccupationAmountOf(const ResourceServer::IClientMultiton *t_clientMultiton) const;
     /**
      * @brief getFreeAmount
      * @return returns the total amount - every occupied amount
@@ -99,7 +99,7 @@ namespace Application
     void unRefCatalog();
 
     bool isAffiliatedWithImpl(const Resource *t_filter) const;
-    bool isAffiliatedWithImpl(const ResourceServer::ClientMultiton *t_filter) const;
+    bool isAffiliatedWithImpl(const ResourceServer::IClientMultiton *t_filter) const;
     bool isAffiliatedWithImpl(const SCPI::Catalog *t_filter) const;
     bool isAffiliatedWithImpl(const cSCPIObject *t_filter) const;
     bool isAffiliatedWithImpl(const cSCPICommand t_filter) const;
@@ -111,7 +111,7 @@ namespace Application
     /**
      * @brief points to the creator of the resource
      */
-    const ResourceServer::ClientMultiton *m_provider = nullptr;
+    const ResourceServer::IClientMultiton *m_provider = nullptr;
     /**
      * @brief a shared pointer to the catalog the resource belongs to
      * @note a refcount is used to track the Catalog usage
@@ -128,7 +128,7 @@ namespace Application
     /**
      * @brief tracks occupations of m_resource
      */
-    QHash <const ResourceServer::ClientMultiton *, quint32> m_occupiers;
+    QHash <const ResourceServer::IClientMultiton *, quint32> m_occupiers;
     /**
      * @brief common scpi interface
      */

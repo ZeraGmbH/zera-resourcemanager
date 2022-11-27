@@ -7,6 +7,7 @@
 #include <netmessages.pb.h>
 #include <scpi.h>
 #include "resman_delegate.h"
+#include "resman_iclientmultiton.h"
 
 namespace ResourceServer
 {
@@ -91,9 +92,9 @@ namespace SCPI
     /**
       @brief The clients SCPI data is handled here
       */
-    void onScpiTransaction(ResourceServer::ClientMultiton *t_clientMultiton, const ProtobufMessage::NetMessage_ScpiCommand &t_pbSCPICommand);
+    void onScpiTransaction(ResourceServer::IClientMultiton *t_clientMultiton, const ProtobufMessage::NetMessage_ScpiCommand &t_pbSCPICommand);
 
-    void onClientMultitonDisconnected(ResourceServer::ClientMultiton *t_clientMultiton);
+    void onClientMultitonDisconnected(ResourceServer::IClientMultiton *t_clientMultiton);
 
   private:
     /**
@@ -103,7 +104,7 @@ namespace SCPI
      * @param [out] t_answerOut the result string of the operation
      * @return true for success
      */
-    bool scpiAddResource(cSCPICommand t_command, ResourceServer::ClientMultiton *t_clientMultiton, QString &t_answerOut);
+    bool scpiAddResource(cSCPICommand t_command, ResourceServer::IClientMultiton *t_clientMultiton, QString &t_answerOut);
 
     /**
      * @brief gets the SCPI::Catalog for the t_resourceType or creates one if it doesn't exist

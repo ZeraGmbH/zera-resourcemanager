@@ -8,7 +8,7 @@
 
 namespace Application
 {
-  ResourceIdentity::ResourceIdentity(Resource *t_resource, ResourceServer::ClientMultiton *t_provider, SCPI::Catalog *t_catalog, cSCPIObject *t_scpiObject, cSCPICommand t_scpiCommand) :
+  ResourceIdentity::ResourceIdentity(Resource *t_resource, ResourceServer::IClientMultiton *t_provider, SCPI::Catalog *t_catalog, cSCPIObject *t_scpiObject, cSCPICommand t_scpiCommand) :
     m_resource(t_resource), m_provider(t_provider), m_catalog(t_catalog), m_scpiObject(t_scpiObject) , m_scpiCommand(t_scpiCommand)
   {
     Q_ASSERT(s_scpiInterface != nullptr);
@@ -43,7 +43,7 @@ namespace Application
 //            t_other.m_scpiCommand.getCommand() == m_scpiCommand.getCommand());
 //  }
 
-  bool ResourceIdentity::occupyResource(ResourceServer::ClientMultiton *t_clientMultiton, quint32 t_amount)
+  bool ResourceIdentity::occupyResource(ResourceServer::IClientMultiton *t_clientMultiton, quint32 t_amount)
   {
     Q_ASSERT(t_clientMultiton != nullptr);
 
@@ -74,7 +74,7 @@ namespace Application
     return retVal;
   }
 
-  bool ResourceIdentity::releaseResource(ResourceServer::ClientMultiton *t_clientMultiton)
+  bool ResourceIdentity::releaseResource(ResourceServer::IClientMultiton *t_clientMultiton)
   {
     Q_ASSERT(t_clientMultiton != nullptr);
 
@@ -93,7 +93,7 @@ namespace Application
     return m_resource;
   }
 
-  const ResourceServer::ClientMultiton *ResourceIdentity::getProvider() const
+  const ResourceServer::IClientMultiton *ResourceIdentity::getProvider() const
   {
     return m_provider;
   }
@@ -113,7 +113,7 @@ namespace Application
     return m_scpiCommand;
   }
 
-  quint32 ResourceIdentity::getOccupationAmountOf(const ResourceServer::ClientMultiton *t_clientMultiton) const
+  quint32 ResourceIdentity::getOccupationAmountOf(const ResourceServer::IClientMultiton *t_clientMultiton) const
   {
     return m_occupiers.value(t_clientMultiton, 0);
   }
@@ -149,7 +149,7 @@ namespace Application
     return m_resource == t_filter;
   }
 
-  bool ResourceIdentity::isAffiliatedWithImpl(const ResourceServer::ClientMultiton *t_filter) const
+  bool ResourceIdentity::isAffiliatedWithImpl(const ResourceServer::IClientMultiton *t_filter) const
   {
     return m_provider == t_filter;
   }

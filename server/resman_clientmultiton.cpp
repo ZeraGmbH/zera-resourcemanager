@@ -10,7 +10,8 @@
 namespace ResourceServer
 {
   ClientMultiton::ClientMultiton(ResourceServer::ClientSocket *t_parent, const QByteArray& t_clientId) :
-    QObject(), m_parent(t_parent), m_clientId(t_clientId)
+    m_parent(t_parent),
+    m_clientId(t_clientId)
   {
   }
 

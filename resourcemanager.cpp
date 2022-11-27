@@ -22,7 +22,7 @@ void ResourceManager::removeResourceIdentity(Application::ResourceIdentity *t_re
   }
 }
 
-QList<Application::ResourceIdentity *> ResourceManager::getOccupationsByClient(ResourceServer::ClientMultiton *t_clientMultiton)
+QList<Application::ResourceIdentity *> ResourceManager::getOccupationsByClient(ResourceServer::IClientMultiton *t_clientMultiton)
 {
   QList<Application::ResourceIdentity *> retVal;
   QSetIterator<Application::ResourceIdentity *> setIterator(m_resourceIdentitySet);

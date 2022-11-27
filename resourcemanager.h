@@ -27,11 +27,11 @@ public:
   void removeResourceIdentity(Application::ResourceIdentity *t_resourceIdentity);
 
   /**
-   * @brief collects a list of Application::ResourceIdentity instances the ResourceServer::ClientMultiton has occupied
+   * @brief collects a list of Application::ResourceIdentity instances the ResourceServer::IClientMultiton has occupied
    * @param t_clientMultiton
    * @return
    */
-  QList<Application::ResourceIdentity *> getOccupationsByClient(ResourceServer::ClientMultiton *t_clientMultiton);
+  QList<Application::ResourceIdentity *> getOccupationsByClient(ResourceServer::IClientMultiton *t_clientMultiton);
   /**
    * @brief returns a copy of the intern m_resourceIdentitySet
    * @return
