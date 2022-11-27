@@ -8,12 +8,12 @@
   */
 namespace Application
 {
-  /**
-    @brief Represents a resource with a list of features
-    */
-  class Resource
-  {
-  public:
+/**
+  @brief Represents a resource with a list of features
+  */
+class Resource
+{
+public:
     /**
       @brief Initialise the const variables
       @param t_amount if the resource has a quantity that can be reserved partially it can specify the amount of that quantity
@@ -48,7 +48,7 @@ namespace Application
      */
     quint16 getPort() const;
 
-  private:
+private:
 
     /**
       @brief amount of the SCPI::ResourceObject
@@ -75,7 +75,7 @@ namespace Application
       @brief type of the SCPI::ResourceObject, e.g. Sense for sensors
       */
     const QString m_resourceType;
-  };
+};
 }
 #endif // H2012_RESOURCEOBJECT_H
 

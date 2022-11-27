@@ -11,12 +11,12 @@
 
 namespace ResourceServer
 {
-  class ClientMultiton;
+class ClientMultiton;
 }
 
 namespace Application
 {
-  class Resource;
+class Resource;
 }
 
 class ResourceManager;
@@ -26,54 +26,54 @@ class ResourceManager;
   */
 namespace SCPI
 {
-  class Catalog;
-  /**
+class Catalog;
+/**
     @brief this encapsulates redundant entries for the add / remove parameters
     */
-  namespace CommandParams
-  {
-    /**
+namespace CommandParams
+{
+/**
       @brief This enum allows parameter reordering and will provide legacy support if changed
       */
-    enum Parameters
-    {
-      type=0,
-      name,
-      amount,
-      description,
-      port,
-      _paramcount
-    };
-  }
+enum Parameters
+{
+    type=0,
+    name,
+    amount,
+    description,
+    port,
+    _paramcount
+};
+}
 
-  namespace SetParams
-  {
-    const QString SET_RESOURCE="set";
-    enum Parameters
-    {
-      command=0,
-      amount
-    };
-  }
+namespace SetParams
+{
+const QString SET_RESOURCE="set";
+enum Parameters
+{
+    command=0,
+    amount
+};
+}
 
-  namespace FreeParams
-  {
-    const QString FREE_RESOURCE="free";
-    enum Parameters
-    {
-      command=0
-    };
-  }
+namespace FreeParams
+{
+const QString FREE_RESOURCE="free";
+enum Parameters
+{
+    command=0
+};
+}
 
-  class ResourceSCPIObject;
+class ResourceSCPIObject;
 
-  /**
+/**
     @brief The interface between this application and the SCPI library
-    */
-  class SCPIInterface : public QObject
-  {
+  */
+class SCPIInterface : public QObject
+{
     Q_OBJECT
-  public:
+public:
     explicit SCPIInterface(ResourceManager *t_resourceManager, QObject *t_parent=0);
 
     /**
@@ -86,9 +86,9 @@ namespace SCPI
      * @param t_command the location of the scpi node to remove
      */
     void removeSCPICommand(cSCPICommand t_command);
-  signals:
+signals:
 
-  public slots:
+public slots:
     /**
       @brief The clients SCPI data is handled here
       */
@@ -96,7 +96,7 @@ namespace SCPI
 
     void onClientMultitonDisconnected(ResourceServer::IClientMultiton *t_clientMultiton);
 
-  private:
+private:
     /**
      * @brief scpiAddResource
      * @param t_command
@@ -156,6 +156,6 @@ namespace SCPI
       @brief Disables copying due to Singleton pattern
       */
     Q_DISABLE_COPY(SCPIInterface)
-  };
+};
 }
 #endif // SCPIINTERFACE_H

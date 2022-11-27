@@ -9,33 +9,33 @@
 
 namespace Application
 {
-  class Resource;
+class Resource;
 }
 
 namespace ResourceServer
 {
-  class ClientSocket;
+class ClientSocket;
 
-  /**
-   * @brief Multiple clients can share one socket connection
-   * this class represents a client
-   */
-  class ClientMultiton : public IClientMultiton
-  {
+/**
+  * @brief Multiple clients can share one socket connection
+  * this class represents a client
+  */
+class ClientMultiton : public IClientMultiton
+{
     Q_OBJECT
-  public:
+public:
     explicit ClientMultiton(ResourceServer::ClientSocket *t_parent, const QByteArray& t_clientId);
     ~ClientMultiton();
     QString getName() const override;
 
     QString getIpAddress() const override;
-  signals:
+signals:
     /**
      * @brief is called when a client sent the IDENT command
      */
     void sigClientIdentified();
 
-  public:
+public:
     /**
       * @brief Sends acknowledgement
       * @param message Optional text
@@ -56,20 +56,20 @@ namespace ResourceServer
       * @param message Optional text
       */
     void doSendNACK(const QString &t_message=QString()) const override;
-  public slots:
+public slots:
     /**
       * @brief Decodes incoming messages into a ProtobufMessage
       * @param message Unparsed message
       */
     void onMessageReceived(std::shared_ptr<ProtobufMessage::NetMessage> t_envelope) override;
 
-  private:
+private:
     QString m_name;
 
     ResourceServer::ClientSocket *m_parent;
     const QByteArray m_clientId;
 
     Q_DISABLE_COPY(ClientMultiton)
-  };
+};
 }
 #endif // CLIENTMULTITON_H

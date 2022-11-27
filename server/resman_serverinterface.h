@@ -12,12 +12,12 @@ class RMProtobufWrapper;
 
 namespace Application
 {
-  class Resource;
+class Resource;
 }
 
 namespace SCPI
 {
-  class SCPIInterface;
+class SCPIInterface;
 }
 
 /**
@@ -25,20 +25,20 @@ namespace SCPI
  */
 namespace ResourceServer
 {
-  class IClientMultiton;
-  class ClientSocket;
-  /**
-    @brief Represents the interface between the network implementations and the ResourceManager
-    */
-  class ServerInterface : public QObject
-  {
+class IClientMultiton;
+class ClientSocket;
+/**
+  @brief Represents the interface between the network implementations and the ResourceManager
+  */
+class ServerInterface : public QObject
+{
     Q_OBJECT
-  public:
+public:
     explicit ServerInterface(SCPI::SCPIInterface *t_scpiInterface, QObject *t_parent = 0);
     ~ServerInterface();
     void start();
 
-  public slots:
+public slots:
     /**
       @brief Will be triggered when the Server::Client disconnects
       */
@@ -56,14 +56,14 @@ namespace ResourceServer
      */
     void onClientIdentified(ResourceServer::IClientMultiton *t_clientMultiton);
 
-  signals:
+signals:
     /**
      * @brief notifies the SCPI::SCPIInterface if a client is disconnected
      * @param t_clientMultiton
      */
     void sigClientDisconnected(ResourceServer::IClientMultiton *t_clientMultiton);
 
-  private:
+private:
     /**
      * @brief pointer to the scpi interface
      */
@@ -87,6 +87,6 @@ namespace ResourceServer
       @note Instances of this class should only get accessed through the getInstance method.
       */
     Q_DISABLE_COPY(ServerInterface)
-  };
+};
 }
 #endif // H2012_SERVERINTERFACE_H

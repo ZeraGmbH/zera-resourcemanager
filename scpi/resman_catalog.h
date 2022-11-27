@@ -8,12 +8,12 @@ class ResourceManager;
 
 namespace SCPI
 {
-  /**
-   * @brief Provides functions to list resources of a given type
-   */
-  class Catalog : public cSCPIObject
-  {
-  public:
+/**
+  * @brief Provides functions to list resources of a given type
+  */
+class Catalog : public cSCPIObject
+{
+public:
     Catalog(ResourceManager *t_resMan, const QString &scpiName, quint8 scpiType);
 
     /**
@@ -48,7 +48,7 @@ namespace SCPI
       */
     void unRef();
 
-  private:
+private:
     /**
       @brief the Type which the catalog represents
       */
@@ -60,7 +60,7 @@ namespace SCPI
 
     const ResourceManager *m_resMan = nullptr;
     Q_DISABLE_COPY(Catalog)
-  };
+};
 }
 
 #endif // CATALOG_H
