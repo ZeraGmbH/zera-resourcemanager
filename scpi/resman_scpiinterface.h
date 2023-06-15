@@ -145,7 +145,7 @@ private:
     /**
       @brief SCPI library interaction is held here
       */
-    cSCPI* m_scpiInstance = new cSCPI("Resourcemanager");
+    cSCPI* m_scpiInstance = new cSCPI();
 
     /**
      * @brief pointer to the resource manager
