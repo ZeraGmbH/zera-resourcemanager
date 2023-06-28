@@ -15,7 +15,7 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 find_package(Qt5 COMPONENTS Core Network Test CONFIG REQUIRED)
-find_package(xiqnet REQUIRED)
+find_package(VeinFramework REQUIRED)
 find_package(zeraprotobuf REQUIRED)
 find_package(SCPI REQUIRED)
 
@@ -44,7 +44,7 @@ target_link_libraries(resman-lib
     PUBLIC
     Qt5::Core
     Qt5::Network
-    VeinMeta::xiqnet
+    Zera::xiqnet
     VeinMeta::zeraprotobuf
     Zera::SCPI
     )
