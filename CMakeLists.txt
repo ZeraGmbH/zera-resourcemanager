@@ -16,7 +16,6 @@ include(CMakePackageConfigHelpers)
 
 find_package(Qt5 COMPONENTS Core Network Test CONFIG REQUIRED)
 find_package(VeinFramework REQUIRED)
-find_package(zeraprotobuf REQUIRED)
 find_package(SCPI REQUIRED)
 
 file(GLOB SOURCES
@@ -45,7 +44,7 @@ target_link_libraries(resman-lib
     Qt5::Core
     Qt5::Network
     Zera::xiqnet
-    VeinMeta::zeraprotobuf
+    Zera::zeraprotobuf
     Zera::SCPI
     )
 
