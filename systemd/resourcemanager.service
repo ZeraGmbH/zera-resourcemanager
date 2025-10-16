@@ -1,0 +1,13 @@
+[Unit]
+Description=Zera Resource Manager
+
+[Service]
+ExecStart=/usr/bin/resman
+Type=simple
+User=zera-services
+NoNewPrivileges=true
+ProtectHome=true
+LogLevelMax=info
+
+[Install]
+WantedBy=multi-user.target

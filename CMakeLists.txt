@@ -30,4 +30,6 @@ install(TARGETS resman
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
+add_subdirectory(systemd)
+
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
